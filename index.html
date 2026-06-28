@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Link Page - Premium</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.container {
+  width: 100%;
+  max-width: 450px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-radius: 30px;
+  padding: 30px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.profile {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.profile-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  object-fit: cover;
+  margin: 0 auto 15px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.profile h1 {
+  color: #fff;
+  font-size: 28px;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.profile p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 5px;
+  border-radius: 20px;
+}
+
+.tabs button {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 15px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: rgba(255, 255, 255, 0.7);
+  background: transparent;
+}
+
+.tabs button.active {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.section {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.section.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.link-card {
+  margin-bottom: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.link-card:hover {
+  transform: translateY(-5px);
+}
+
+.link-card a {
+  display: block;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 30px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.link-card a:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+.link-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 0;
+}
+
+.link-image {
+  width: 100%;
+  height: 150px;
+  border-radius: 30px 30px 0 0;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.link-text {
+  flex: 1;
+  width: 100%;
+  padding: 14px 18px;
+  text-align: center;
+}
+
+.link-title {
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 3px;
+}
+
+.link-desc {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+}
+
+.link-date {
+  display: inline-block;
+  margin-top: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.8);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.price-badge {
+  background: rgba(255, 215, 0, 0.3);
+  color: #ffd700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.section-title {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.bottom-bar {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.bottom-links {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.bottom-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  text-decoration: none;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.bottom-links a:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.footer-text {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+}
+
+.dynamic-island {
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, rgba(37, 211, 102, 0.95), rgba(25, 135, 84, 0.95));
+  backdrop-filter: blur(20px);
+  border-radius: 50px;
+  padding: 10px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(37, 211, 102, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  animation: float 3s ease-in-out infinite;
+  z-index: 100;
+  white-space: nowrap;
+  min-width: 140px;
+  text-align: center;
+}
+
+.dynamic-island a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-decoration: none;
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  transition: all 0.3s ease;
+}
+
+.dynamic-island a:hover {
+  transform: scale(1.05);
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.container {
+  position: relative;
+}
+
+/* MODAL STYLES */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal.active {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.95), rgba(118, 75, 162, 0.95));
+  backdrop-filter: blur(20px);
+  border-radius: 40px;
+  padding: 0;
+  width: 90%;
+  max-width: 400px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s ease;
+  color: #fff;
+  overflow: hidden;
+}
+
+.modal-image {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+.modal-body {
+  padding: 30px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.modal-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.close-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: #fff;
+  font-size: 28px;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.modal-price {
+  font-size: 32px;
+  font-weight: 700;
+  color: #ffd700;
+  margin-bottom: 20px;
+}
+
+.modal-features {
+  margin-bottom: 25px;
+}
+
+.modal-features h3 {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.8;
+  margin-bottom: 12px;
+}
+
+.feature-list {
+  list-style: none;
+}
+
+.feature-list li {
+  padding: 8px 0;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.feature-list li:before {
+  content: "✓";
+  color: #ffd700;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.modal-buy-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.modal-buy-btn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Download Modal Styles */
+.download-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  z-index: 2000;
+  animation: fadeIn 0.3s ease;
+}
+
+.download-modal.active {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.download-modal-content {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.95), rgba(118, 75, 162, 0.95));
+  backdrop-filter: blur(20px);
+  border-radius: 40px;
+  padding: 40px 30px;
+  width: 90%;
+  max-width: 350px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s ease;
+  color: #fff;
+  text-align: center;
+  position: relative;
+}
+
+.download-modal-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 25px;
+}
+
+.download-modal-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.download-modal-btn {
+  padding: 14px;
+  border: none;
+  border-radius: 25px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.download-btn {
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  color: #333;
+}
+
+.download-btn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+}
+
+.tutorial-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.tutorial-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.download-close-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: #fff;
+  font-size: 28px;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.download-close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+/* Purchase Required Modal */
+.purchase-required-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  z-index: 2000;
+  animation: fadeIn 0.3s ease;
+}
+
+.purchase-required-modal.active {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.purchase-required-content {
+  background: linear-gradient(135deg, rgba(234, 102, 102, 0.95), rgba(209, 72, 72, 0.95));
+  backdrop-filter: blur(20px);
+  border-radius: 40px;
+  padding: 40px 30px;
+  width: 90%;
+  max-width: 350px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s ease;
+  color: #fff;
+  text-align: center;
+  position: relative;
+}
+
+.purchase-required-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.purchase-required-message {
+  font-size: 14px;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+.purchase-required-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  border: none;
+  border-radius: 25px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.purchase-required-btn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+}
+
+.purchase-required-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: #fff;
+  font-size: 28px;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.purchase-required-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- DYNAMIC ISLAND - WhatsApp -->
+  <div class="dynamic-island">
+    <a onclick="window.open('https://wa.me/1234567890', '_blank'); return false;">
+      💬 WhatsApp
+    </a>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="profile">
+    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop" alt="Profile" class="profile-img">
+    <h1>Dominic Johnson</h1>
+    <p>Share your content with the world</p>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="free">FREE</button>
+    <button class="tab-btn" data-tab="paid">PAID</button>
+  </div>
+
+  <!-- FREE SECTION -->
+  <div id="free" class="section active">
+    <div class="section-title">📂 Free Content</div>
+
+    <div class="link-card">
+      <a onclick="openFreeModal('ebook'); return false;">
+        <div class="link-content">
+          <img src="https://images.unsplash.com/photo-1507842217343-583f20270319?w=100&h=100&fit=crop" alt="Free Ebook" class="link-image">
+          <div class="link-text">
+            <div class="link-title">Free E-Book</div>
+            <div class="link-desc">Get started guide (PDF)</div>
+            <div class="link-date">📅 Jun 28, 2026</div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="link-card">
+      <a onclick="openFreeModal('tutorial'); return false;">
+        <div class="link-content">
+          <img src="https://images.unsplash.com/photo-1516321318423-f06f70504646?w=100&h=100&fit=crop" alt="Tutorial" class="link-image">
+          <div class="link-text">
+            <div class="link-title">Video Tutorial</div>
+            <div class="link-desc">Watch free videos</div>
+            <div class="link-date">📅 Jun 28, 2026</div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="link-card">
+      <a onclick="openFreeModal('template'); return false;">
+        <div class="link-content">
+          <img src="https://images.unsplash.com/photo-1561070791-2526d30994b5?w=100&h=100&fit=crop" alt="Template" class="link-image">
+          <div class="link-text">
+            <div class="link-title">Free Template</div>
+            <div class="link-desc">Download now</div>
+            <div class="link-date">📅 Jun 28, 2026</div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+  </div>
+
+  <!-- PAID SECTION -->
+  <div id="paid" class="section">
+    <div class="section-title">💎 Premium Content</div>
+
+    <div class="link-card">
+      <a onclick="openModal('basic'); return false;">
+        <div class="link-content">
+          <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=100&h=100&fit=crop" alt="Basic Plan" class="link-image">
+          <div class="link-text">
+            <div class="link-title">Basic Plan</div>
+            <div class="link-desc">Essential features</div>
+            <div class="price-badge">$9/month</div>
+            <div class="link-date">📅 Jun 28, 2026</div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="link-card">
+      <a onclick="openModal('pro'); return false;">
+        <div class="link-content">
+          <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=100&h=100&fit=crop" alt="Pro Plan" class="link-image">
+          <div class="link-text">
+            <div class="link-title">Pro Plan</div>
+            <div class="link-desc">Advanced tools</div>
+            <div class="price-badge">$19/month</div>
+            <div class="link-date">📅 Jun 28, 2026</div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="link-card">
+      <a onclick="openModal('lifetime'); return false;">
+        <div class="link-content">
+          <img src="https://images.unsplash.com/photo-1579621970563-ebec642a9f7b?w=100&h=100&fit=crop" alt="Lifetime" class="link-image">
+          <div class="link-text">
+            <div class="link-title">Lifetime Access</div>
+            <div class="link-desc">One-time payment</div>
+            <div class="price-badge">$99</div>
+            <div class="link-date">📅 Jun 28, 2026</div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div class="bottom-bar">
+    <div class="bottom-links">
+      <a onclick="window.open('https://t.me/yourusername', '_blank'); return false;">
+        ✈️ Telegram
+      </a>
+      <a onclick="window.location.href='mailto:support@example.com'; return false;">
+        ❓ Help & Support
+      </a>
+    </div>
+    <div class="footer-text">
+      © 2024 All Rights Reserved
+    </div>
+  </div>
+
+  <!-- MODALS FOR FREE CONTENT -->
+
+  <!-- Free data config: set downloadUrl and youtubeUrl. Leave youtubeUrl empty if no video yet. -->
+  <script>
+    const freeItems = {
+      ebook: {
+        title: 'Free E-Book',
+        downloadUrl: 'https://example.com/free-ebook',
+        youtubeUrl: 'https://youtube.com/watch?v=XXXXXXX' // leave empty string if no video
+      },
+      tutorial: {
+        title: 'Video Tutorial',
+        downloadUrl: 'https://example.com/free-tutorial',
+        youtubeUrl: '' // no video yet
+      },
+      template: {
+        title: 'Free Template',
+        downloadUrl: 'https://example.com/free-template',
+        youtubeUrl: 'https://youtube.com/watch?v=XXXXXXX'
+      }
+    };
+
+    function openFreeModal(key) {
+      const item = freeItems[key];
+      document.getElementById('freeModalTitle').textContent = item.title;
+      document.getElementById('freeDownloadBtn').onclick = function() {
+        window.open(item.downloadUrl, '_blank');
+      };
+      const howToBtn = document.getElementById('freeHowToBtn');
+      const noVideoMsg = document.getElementById('freeNoVideoMsg');
+      if (item.youtubeUrl) {
+        howToBtn.style.display = 'block';
+        noVideoMsg.style.display = 'none';
+        howToBtn.onclick = function() { window.open(item.youtubeUrl, '_blank'); };
+      } else {
+        howToBtn.style.display = 'none';
+        noVideoMsg.style.display = 'block';
+      }
+      document.getElementById('freeModal').classList.add('active');
+    }
+
+    function closeFreeModal() {
+      document.getElementById('freeModal').classList.remove('active');
+    }
+  </script>
+
+  <div id="freeModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="modal-header">
+          <h2 id="freeModalTitle"></h2>
+          <button class="close-btn" onclick="closeFreeModal()">&times;</button>
+        </div>
+        <p style="color: rgba(255,255,255,0.7); font-size: 14px; margin-bottom: 25px;">Choose an option below:</p>
+        <div style="display: flex; gap: 12px; flex-direction: column;">
+          <button id="freeDownloadBtn" class="modal-buy-btn" style="background: linear-gradient(135deg, #ffd700, #ffed4e); color: #333;">
+            ⬇️ Download
+          </button>
+          <button id="freeHowToBtn" class="modal-buy-btn" style="background: rgba(255,255,255,0.2); color: #fff;">
+            ▶️ How to Use
+          </button>
+          <div id="freeNoVideoMsg" style="display:none; background: rgba(255,255,255,0.1); border-radius: 20px; padding: 14px; text-align: center; color: rgba(255,255,255,0.7); font-size: 14px;">
+            🎬 No video made on this content file yet.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALS FOR PRODUCTS -->
+  <div id="basicModal" class="modal">
+    <div class="modal-content">
+      <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=250&fit=crop" alt="Basic Plan" class="modal-image">
+      <div class="modal-body">
+        <div class="modal-header">
+          <h2>Basic Plan</h2>
+          <button class="close-btn" onclick="closeModal('basic')">&times;</button>
+        </div>
+        <div class="modal-price">$9/month</div>
+        <div class="modal-features">
+          <h3>Features Included</h3>
+          <ul class="feature-list">
+            <li>Access to basic content</li>
+            <li>Email support</li>
+            <li>Monthly updates</li>
+            <li>Basic analytics</li>
+          </ul>
+        </div>
+        <div style="display: flex; gap: 10px; flex-direction: column;">
+          <button class="modal-buy-btn" onclick="window.open('https://example.com/buy-basic', '_blank'); return false;" style="background: linear-gradient(135deg, #ffd700, #ffed4e); margin-bottom: 0;">💳 Buy Now</button>
+          <button class="modal-buy-btn" onclick="openPurchaseRequired('basic'); return false;" style="background: rgba(255, 255, 255, 0.2); color: #fff; margin-bottom: 0;">▶️ How to Use</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="proModal" class="modal">
+    <div class="modal-content">
+      <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=250&fit=crop" alt="Pro Plan" class="modal-image">
+      <div class="modal-body">
+        <div class="modal-header">
+          <h2>Pro Plan</h2>
+          <button class="close-btn" onclick="closeModal('pro')">&times;</button>
+        </div>
+        <div class="modal-price">$19/month</div>
+        <div class="modal-features">
+          <h3>Features Included</h3>
+          <ul class="feature-list">
+            <li>All Basic features</li>
+            <li>Priority email support</li>
+            <li>Advanced analytics</li>
+            <li>Custom branding</li>
+            <li>Weekly updates</li>
+          </ul>
+        </div>
+        <div style="display: flex; gap: 10px; flex-direction: column;">
+          <button class="modal-buy-btn" onclick="window.open('https://example.com/buy-pro', '_blank'); return false;" style="background: linear-gradient(135deg, #ffd700, #ffed4e); margin-bottom: 0;">💳 Buy Now</button>
+          <button class="modal-buy-btn" onclick="openPurchaseRequired('pro'); return false;" style="background: rgba(255, 255, 255, 0.2); color: #fff; margin-bottom: 0;">▶️ How to Use</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="lifetimeModal" class="modal">
+    <div class="modal-content">
+      <img src="https://images.unsplash.com/photo-1579621970563-ebec642a9f7b?w=400&h=250&fit=crop" alt="Lifetime" class="modal-image">
+      <div class="modal-body">
+        <div class="modal-header">
+          <h2>Lifetime Access</h2>
+          <button class="close-btn" onclick="closeModal('lifetime')">&times;</button>
+        </div>
+        <div class="modal-price">$99</div>
+        <div class="modal-features">
+          <h3>Features Included</h3>
+          <ul class="feature-list">
+            <li>All Pro features</li>
+            <li>24/7 Priority support</li>
+            <li>Lifetime updates</li>
+            <li>Advanced analytics</li>
+            <li>Custom integrations</li>
+            <li>Dedicated account manager</li>
+          </ul>
+        </div>
+        <div style="display: flex; gap: 10px; flex-direction: column;">
+          <button class="modal-buy-btn" onclick="window.open('https://example.com/buy-lifetime', '_blank'); return false;" style="background: linear-gradient(135deg, #ffd700, #ffed4e); margin-bottom: 0;">💳 Buy Now</button>
+          <button class="modal-buy-btn" onclick="openPurchaseRequired('lifetime'); return false;" style="background: rgba(255, 255, 255, 0.2); color: #fff; margin-bottom: 0;">▶️ How to Use</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PURCHASE REQUIRED MODALS FOR PAID PRODUCTS -->
+  <div id="basicPurchaseModal" class="purchase-required-modal">
+    <div class="purchase-required-content">
+      <button class="purchase-required-close" onclick="closePurchaseRequired('basic')">&times;</button>
+      <div class="purchase-required-title">⚠️ Purchase Required</div>
+      <div class="purchase-required-message">Please buy the Basic Plan first to view the how to use tutorial.</div>
+      <button class="purchase-required-btn" onclick="closeModal('basic'); closeDownloadModal('basic'); window.open('https://example.com/buy-basic', '_blank'); return false;">Buy Now</button>
+    </div>
+  </div>
+
+  <div id="proPurchaseModal" class="purchase-required-modal">
+    <div class="purchase-required-content">
+      <button class="purchase-required-close" onclick="closePurchaseRequired('pro')">&times;</button>
+      <div class="purchase-required-title">⚠️ Purchase Required</div>
+      <div class="purchase-required-message">Please buy the Pro Plan first to view the how to use tutorial.</div>
+      <button class="purchase-required-btn" onclick="closeModal('pro'); closeDownloadModal('pro'); window.open('https://example.com/buy-pro', '_blank'); return false;">Buy Now</button>
+    </div>
+  </div>
+
+  <div id="lifetimePurchaseModal" class="purchase-required-modal">
+    <div class="purchase-required-content">
+      <button class="purchase-required-close" onclick="closePurchaseRequired('lifetime')">&times;</button>
+      <div class="purchase-required-title">⚠️ Purchase Required</div>
+      <div class="purchase-required-message">Please buy the Lifetime Access first to view the how to use tutorial.</div>
+      <button class="purchase-required-btn" onclick="closeModal('lifetime'); closeDownloadModal('lifetime'); window.open('https://example.com/buy-lifetime', '_blank'); return false;">Buy Now</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const tabButtons = document.querySelectorAll('.tab-btn');
+const sections = document.querySelectorAll('.section');
+
+tabButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    const tabName = button.getAttribute('data-tab');
+
+    // Remove active class from all buttons and sections
+    tabButtons.forEach(btn => btn.classList.remove('active'));
+    sections.forEach(section => section.classList.remove('active'));
+
+    // Add active class to clicked button and corresponding section
+    button.classList.add('active');
+    document.getElementById(tabName).classList.add('active');
+  });
+});
+
+// Modal Functions
+function openModal(planType) {
+  const modalId = planType + 'Modal';
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.classList.add('active');
+  }
+}
+
+function closeModal(planType) {
+  const modalId = planType + 'Modal';
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.classList.remove('active');
+  }
+}
+
+function openDownloadModal(planType) {
+  const downloadModalId = planType + 'DownloadModal';
+  const downloadModal = document.getElementById(downloadModalId);
+  if (downloadModal) {
+    downloadModal.classList.add('active');
+  }
+}
+
+function closeDownloadModal(planType) {
+  const downloadModalId = planType + 'DownloadModal';
+  const downloadModal = document.getElementById(downloadModalId);
+  if (downloadModal) {
+    downloadModal.classList.remove('active');
+  }
+}
+
+function openPurchaseRequired(planType) {
+  const purchaseModalId = planType + 'PurchaseModal';
+  const purchaseModal = document.getElementById(purchaseModalId);
+  if (purchaseModal) {
+    purchaseModal.classList.add('active');
+  }
+}
+
+function closePurchaseRequired(planType) {
+  const purchaseModalId = planType + 'PurchaseModal';
+  const purchaseModal = document.getElementById(purchaseModalId);
+  if (purchaseModal) {
+    purchaseModal.classList.remove('active');
+  }
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(event) {
+  const modals = document.querySelectorAll('.modal');
+  modals.forEach(modal => {
+    if (event.target === modal) {
+      modal.classList.remove('active');
+    }
+  });
+
+  const downloadModals = document.querySelectorAll('.download-modal');
+  downloadModals.forEach(modal => {
+    if (event.target === modal) {
+      modal.classList.remove('active');
+    }
+  });
+
+  const purchaseModals = document.querySelectorAll('.purchase-required-modal');
+  purchaseModals.forEach(modal => {
+    if (event.target === modal) {
+      modal.classList.remove('active');
+    }
+  });
+});
+</script>
+
+</body>
+</html>
