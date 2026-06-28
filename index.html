@@ -12,14 +12,78 @@
   box-sizing: border-box;
 }
 
+/* ANIMATED GRADIENT BACKGROUND */
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(270deg, #667eea, #764ba2, #f64f59, #c471ed, #12c2e9, #667eea);
+  background-size: 400% 400%;
+  animation: gradientShift 10s ease infinite;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px;
+  transition: background 0.5s ease;
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* DARK MODE */
+body.dark-mode {
+  background: linear-gradient(270deg, #0f0c29, #302b63, #24243e, #1a1a2e, #16213e, #0f0c29);
+  background-size: 400% 400%;
+  animation: gradientShift 10s ease infinite;
+}
+
+body.dark-mode .container {
+  background: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .link-card a::before {
+  background: linear-gradient(270deg, #0f0c29, #302b63, #24243e, #4a0080, #1a1a2e, #16213e, #0f0c29);
+  background-size: 400% 400%;
+  animation: gradientShift 6s ease infinite;
+}
+
+body.dark-mode .tabs {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* DARK/LIGHT TOGGLE BUTTON */
+.theme-toggle {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 9999;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 20px;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(1.05);
+}
+
+.theme-toggle span {
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .container {
@@ -31,6 +95,70 @@ body {
   padding: 30px 20px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* TABLET MODE */
+@media (min-width: 768px) {
+  .container {
+    max-width: 650px;
+    padding: 40px 35px;
+  }
+  .profile h1 {
+    font-size: 34px;
+  }
+  .link-image {
+    height: 200px;
+  }
+  .tabs button {
+    font-size: 17px;
+    padding: 14px 24px;
+  }
+}
+
+/* DESKTOP MODE */
+@media (min-width: 1024px) {
+  body {
+    align-items: center;
+  }
+  .container {
+    max-width: 860px;
+    padding: 50px 50px;
+    border-radius: 40px;
+  }
+  .profile h1 {
+    font-size: 40px;
+  }
+  .profile-img {
+    width: 150px;
+    height: 150px;
+  }
+  .link-content {
+    flex-direction: row;
+    align-items: stretch;
+  }
+  .link-image {
+    width: 220px;
+    height: 140px;
+    border-radius: 30px 0 0 30px;
+    flex-shrink: 0;
+  }
+  .link-text {
+    text-align: left;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .link-title {
+    font-size: 18px;
+  }
+  .link-desc {
+    font-size: 15px;
+  }
+  .tabs button {
+    font-size: 18px;
+    padding: 14px 28px;
+  }
 }
 
 .profile {
@@ -99,14 +227,8 @@ body {
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .link-card {
@@ -121,19 +243,34 @@ body {
 
 .link-card a {
   display: block;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
+  position: relative;
   border-radius: 30px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.link-card a::before {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  background: linear-gradient(270deg, #667eea, #764ba2, #f64f59, #c471ed, #12c2e9, #ff6b6b, #feca57, #667eea);
+  background-size: 400% 400%;
+  animation: gradientShift 6s ease infinite;
+  filter: blur(18px);
+  z-index: 0;
+  opacity: 0.92;
+}
+
+.link-card a > * {
+  position: relative;
+  z-index: 1;
 }
 
 .link-card a:hover {
-  background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
 }
 
 .link-content {
@@ -277,12 +414,8 @@ body {
 }
 
 @keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
+  0%, 100% { transform: translateX(-50%) translateY(0px); }
+  50%       { transform: translateX(-50%) translateY(-8px); }
 }
 
 .container {
@@ -293,10 +426,8 @@ body {
 .modal {
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(5px);
   z-index: 1000;
@@ -423,24 +554,16 @@ body {
 }
 
 @keyframes slideUp {
-  from {
-    transform: translateY(50px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  from { transform: translateY(50px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
 }
 
-/* Download Modal Styles */
+/* Download Modal */
 .download-modal {
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(5px);
   z-index: 2000;
@@ -538,10 +661,8 @@ body {
 .purchase-required-modal {
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(5px);
   z-index: 2000;
@@ -627,20 +748,23 @@ body {
 
 <body>
 
+<!-- DARK / LIGHT TOGGLE BUTTON (top left) -->
+<button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙 <span>Dark</span></button>
+
 <div class="container">
 
   <!-- DYNAMIC ISLAND - WhatsApp -->
   <div class="dynamic-island">
-    <a onclick="window.open('https://wa.me/923041891897', '_blank'); return false;">
+    <a onclick="window.open('https://wa.me/1234567890', '_blank'); return false;">
       💬 WhatsApp
     </a>
   </div>
 
   <!-- PROFILE -->
   <div class="profile">
-    <img src="https://i.imgur.com/HaaGEBq.jpeg?w=200&h=200&fit=crop" alt="Profile" class="profile-img">
-    <h1>PIKAZOO ARMY</h1>
-    <p>Download File Below!</p>
+    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop" alt="Profile" class="profile-img">
+    <h1>Dominic Johnson</h1>
+    <p>Share your content with the world</p>
   </div>
 
   <!-- TABS -->
@@ -698,10 +822,11 @@ body {
   <div id="paid" class="section">
     <div class="section-title">💎 Premium Content</div>
 
+    <!-- BASIC PLAN - Animated GIF -->
     <div class="link-card">
       <a onclick="openModal('basic'); return false;">
         <div class="link-content">
-          <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=100&h=100&fit=crop" alt="Basic Plan" class="link-image">
+          <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcHVkcXhiMm1kcm8zMTc1cGpxaHlkMmRrcXlsNnM4NHZkcHVoMmI5OSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlDy9x8FZo0XO1i/giphy.gif" alt="Basic Plan" class="link-image">
           <div class="link-text">
             <div class="link-title">Basic Plan</div>
             <div class="link-desc">Essential features</div>
@@ -758,19 +883,17 @@ body {
   </div>
 
   <!-- MODALS FOR FREE CONTENT -->
-
-  <!-- Free data config: set downloadUrl and youtubeUrl. Leave youtubeUrl empty if no video yet. -->
   <script>
     const freeItems = {
       ebook: {
         title: 'Free E-Book',
         downloadUrl: 'https://example.com/free-ebook',
-        youtubeUrl: 'https://youtube.com/watch?v=XXXXXXX' // leave empty string if no video
+        youtubeUrl: 'https://youtube.com/watch?v=XXXXXXX'
       },
       tutorial: {
         title: 'Video Tutorial',
         downloadUrl: 'https://example.com/free-tutorial',
-        youtubeUrl: '' // no video yet
+        youtubeUrl: ''
       },
       template: {
         title: 'Free Template',
@@ -801,6 +924,17 @@ body {
     function closeFreeModal() {
       document.getElementById('freeModal').classList.remove('active');
     }
+
+    function toggleTheme() {
+      const body = document.body;
+      const btn = document.getElementById('themeBtn');
+      body.classList.toggle('dark-mode');
+      if (body.classList.contains('dark-mode')) {
+        btn.innerHTML = '☀️ <span>Light</span>';
+      } else {
+        btn.innerHTML = '🌙 <span>Dark</span>';
+      }
+    }
   </script>
 
   <div id="freeModal" class="modal">
@@ -829,7 +963,7 @@ body {
   <!-- MODALS FOR PRODUCTS -->
   <div id="basicModal" class="modal">
     <div class="modal-content">
-      <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=250&fit=crop" alt="Basic Plan" class="modal-image">
+      <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcHVkcXhiMm1kcm8zMTc1cGpxaHlkMmRrcXlsNnM4NHZkcHVoMmI5OSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0HlDy9x8FZo0XO1i/giphy.gif" alt="Basic Plan" class="modal-image">
       <div class="modal-body">
         <div class="modal-header">
           <h2>Basic Plan</h2>
@@ -908,7 +1042,7 @@ body {
     </div>
   </div>
 
-  <!-- PURCHASE REQUIRED MODALS FOR PAID PRODUCTS -->
+  <!-- PURCHASE REQUIRED MODALS -->
   <div id="basicPurchaseModal" class="purchase-required-modal">
     <div class="purchase-required-content">
       <button class="purchase-required-close" onclick="closePurchaseRequired('basic')">&times;</button>
@@ -945,87 +1079,52 @@ const sections = document.querySelectorAll('.section');
 tabButtons.forEach(button => {
   button.addEventListener('click', () => {
     const tabName = button.getAttribute('data-tab');
-
-    // Remove active class from all buttons and sections
     tabButtons.forEach(btn => btn.classList.remove('active'));
     sections.forEach(section => section.classList.remove('active'));
-
-    // Add active class to clicked button and corresponding section
     button.classList.add('active');
     document.getElementById(tabName).classList.add('active');
   });
 });
 
-// Modal Functions
 function openModal(planType) {
-  const modalId = planType + 'Modal';
-  const modal = document.getElementById(modalId);
-  if (modal) {
-    modal.classList.add('active');
-  }
+  const modal = document.getElementById(planType + 'Modal');
+  if (modal) modal.classList.add('active');
 }
 
 function closeModal(planType) {
-  const modalId = planType + 'Modal';
-  const modal = document.getElementById(modalId);
-  if (modal) {
-    modal.classList.remove('active');
-  }
+  const modal = document.getElementById(planType + 'Modal');
+  if (modal) modal.classList.remove('active');
 }
 
 function openDownloadModal(planType) {
-  const downloadModalId = planType + 'DownloadModal';
-  const downloadModal = document.getElementById(downloadModalId);
-  if (downloadModal) {
-    downloadModal.classList.add('active');
-  }
+  const modal = document.getElementById(planType + 'DownloadModal');
+  if (modal) modal.classList.add('active');
 }
 
 function closeDownloadModal(planType) {
-  const downloadModalId = planType + 'DownloadModal';
-  const downloadModal = document.getElementById(downloadModalId);
-  if (downloadModal) {
-    downloadModal.classList.remove('active');
-  }
+  const modal = document.getElementById(planType + 'DownloadModal');
+  if (modal) modal.classList.remove('active');
 }
 
 function openPurchaseRequired(planType) {
-  const purchaseModalId = planType + 'PurchaseModal';
-  const purchaseModal = document.getElementById(purchaseModalId);
-  if (purchaseModal) {
-    purchaseModal.classList.add('active');
-  }
+  const modal = document.getElementById(planType + 'PurchaseModal');
+  if (modal) modal.classList.add('active');
 }
 
 function closePurchaseRequired(planType) {
-  const purchaseModalId = planType + 'PurchaseModal';
-  const purchaseModal = document.getElementById(purchaseModalId);
-  if (purchaseModal) {
-    purchaseModal.classList.remove('active');
-  }
+  const modal = document.getElementById(planType + 'PurchaseModal');
+  if (modal) modal.classList.remove('active');
 }
 
-// Close modal when clicking outside
 document.addEventListener('click', function(event) {
-  const modals = document.querySelectorAll('.modal');
-  modals.forEach(modal => {
-    if (event.target === modal) {
-      modal.classList.remove('active');
-    }
+  document.querySelectorAll('.modal').forEach(modal => {
+    if (event.target === modal) modal.classList.remove('active');
   });
-
-  const downloadModals = document.querySelectorAll('.download-modal');
-  downloadModals.forEach(modal => {
-    if (event.target === modal) {
-      modal.classList.remove('active');
-    }
+  document.querySelectorAll('.download-modal').forEach(modal => {
+    if (event.target === modal) modal.classList.remove('active');
   });
-
-  const purchaseModals = document.querySelectorAll('.purchase-required-modal');
-  purchaseModals.forEach(modal => {
-    if (event.target === modal) {
-      modal.classList.remove('active');
-    }
+  document.querySelectorAll('.purchase-required-modal').forEach(modal => {
+    if (event.target === modal) modal.classList.remove('active');
   });
 });
 </script>
