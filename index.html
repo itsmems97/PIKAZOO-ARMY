@@ -38,6 +38,29 @@ body {
   opacity: 0.85;
 }
 
+/* SHOW TOUCH — tap/click ripple indicator */
+.show-touch-ripple {
+  position: fixed;
+  width: 56px;
+  height: 56px;
+  margin-left: -28px;
+  margin-top: -28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  pointer-events: none;
+  z-index: 99999;
+  transform: scale(0.3);
+  opacity: 0.9;
+  animation: showTouchPop 0.5s ease-out forwards;
+}
+
+@keyframes showTouchPop {
+  0%   { transform: scale(0.3); opacity: 0.9; }
+  60%  { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.15); opacity: 0; }
+}
+
 /* DARK MODE */
 body.dark-mode {
   background: #0d0a1a;
@@ -54,9 +77,7 @@ body.dark-mode .container {
 }
 
 body.dark-mode .link-card a::before {
-  background: linear-gradient(270deg, #0f0c29, #302b63, #24243e, #1a1a2e, #16213e, #0f0c29);
-  background-size: 400% 400%;
-  animation: gradientShift 6s ease infinite;
+  background: rgba(0, 0, 0, 0.3);
 }
 
 body.dark-mode .tabs {
@@ -192,16 +213,92 @@ body.dark-mode .tabs {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
-.profile h1 {
-  color: #fff;
-  font-size: 28px;
-  margin-bottom: 5px;
-  font-weight: 600;
+/* WELCOME text */
+.profile h2 {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  background: linear-gradient(90deg, #a78bfa, #60a5fa, #f472b6, #34d399, #a78bfa);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: welcomeColorFlow 4s ease infinite, welcomeFadeDown 0.8s ease both;
+  transform-style: preserve-3d;
 }
 
+/* PIKAZOO STORE title */
+.profile h1 {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 30%, #93c5fd 60%, #ffffff 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: titleColorFlow 5s ease infinite, titlePopIn 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+  text-shadow: none;
+  filter: drop-shadow(0 4px 16px rgba(167, 139, 250, 0.5));
+}
+
+/* Description text */
 .profile p {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.75);
+  animation: welcomeFadeDown 1s ease 0.5s both;
+}
+
+/* Light mode overrides — keep colored in light too */
+body:not(.dark-mode) .profile h1 {
+  background: linear-gradient(135deg, #7c3aed 0%, #2563eb 50%, #7c3aed 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 4px 14px rgba(124, 58, 237, 0.4));
+}
+
+body:not(.dark-mode) .profile h2 {
+  background: linear-gradient(90deg, #7c3aed, #2563eb, #db2777, #059669, #7c3aed);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+body:not(.dark-mode) .profile p {
+  color: rgba(30, 20, 60, 0.75);
+}
+
+/* ANIMATIONS */
+@keyframes welcomeColorFlow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes titleColorFlow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes welcomeFadeDown {
+  from { opacity: 0; transform: translateY(-18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes titlePopIn {
+  0%   { opacity: 0; transform: scale(0.7) translateY(-10px) rotateX(30deg); }
+  60%  { transform: scale(1.08) translateY(2px) rotateX(-5deg); }
+  80%  { transform: scale(0.97) rotateX(2deg); }
+  100% { opacity: 1; transform: scale(1) translateY(0) rotateX(0deg); }
 }
 
 .tabs {
@@ -296,13 +393,14 @@ body.dark-mode .tabs {
 .link-card a::before {
   content: '';
   position: absolute;
-  inset: -20px;
-  background: linear-gradient(270deg, #667eea, #764ba2, #f64f59, #c471ed, #12c2e9, #ff6b6b, #feca57, #667eea);
-  background-size: 400% 400%;
-  animation: gradientShift 6s ease infinite;
-  filter: blur(18px);
+  inset: 0;
+  background: rgba(255, 255, 255, 0.15);
   z-index: 0;
-  opacity: 0.92;
+  opacity: 1;
+}
+
+body.dark-mode .link-card a::before {
+  background: rgba(0, 0, 0, 0.25);
 }
 
 .link-card a > * {
@@ -586,19 +684,32 @@ body.dark-mode .tabs {
 .modal-buy-btn {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(135deg, #ffd700, #ffed4e);
-  border: none;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 25px;
   font-size: 16px;
   font-weight: 700;
-  color: #333;
+  color: #fff;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255,255,255,0.3);
 }
 
 .modal-buy-btn:hover {
   transform: scale(1.02);
-  box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+  background: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255,255,255,0.35);
+}
+
+body.dark-mode .modal-buy-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+body.dark-mode .modal-buy-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.12);
 }
 
 /* Spring scale-in for iOS-like popups */
@@ -685,24 +796,51 @@ body.dark-mode .tabs {
 }
 
 .download-btn {
-  background: linear-gradient(135deg, #ffd700, #ffed4e);
-  color: #333;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255,255,255,0.3);
 }
 
 .download-btn:hover {
   transform: scale(1.02);
-  box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+  background: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+}
+
+body.dark-mode .download-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .download-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
 
 .tutorial-btn {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.12);
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
 }
 
 .tutorial-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.22);
   border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-mode .tutorial-btn {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode .tutorial-btn:hover {
+  background: rgba(255, 255, 255, 0.13);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
 }
 
 .download-close-btn {
@@ -781,19 +919,32 @@ body.dark-mode .tabs {
 .purchase-required-btn {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(135deg, #ffd700, #ffed4e);
-  border: none;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 25px;
   font-size: 15px;
   font-weight: 700;
-  color: #333;
+  color: #fff;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255,255,255,0.3);
 }
 
 .purchase-required-btn:hover {
   transform: scale(1.02);
-  box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+  background: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+}
+
+body.dark-mode .purchase-required-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .purchase-required-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
 
 .purchase-required-close {
@@ -945,6 +1096,7 @@ body.dark-mode .tabs {
   position: relative;
   z-index: 2;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
@@ -965,7 +1117,7 @@ body.dark-mode .tabs {
 }
 
 .discount-main-symbol {
-  font-size: 130px;
+  font-size: 40px;
   font-weight: 900;
   background: linear-gradient(135deg, #fff, #e8b4ff, #fff);
   -webkit-background-clip: text;
@@ -977,6 +1129,29 @@ body.dark-mode .tabs {
   animation: discountPulse 1s ease-in-out infinite alternate;
   position: relative;
   z-index: 2;
+}
+
+.discount-subtext {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  margin-top: 4px;
+  line-height: 1.3;
+  list-style: none;
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 0 10px rgba(255,255,255,0.4);
+}
+
+@media (min-width: 768px) {
+  .discount-main-symbol {
+    font-size: 130px;
+  }
+  .discount-subtext {
+    font-size: 28px;
+    margin-top: 8px;
+  }
 }
 
 @keyframes discountPulse {
@@ -1034,7 +1209,7 @@ body.dark-mode .tabs {
 
 </head>
 
-<body>
+<body class="dark-mode">
 
 <!-- BLOB BACKGROUND CANVAS -->
 <canvas id="blobCanvas"></canvas>
@@ -1062,8 +1237,8 @@ body.dark-mode .tabs {
     <span class="discount-floating-item">💥</span>
     <span class="discount-floating-item">🌟</span>
     <span class="discount-floating-item">🎉</span>
-    <div class="discount-main-symbol">25%</div>
-    <li>OFF on Pre-Order PUBG 4.5 Update</li>
+    <div class="discount-main-symbol">25% OFF</div>
+    <li class="discount-subtext">Pre-Order PUBG 4.5 Update</li>
   </div>
 </div>
 
@@ -1100,7 +1275,7 @@ body.dark-mode .tabs {
 </script>
 
 
-<button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙 <span>Dark</span></button>
+<button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">☀️ <span>Light</span></button>
 
 <div class="container">
 
@@ -1324,7 +1499,7 @@ body.dark-mode .tabs {
         </div>
         <p style="color: rgba(255,255,255,0.7); font-size: 14px; margin-bottom: 25px;">Choose an option below:</p>
         <div style="display: flex; gap: 12px; flex-direction: column;">
-          <button id="freeDownloadBtn" class="modal-buy-btn" style="background: linear-gradient(135deg, #ffd700, #ffed4e); color: #333;">
+          <button id="freeDownloadBtn" class="modal-buy-btn" style="">
             ⬇️ Download
           </button>
           <button id="freeHowToBtn" class="modal-buy-btn" style="background: rgba(255,255,255,0.2); color: #fff;">
@@ -1360,7 +1535,7 @@ body.dark-mode .tabs {
           </ul>
         </div>
         <div style="display: flex; gap: 10px; flex-direction: column;">
-          <button class="modal-buy-btn" onclick="window.open('https://wa.link/xcgi3o', '_blank'); return false;" style="background: linear-gradient(135deg, #ffd700, #ffed4e); margin-bottom: 0;">💳 Buy Now</button>
+          <button class="modal-buy-btn" onclick="window.open('https://wa.link/xcgi3o', '_blank'); return false;" style="margin-bottom: 0;">💳 Buy Now</button>
           <button class="modal-buy-btn" onclick="openPurchaseRequired('basic'); return false;" style="background: rgba(255, 255, 255, 0.2); color: #fff; margin-bottom: 0;">▶️ How to Use</button>
         </div>
       </div>
@@ -1388,7 +1563,7 @@ body.dark-mode .tabs {
           </ul>
         </div>
         <div style="display: flex; gap: 10px; flex-direction: column;">
-          <button class="modal-buy-btn" onclick="window.open('https://wa.link/8ehxik', '_blank'); return false;" style="background: linear-gradient(135deg, #ffd700, #ffed4e); margin-bottom: 0;">💳 Buy Now</button>
+          <button class="modal-buy-btn" onclick="window.open('https://wa.link/8ehxik', '_blank'); return false;" style="margin-bottom: 0;">💳 Buy Now</button>
           <button class="modal-buy-btn" onclick="openPurchaseRequired('pro'); return false;" style="background: rgba(255, 255, 255, 0.2); color: #fff; margin-bottom: 0;">▶️ How to Use</button>
         </div>
       </div>
@@ -1416,7 +1591,7 @@ body.dark-mode .tabs {
           </ul>
         </div>
         <div style="display: flex; gap: 10px; flex-direction: column;">
-          <button class="modal-buy-btn" onclick="window.open('https://wa.link/sx7y8f', '_blank'); return false;" style="background: linear-gradient(135deg, #ffd700, #ffed4e); margin-bottom: 0;">💳 Buy Now</button>
+          <button class="modal-buy-btn" onclick="window.open('https://wa.link/sx7y8f', '_blank'); return false;" style="margin-bottom: 0;">💳 Buy Now</button>
           <button class="modal-buy-btn" onclick="openPurchaseRequired('lifetime'); return false;" style="background: rgba(255, 255, 255, 0.2); color: #fff; margin-bottom: 0;">▶️ How to Use</button>
         </div>
       </div>
@@ -1567,6 +1742,28 @@ updatePill(document.querySelector('.tab-btn.active'));
   document.addEventListener('touchstart', e => {
     const t = e.touches[0];
     moveGlow(t.clientX, t.clientY);
+  }, { passive: true });
+})();
+
+// ─── "SHOW TOUCH" TAP INDICATOR (like Android's Show Taps) ──────────
+(function() {
+  function spawnRipple(x, y) {
+    const ripple = document.createElement('div');
+    ripple.className = 'show-touch-ripple';
+    ripple.style.left = x + 'px';
+    ripple.style.top  = y + 'px';
+    document.body.appendChild(ripple);
+    ripple.addEventListener('animationend', () => ripple.remove());
+  }
+
+  // Mouse clicks
+  document.addEventListener('mousedown', e => spawnRipple(e.clientX, e.clientY));
+
+  // Touch taps (supports multi-touch)
+  document.addEventListener('touchstart', e => {
+    for (let i = 0; i < e.touches.length; i++) {
+      spawnRipple(e.touches[i].clientX, e.touches[i].clientY);
+    }
   }, { passive: true });
 })();
 </script>
