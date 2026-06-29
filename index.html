@@ -742,13 +742,181 @@ body.dark-mode .tabs {
   background: rgba(255, 255, 255, 0.3);
   transform: rotate(90deg);
 }
+
+/* ===========================
+   DISCOUNT ANIMATION OVERLAY
+   =========================== */
+#discountOverlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 99999;
+  pointer-events: none;
+  justify-content: center;
+  align-items: center;
+}
+
+#discountOverlay.show {
+  display: flex;
+}
+
+.discount-bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(130, 60, 200, 0.55);
+  backdrop-filter: blur(4px);
+}
+
+.discount-center {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+#discountOverlay.show .discount-center {
+  animation: discountFadeInOut 3s ease forwards;
+}
+
+@keyframes discountFadeInOut {
+  0%   { opacity: 0; transform: scale(0.8); }
+  20%  { opacity: 1; transform: scale(1); }
+  75%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.05); }
+}
+
+.discount-main-symbol {
+  font-size: 130px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #fff, #e8b4ff, #fff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  filter: drop-shadow(0 0 30px rgba(255,255,255,0.5));
+  line-height: 1;
+  animation: discountPulse 1s ease-in-out infinite alternate;
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes discountPulse {
+  from { filter: drop-shadow(0 0 20px rgba(255,255,255,0.4)); }
+  to   { filter: drop-shadow(0 0 50px rgba(255,180,255,0.9)); }
+}
+
+.discount-floating-item {
+  position: absolute;
+  font-size: 40px;
+  animation: floatAround 2s ease-in-out infinite alternate;
+  z-index: 3;
+}
+
+.discount-floating-item:nth-child(1) { top: 15%; left: 12%; animation-delay: 0s; }
+.discount-floating-item:nth-child(2) { top: 12%; right: 15%; animation-delay: 0.3s; }
+.discount-floating-item:nth-child(3) { bottom: 20%; left: 10%; animation-delay: 0.5s; }
+.discount-floating-item:nth-child(4) { bottom: 18%; right: 12%; animation-delay: 0.2s; }
+.discount-floating-item:nth-child(5) { top: 45%; left: 5%; animation-delay: 0.4s; font-size: 30px; }
+.discount-floating-item:nth-child(6) { top: 40%; right: 6%; animation-delay: 0.1s; font-size: 30px; }
+
+@keyframes floatAround {
+  from { transform: translateY(0px) rotate(-5deg); }
+  to   { transform: translateY(-18px) rotate(5deg); }
+}
+
+/* DISCOUNT TOAST */
+#discountToast {
+  display: none;
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(30px);
+  background: linear-gradient(135deg, rgba(180, 60, 255, 0.95), rgba(100, 20, 180, 0.95));
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 100000;
+  border: 1px solid rgba(255,255,255,0.3);
+  box-shadow: 0 8px 32px rgba(150, 0, 255, 0.4);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+#discountToast.show {
+  display: block;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0px);
+}
 </style>
 
 </head>
 
 <body>
 
-<!-- DARK / LIGHT TOGGLE BUTTON (top left) -->
+<!-- ================================
+  DISCOUNT TOGGLE — SET true OR false
+================================= -->
+<script>
+  const DISCOUNT_ON = true; // ← Change to false to turn off discount animation
+</script>
+
+<!-- DISCOUNT ANIMATION OVERLAY -->
+<div id="discountOverlay">
+  <div class="discount-bg"></div>
+  <div class="discount-center">
+    <span class="discount-floating-item">🏷️</span>
+    <span class="discount-floating-item">⚡</span>
+    <span class="discount-floating-item">✨</span>
+    <span class="discount-floating-item">💥</span>
+    <span class="discount-floating-item">🌟</span>
+    <span class="discount-floating-item">🎉</span>
+    <div class="discount-main-symbol">40%</div>
+  </div>
+</div>
+
+<!-- DISCOUNT TOAST -->
+<div id="discountToast">🏷️ Discount available in paid section!</div>
+
+<script>
+  window.addEventListener('load', function() {
+    if (typeof DISCOUNT_ON !== 'undefined' && DISCOUNT_ON === true) {
+      const overlay = document.getElementById('discountOverlay');
+      const toast = document.getElementById('discountToast');
+
+      // Show overlay
+      overlay.classList.add('show');
+
+      // Show toast with slight delay
+      setTimeout(() => {
+        toast.style.display = 'block';
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            toast.classList.add('show');
+          });
+        });
+      }, 300);
+
+      // Hide both after 3 seconds
+      setTimeout(() => {
+        overlay.classList.remove('show');
+        toast.classList.remove('show');
+        setTimeout(() => { toast.style.display = 'none'; }, 500);
+      }, 3000);
+    }
+  });
+</script>
+
+
 <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙 <span>Dark</span></button>
 
 <div class="container">
