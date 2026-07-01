@@ -318,22 +318,17 @@ body:not(.dark-mode) .profile p {
 .tabs-pill {
   position: absolute;
   top: 4px;
-  left: 4px;
+  left: 0;
   height: calc(100% - 8px);
-  width: calc(50% - 4px);
   background: rgba(255, 255, 255, 0.28);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-radius: 16px;
   border: 1px solid rgba(255,255,255,0.35);
   box-shadow: 0 4px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.4);
-  transition: transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
   pointer-events: none;
   z-index: 0;
-}
-
-.tabs-pill.slide-right {
-  transform: translateX(calc(100% + 4px));
 }
 
 .tabs button {
@@ -564,6 +559,45 @@ body.dark-mode .link-card a::before {
 }
 
 /* MODAL STYLES */
+/* IMAGE LIGHTBOX (inline image viewer, replaces window.open to external sites) */
+.image-lightbox {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 10000;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.25s ease;
+}
+
+.image-lightbox.active {
+  display: flex;
+}
+
+.image-lightbox img {
+  max-width: 92%;
+  max-height: 88%;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+}
+
+.image-lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: #fff;
+  font-size: 30px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  line-height: 1;
+}
+
 .modal {
   display: none;
   position: fixed;
@@ -604,6 +638,64 @@ body.dark-mode .link-card a::before {
   width: 100%;
   height: 250px;
   object-fit: cover;
+}
+
+/* ===========================
+   SWIPEABLE SCREENSHOT GALLERY
+   =========================== */
+.modal-gallery {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+}
+
+.gallery-track {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.gallery-track::-webkit-scrollbar {
+  display: none;
+}
+
+.gallery-img {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+}
+
+.gallery-dots {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 2;
+}
+
+.gallery-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  transition: all 0.25s ease;
+}
+
+.gallery-dot.active {
+  background: #fff;
+  width: 16px;
+  border-radius: 3px;
 }
 
 .modal-body {
@@ -679,6 +771,82 @@ body.dark-mode .link-card a::before {
   color: #ffd700;
   font-weight: bold;
   font-size: 16px;
+}
+
+/* ===========================
+   PAYMENT MODAL
+   =========================== */
+.payment-section {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 18px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+
+.payment-section-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #ffd700;
+  margin-bottom: 8px;
+}
+
+.payment-label {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 4px;
+}
+
+.payment-value {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px dashed rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  margin-bottom: 6px;
+  transition: background 0.2s ease;
+  user-select: all;
+}
+
+.payment-value:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.payment-value .copy-icon {
+  font-size: 15px;
+  opacity: 0.85;
+}
+
+.payment-note {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.75);
+  text-align: center;
+  margin: 14px 0 18px;
+}
+
+.payment-note strong {
+  color: #ff9f9f;
+}
+
+.payment-btn-row {
+  display: flex;
+  gap: 10px;
+}
+
+.payment-btn-row .modal-buy-btn {
+  margin-bottom: 0;
+}
+
+.payment-btn-cancel {
+  background: rgba(255, 255, 255, 0.15) !important;
 }
 
 .modal-buy-btn {
@@ -1297,60 +1465,25 @@ body.dark-mode .purchase-required-btn:hover {
   <!-- TABS -->
   <div class="tabs">
     <div class="tabs-pill" id="tabPill"></div>
-    <button class="tab-btn active" data-tab="free">FREE</button>
-    <button class="tab-btn" data-tab="paid">PAID</button>
+    <button class="tab-btn" data-tab="original">ORIGINAL</button>
+    <button class="tab-btn active" data-tab="free">FREE FILE'S</button>
+    <button class="tab-btn" data-tab="paid">VIP FILE'S</button>
   </div>
 
   <!-- FREE SECTION -->
+  <div id="original" class="section">
+    <div class="section-title">🌍 Original Files</div>
+    <div id="originalCards"></div>
+  </div>
+
   <div id="free" class="section active">
     <div class="section-title">📂 Free Content</div>
-
-    <div class="link-card">
-      <a onclick="openFreeModal('ebook'); return false;">
-        <div class="link-content">
-          <img src="https://i.imgur.com/oNa6fOG.jpeg?w=100&h=100&fit=crop" alt="Free Ebook" class="link-image">
-          <div class="link-text">
-            <div class="link-title">🌐PIKAZOOxRICH-GL-V5-WH-64BIT</div>
-            <div class="link-desc">GLOBAL X64BIT 4.4 ONLY</div>
-            <div class="link-date">📅Upload: 29-06-2026</div>
-          </div>
-        </div>
-      </a>
-    </div>
-
-    <div class="link-card">
-      <a onclick="openFreeModal('tutorial'); return false;">
-        <div class="link-content">
-          <img src="https://i.imgur.com/SlVO22A.png?w=100&h=100&fit=crop" alt="Tutorial" class="link-image">
-          <div class="link-text">
-            <div class="link-title">PUBG 4.4 GLOBAL ORIGINAL APK 64Bit</div>
-            <div class="link-desc">Apply Process</div>
-            <div class="link-date">📅Upload: 12-05-2026</div>
-          </div>
-        </div>
-      </a>
-    </div>
-
-    <div class="link-card">
-      <a onclick="openFreeModal('template'); return false;">
-        <div class="link-content">
-          <img src="https://i.imgur.com/Mqjvn8a.png?w=100&h=100&fit=crop" alt="Template" class="link-image">
-          <div class="link-text">
-            <div class="link-title">PUBG 4.4 GLOBAL ORIGINAL OBB 64Bit</div>
-            <div class="link-desc">Download now</div>
-            <div class="link-date">📅Upload: 12-05-2026</div>
-          </div>
-        </div>
-      </a>
-    </div>
-
+    <div id="freeCards"></div>
   </div>
 
   <!-- PAID SECTION -->
   <div id="paid" class="section">
     <div class="section-title">💎 Premium Content</div>
-
-
 
     <!-- DISCOUNT COUNTDOWN -->
     <div class="countdown-box" id="countdownBox" style="display:none;">
@@ -1375,98 +1508,288 @@ body.dark-mode .purchase-required-btn:hover {
       </div>
     </div>
 
-    <!-- BASIC PLAN - Animated GIF -->
-    <div class="link-card">
-      <a onclick="openModal('basic'); return false;">
-        <div class="link-content">
-          <img src="https://i.imgur.com/qTIl8Zk.gif" alt="Basic Plan" class="link-image">
-          <div class="link-text">
-            <div class="link-title">WallHack Color Body Blink Fix</div>
-            <div class="link-desc">Essential Features</div>
-            <div class="price-badge">PKR: <del>2000</del> - 1500 / 2-Month / Full Season</div>
-            <div class="link-date">📅 Jun 30, 2026 &nbsp;|&nbsp; 🔥 07 Sold</div>
-          </div>
-        </div>
-      </a>
-    </div>
-
-    <div class="link-card">
-      <a onclick="openModal('pro'); return false;">
-        <div class="link-content">
-          <img src="https://i.imgur.com/BsF2LR5.gif?w=100&h=100&fit=crop" alt="Pro Plan" class="link-image">
-          <div class="link-text">
-            <div class="link-title">VIP MAGIC BULLET PUBG 4.5</div>
-            <div class="link-desc">Advanced ByPass Protection</div>
-            <div class="price-badge">PKR: <del>1500</del> - 1000 / 2-Month / Full Season</div>
-            <div class="link-date">📅 Jun 30, 2026 &nbsp;|&nbsp; 🔥 05 Sold</div>
-          </div>
-        </div>
-      </a>
-    </div>
-
-    <div class="link-card">
-      <a onclick="openModal('lifetime'); return false;">
-        <div class="link-content">
-          <img src="https://i.imgur.com/PUIyJgq.gif?w=100&h=100&fit=crop" alt="Lifetime" class="link-image">
-          <div class="link-text">
-            <div class="link-title">ALL IN ONE VIP</div>
-            <div class="link-desc">One-time payment</div>
-            <div class="price-badge">PKR: <del>3000</del> - 2500</div>
-            <div class="link-date">📅 Jun 30, 2026 &nbsp;|&nbsp; 🔥 02 Sold</div>
-          </div>
-        </div>
-      </a>
-    </div>
+    <div id="paidCards"></div>
 
   </div>
 
   <!-- BOTTOM BAR -->
   <div class="bottom-bar">
     <div class="bottom-links">
-      <a onclick="window.open('https://t.me/yourusername', '_blank'); return false;">
+      <a onclick="window.open('https://t.me/PIKAZOOARMY', '_blank'); return false;">
         ✈️ Telegram
       </a>
-      <a onclick="window.location.href='mailto:support@example.com'; return false;">
+      <a onclick="window.location.href='pubgmobile16241897@gmail.com'; return false;">
         ❓ Help & Support
       </a>
     </div>
     <div class="footer-text">
-      © 2024 All Rights Reserved
+      © 2026 All Rights Reserved
     </div>
   </div>
 
-  <!-- MODALS FOR FREE CONTENT -->
+  <!-- ============================================================
+       SINGLE SOURCE OF DATA — edit item name/link/price HERE ONLY
+       Everything below (cards + popups) is generated from this.
+       ============================================================ -->
   <script>
-    const freeItems = {
-      ebook: {
-        title: '🌐PIKAZOOxRICH-GL-V5-WH-64BIT',
-        downloadUrl: 'https://download1335.mediafire.com/iyny05pkt41gqV153FGikXcGs_bN0bmsEh9R2j6qT2fdRt6qF4cFOld-o2cerfugg4ove0JaKRMZriU2kDJI2SaVzy95gaZ5Zra7ukpb6Ndc4257CWOPnFx0-icExKUaxcSP6RHrRiBYJTuyfRvTT8ak1kxaKMmpTJwKKo6GTAWNEVc/7vv0d20czbdlnw0/%F0%9F%8C%90PIKAZOOxRICH-GL-V5-WH-64BIT.apk',
-        youtubeUrl: 'https://youtu.be/VXHYqwJohME'
+    const SITE_DATA = {
+      original: [
+        {
+          key: 'global32',
+          title: '🌍 32Bit 4.5 PUBG ORIGINAL',
+          desc: 'APK | OBB',
+          date: '📅 Jun 30, 2026',
+          image: 'https://i.imgur.com/7nDL3Ta.gif?w=100&h=100&fit=crop',
+          apkUrl: 'https://i.imgur.com/7nDL3Ta.gif',
+          obbUrl: 'https://i.imgur.com/7nDL3Ta.gif'
+        },
+        {
+          key: 'global64',
+          title: '🌍 64Bit 4.5 PUBG ORIGINAL',
+          desc: 'APK | OBB',
+          date: '📅 Jun 30, 2026',
+          image: 'https://i.imgur.com/7nDL3Ta.gif?w=100&h=100&fit=crop',
+          apkUrl: 'https://i.imgur.com/7nDL3Ta.gif',
+          obbUrl: 'https://i.imgur.com/7nDL3Ta.gif'
+        },
+        {
+          key: 'korea32',
+          title: '🇰🇷 32Bit 4.5 PUBG ORIGINAL',
+          desc: 'APK | OBB',
+          date: '📅 Jun 30, 2026',
+          image: 'https://i.imgur.com/7nDL3Ta.gif?w=100&h=100&fit=crop',
+          apkUrl: 'https://i.imgur.com/7nDL3Ta.gif',
+          obbUrl: 'https://i.imgur.com/7nDL3Ta.gif'
+        },
+        {
+          key: 'korea64',
+          title: '🇰🇷 64Bit 4.5 PUBG ORIGINAL',
+          desc: 'APK | OBB',
+          date: '📅 Jun 30, 2026',
+          image: 'https://i.imgur.com/7nDL3Ta.gif?w=100&h=100&fit=crop',
+          apkUrl: 'https://i.imgur.com/7nDL3Ta.gif',
+          obbUrl: 'https://i.imgur.com/7nDL3Ta.gif'
+        }
+      ],
+
+      free: [
+        {
+          key: 'ebook',
+          title: '🌐PIKAZOOxRICH-GL-V5-WH-64BIT',
+          desc: 'GLOBAL X64BIT 4.4 ONLY',
+          date: '📅Upload: 29-06-2026',
+          image: 'https://i.imgur.com/oNa6fOG.jpeg?w=100&h=100&fit=crop',
+          downloadUrl: 'https://download1335.mediafire.com/iyny05pkt41gqV153FGikXcGs_bN0bmsEh9R2j6qT2fdRt6qF4cFOld-o2cerfugg4ove0JaKRMZriU2kDJI2SaVzy95gaZ5Zra7ukpb6Ndc4257CWOPnFx0-icExKUaxcSP6RHrRiBYJTuyfRvTT8ak1kxaKMmpTJwKKo6GTAWNEVc/7vv0d20czbdlnw0/%F0%9F%8C%90PIKAZOOxRICH-GL-V5-WH-64BIT.apk',
+          youtubeUrl: 'https://youtu.be/VXHYqwJohME'
+        },
+        {
+          key: 'tutorial',
+          title: 'Coming Soon',
+          desc: 'Watch free videos',
+          date: '📅 Jun 28, 2026',
+          image: 'https://i.imgur.com/7nDL3Ta.gif?w=100&h=100&fit=crop',
+          downloadUrl: 'https://i.imgur.com/7nDL3Ta.gif?w=100&h=100&fit=crop',
+          youtubeUrl: 'https://i.imgur.com/7nDL3Ta.gif?w=100&h=100&fit=crop'
+        },
+        {
+          key: 'template',
+          title: 'Coming Soon',
+          desc: 'Download now',
+          date: '📅 Jun 28, 2026',
+          image: 'https://i.imgur.com/7nDL3Ta.gif?w=100&h=100&fit=crop',
+          downloadUrl: 'https://i.imgur.com/7nDL3Ta.gif?w=100&h=100&fit=crop',
+          youtubeUrl: 'https://i.imgur.com/7nDL3Ta.gif?w=100&h=100&fit=crop'
+        }
+      ],
+
+      paid: [
+        {
+          key: 'basic',
+          title: 'WallHack Color Body Blink Fix',
+          desc: 'Essential Features',
+          images: [
+            'https://i.imgur.com/qTIl8Zk.gif',
+            'https://i.imgur.com/qTIl8Zk.gif',
+            'https://i.imgur.com/qTIl8Zk.gif'
+          ],
+          priceOld: 2000,
+          priceNew: 1500,
+          validity: '2-Month',
+          working: 'Full Season',
+          sold: 7,
+          date: '📅 Jun 30, 2026',
+          featuresTitle: 'VIP Features Included',
+          features: [
+            'Main Account 100% Safe',
+            'Visibility Check',
+            'No Grass/Less Tree / More Features...',
+            'Customer Support'
+          ]
+        },
+        {
+          key: 'pro',
+          title: 'VIP MAGIC BULLET PUBG 4.5',
+          modalTitle: 'VIP MAGIC BULLET FILE 4.5',
+          desc: 'Advanced ByPass Protection',
+          images: [
+            'https://i.imgur.com/BsF2LR5.gif?w=100&h=100&fit=crop',
+            'https://i.imgur.com/BsF2LR5.gif?w=100&h=100&fit=crop',
+            'https://i.imgur.com/BsF2LR5.gif?w=100&h=100&fit=crop'
+          ],
+          priceOld: 1500,
+          priceNew: 1000,
+          validity: '2-Month',
+          working: 'Full Season',
+          sold: 5,
+          date: '📅 Jun 30, 2026',
+          featuresTitle: 'VIP Features Included',
+          features: [
+            'Magic Bullet File',
+            'Aim Assist',
+            'Advanced Protection',
+            'Main Account Safe',
+            'More Basic Feature',
+            'Weekly updates'
+          ]
+        },
+        {
+          key: 'lifetime',
+          title: 'ALL IN ONE VIP',
+          desc: 'One-time payment',
+          images: [
+            'https://i.imgur.com/PUIyJgq.gif?w=100&h=100&fit=crop',
+            'https://i.imgur.com/PUIyJgq.gif?w=100&h=100&fit=crop',
+            'https://i.imgur.com/PUIyJgq.gif?w=100&h=100&fit=crop'
+          ],
+          priceOld: 3000,
+          priceNew: 2500,
+          sold: 2,
+          date: '📅 Jun 30, 2026',
+          featuresTitle: 'All VIP Features Included',
+          features: [
+            'WALLHACK V6 VIP & COLOR BODY',
+            'MAGIC BULLET VIP & SAFE AIMBOT',
+            '20+ PBC FEATURES ADDED',
+            '50+ VIP FEATURES ADDED',
+            'MAIN 100% SAFE GUARANTEED',
+            'INSTANT CUSTOMER SUPPORT'
+          ]
+        }
+      ]
+    };
+
+    // ── Your WhatsApp number that receives all "Buy Now" messages ──
+    const WHATSAPP_NUMBER = '923041891897';
+
+    // ── Payment details shown in the Payment popup ──
+    const PAYMENT_INFO = {
+      jazzcash: {
+        number: '03041891897',
+        name: 'Muhammad Shoaib'
       },
-      tutorial: {
-        title: 'Video Tutorial',
-        downloadUrl: 'https://example.com/free-tutorial',
-        youtubeUrl: ''
-      },
-      template: {
-        title: 'Free Template',
-        downloadUrl: 'https://example.com/free-template',
-        youtubeUrl: 'https://youtube.com/watch?v=XXXXXXX'
+      binance: {
+        idName: 'PIKAZOO',
+        id: '370451668'
       }
     };
 
+    // Builds a WhatsApp link with the item name + price pre-filled in the message
+    function buildWhatsAppLink(item) {
+      const message = `Hi "${item.title}" "PKR ${item.priceNew}"`;
+      return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    }
+
+    // ---------- RENDER: ORIGINAL CARDS ----------
+    function renderOriginalCards() {
+      const el = document.getElementById('originalCards');
+      el.innerHTML = SITE_DATA.original.map(item => `
+        <div class="link-card">
+          <a onclick="openOriginalModal('${item.key}'); return false;">
+            <div class="link-content">
+              <img src="${item.image}" alt="${item.title}" class="link-image">
+              <div class="link-text">
+                <div class="link-title">${item.title}</div>
+                <div class="link-desc">${item.desc}</div>
+                <div class="link-date">${item.date}</div>
+              </div>
+            </div>
+          </a>
+        </div>
+      `).join('');
+    }
+
+    function openOriginalModal(key) {
+      const item = SITE_DATA.original.find(i => i.key === key);
+      if (!item) return;
+      document.getElementById('originalModalTitle').textContent = item.title;
+      document.getElementById('originalApkBtn').onclick = function() {
+        showImageLightbox(item.apkUrl);
+      };
+      document.getElementById('originalObbBtn').onclick = function() {
+        showImageLightbox(item.obbUrl);
+      };
+      document.getElementById('originalModal').classList.add('active');
+    }
+
+    function showImageLightbox(url) {
+      const lightbox = document.getElementById('imageLightbox');
+      const img = document.getElementById('imageLightboxImg');
+      img.src = url;
+      lightbox.classList.add('active');
+    }
+
+    function closeImageLightbox() {
+      document.getElementById('imageLightbox').classList.remove('active');
+      document.getElementById('imageLightboxImg').src = '';
+    }
+
+    function closeOriginalModal() {
+      document.getElementById('originalModal').classList.remove('active');
+    }
+
+    // ---------- RENDER: FREE CARDS ----------
+    function renderFreeCards() {
+      const el = document.getElementById('freeCards');
+      el.innerHTML = SITE_DATA.free.map(item => `
+        <div class="link-card">
+          <a onclick="openFreeModal('${item.key}'); return false;">
+            <div class="link-content">
+              <img src="${item.image}" alt="${item.title}" class="link-image">
+              <div class="link-text">
+                <div class="link-title">${item.title}</div>
+                <div class="link-desc">${item.desc}</div>
+                <div class="link-date">${item.date}</div>
+              </div>
+            </div>
+          </a>
+        </div>
+      `).join('');
+    }
+
     function openFreeModal(key) {
-      const item = freeItems[key];
+      const item = SITE_DATA.free.find(i => i.key === key);
+      if (!item) return;
+      const useLightbox = (item.key === 'tutorial' || item.key === 'template');
       document.getElementById('freeModalTitle').textContent = item.title;
       document.getElementById('freeDownloadBtn').onclick = function() {
-        window.open(item.downloadUrl, '_blank');
+        if (useLightbox) {
+          showImageLightbox(item.downloadUrl);
+        } else {
+          window.open(item.downloadUrl, '_blank');
+        }
       };
       const howToBtn = document.getElementById('freeHowToBtn');
       const noVideoMsg = document.getElementById('freeNoVideoMsg');
       if (item.youtubeUrl) {
         howToBtn.style.display = 'block';
         noVideoMsg.style.display = 'none';
-        howToBtn.onclick = function() { window.open(item.youtubeUrl, '_blank'); };
+        howToBtn.onclick = function() {
+          if (useLightbox) {
+            showImageLightbox(item.youtubeUrl);
+          } else {
+            window.open(item.youtubeUrl, '_blank');
+          }
+        };
       } else {
         howToBtn.style.display = 'none';
         noVideoMsg.style.display = 'block';
@@ -1476,6 +1799,173 @@ body.dark-mode .purchase-required-btn:hover {
 
     function closeFreeModal() {
       document.getElementById('freeModal').classList.remove('active');
+    }
+
+    // ---------- RENDER: PAID CARDS + MODALS + PURCHASE-REQUIRED MODALS ----------
+    function renderPaidCards() {
+      const cardsEl = document.getElementById('paidCards');
+      cardsEl.innerHTML = SITE_DATA.paid.map(item => {
+        const extras = [item.validity, item.working].filter(Boolean).map(v => ' / ' + v).join('');
+        const thumb = item.images[0];
+        return `
+        <div class="link-card">
+          <a onclick="openModal('${item.key}'); return false;">
+            <div class="link-content">
+              <img src="${thumb}" alt="${item.title}" class="link-image">
+              <div class="link-text">
+                <div class="link-title">${item.title}</div>
+                <div class="link-desc">${item.desc}</div>
+                <div class="price-badge">PKR: <del>${item.priceOld}</del> - ${item.priceNew}${extras}</div>
+                <div class="link-date">${item.date} &nbsp;|&nbsp; 🔥 ${String(item.sold).padStart(2, '0')} Sold</div>
+              </div>
+            </div>
+          </a>
+        </div>`;
+      }).join('');
+
+      const modalsEl = document.getElementById('paidModals');
+      modalsEl.innerHTML = SITE_DATA.paid.map(item => {
+        const validityBadge = item.validity ? `<div class="price-badge">Validity: ${item.validity}</div>` : '';
+        const workingBadge = item.working ? `<div class="price-badge">Working: ${item.working}</div>` : '';
+        const featuresHtml = item.features.map(f => `<li>${f}</li>`).join('');
+        const galleryImgs = item.images.map(img => `<img src="${img}" alt="${item.title}" class="gallery-img">`).join('');
+        const galleryDots = item.images.map((_, i) => `<span class="gallery-dot${i === 0 ? ' active' : ''}"></span>`).join('');
+        return `
+        <div id="${item.key}Modal" class="modal">
+          <div class="modal-content">
+            <div class="modal-gallery">
+              <div class="gallery-track" id="gallery-${item.key}">
+                ${galleryImgs}
+              </div>
+              <div class="gallery-dots" id="dots-${item.key}">
+                ${galleryDots}
+              </div>
+            </div>
+            <div class="modal-body">
+              <div class="modal-header">
+                <h2>${item.modalTitle || item.title}</h2>
+                <button class="close-btn" onclick="closeModal('${item.key}')">&times;</button>
+              </div>
+              <div class="modal-price">PKR: <del>${item.priceOld}</del> - ${item.priceNew}</div>
+              ${validityBadge}
+              ${workingBadge}
+              <div class="modal-features">
+                <h3>${item.featuresTitle}</h3>
+                <ul class="feature-list">
+                  ${featuresHtml}
+                </ul>
+              </div>
+              <div style="display: flex; gap: 10px; flex-direction: column;">
+                <button class="modal-buy-btn" onclick="openPaymentModal('${item.key}'); return false;" style="margin-bottom: 0;">💳 Buy Now</button>
+                <button class="modal-buy-btn" onclick="openPurchaseRequired('${item.key}'); return false;" style="background: rgba(255, 255, 255, 0.2); color: #fff; margin-bottom: 0;">▶️ How to Use</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="${item.key}PurchaseModal" class="purchase-required-modal">
+          <div class="purchase-required-content">
+            <button class="purchase-required-close" onclick="closePurchaseRequired('${item.key}')">&times;</button>
+            <div class="purchase-required-title">⚠️ Purchase Required</div>
+            <div class="purchase-required-message">Please buy the file first to view the how to use tutorial.</div>
+            <button class="purchase-required-btn" onclick="closeModal('${item.key}'); closePurchaseRequired('${item.key}'); openPaymentModal('${item.key}'); return false;">Buy Now</button>
+          </div>
+        </div>`;
+      }).join('');
+
+      // Sync the dot indicators with swipe/scroll position for each gallery
+      SITE_DATA.paid.forEach(item => {
+        const track = document.getElementById('gallery-' + item.key);
+        const dots = document.querySelectorAll('#dots-' + item.key + ' .gallery-dot');
+        if (!track || dots.length === 0) return;
+        track.addEventListener('scroll', () => {
+          const index = Math.round(track.scrollLeft / track.clientWidth);
+          dots.forEach((d, i) => d.classList.toggle('active', i === index));
+        });
+      });
+    }
+
+    // ---------- PAYMENT MODAL (JazzCash / Binance) ----------
+    let currentPaymentLink = '';
+
+    function renderPaymentModal() {
+      const container = document.getElementById('paymentModalContainer');
+      container.innerHTML = `
+        <div id="paymentModal" class="modal">
+          <div class="modal-content">
+            <div class="modal-body">
+              <div class="modal-header">
+                <h2>💳 Payment Details</h2>
+                <button class="close-btn" onclick="closePaymentModal()">&times;</button>
+              </div>
+
+              <div class="payment-section">
+                <div class="payment-section-title">🇵🇰 Payment For Pakistani</div>
+                <div class="payment-label">JazzCash Account Number</div>
+                <div class="payment-value" onclick="copyToClipboard('${PAYMENT_INFO.jazzcash.number}', this)">
+                  <span>${PAYMENT_INFO.jazzcash.number}</span>
+                  <span class="copy-icon">📋</span>
+                </div>
+                <div class="payment-label">Name: ${PAYMENT_INFO.jazzcash.name}</div>
+              </div>
+
+              <div class="payment-section">
+                <div class="payment-section-title">🌍 For International Crypto User</div>
+                <div class="payment-label">Binance ID Name: ${PAYMENT_INFO.binance.idName}</div>
+                <div class="payment-label">Binance ID</div>
+                <div class="payment-value" onclick="copyToClipboard('${PAYMENT_INFO.binance.id}', this)">
+                  <span>${PAYMENT_INFO.binance.id}</span>
+                  <span class="copy-icon">📋</span>
+                </div>
+              </div>
+
+              <div class="payment-note">
+                For More Detail Contact On WhatsApp<br>
+                <strong>⚠️ Important:</strong> attach Screenshot After Payment
+              </div>
+
+              <div class="payment-btn-row">
+                <button class="modal-buy-btn payment-btn-cancel" onclick="closePaymentModal()">Cancel</button>
+                <button class="modal-buy-btn" onclick="confirmPaymentBuy()">Buy</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function openPaymentModal(key) {
+      const item = SITE_DATA.paid.find(i => i.key === key);
+      if (!item) return;
+      currentPaymentLink = buildWhatsAppLink(item);
+      document.getElementById('paymentModal').classList.add('active');
+    }
+
+    function closePaymentModal() {
+      document.getElementById('paymentModal').classList.remove('active');
+    }
+
+    function confirmPaymentBuy() {
+      window.open(currentPaymentLink, '_blank');
+      closePaymentModal();
+    }
+
+    function copyToClipboard(text, el) {
+      const showCopied = () => {
+        const original = el.innerHTML;
+        el.innerHTML = '<span>' + text + '</span><span class="copy-icon">✅</span>';
+        setTimeout(() => { el.innerHTML = original; }, 1200);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(showCopied).catch(showCopied);
+      } else {
+        const temp = document.createElement('textarea');
+        temp.value = text;
+        document.body.appendChild(temp);
+        temp.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(temp);
+        showCopied();
+      }
     }
 
     function toggleTheme() {
@@ -1488,6 +1978,7 @@ body.dark-mode .purchase-required-btn:hover {
         btn.innerHTML = '🌙 <span>Dark</span>';
       }
     }
+
   </script>
 
   <div id="freeModal" class="modal">
@@ -1513,119 +2004,45 @@ body.dark-mode .purchase-required-btn:hover {
     </div>
   </div>
 
-  <!-- MODALS FOR PRODUCTS -->
-  <div id="basicModal" class="modal">
+  <div id="originalModal" class="modal">
     <div class="modal-content">
-      <img src="https://i.imgur.com/qTIl8Zk.gif" alt="Basic Plan" class="modal-image">
       <div class="modal-body">
         <div class="modal-header">
-          <h2>WallHack Color Body Blink Fix</h2>
-          <button class="close-btn" onclick="closeModal('basic')">&times;</button>
+          <h2 id="originalModalTitle"></h2>
+          <button class="close-btn" onclick="closeOriginalModal()">&times;</button>
         </div>
-     <div class="modal-price">PKR: <del>2000</del> - 1500</div>
-        <div class="price-badge">Validity: 2-Month</div>
-        <div class="price-badge">Working: Full Seasion</div>
-        <div class="modal-features">
-          <h3>VIP Features Included</h3>
-          <ul class="feature-list">
-            <li>Main Account 100% Safe</li>
-            <li>Visibility Check</li>
-            <li>No Grass/Less Tree / More Features...</li>
-            <li>Customer Support</li>
-          </ul>
-        </div>
-        <div style="display: flex; gap: 10px; flex-direction: column;">
-          <button class="modal-buy-btn" onclick="window.open('https://wa.link/xcgi3o', '_blank'); return false;" style="margin-bottom: 0;">💳 Buy Now</button>
-          <button class="modal-buy-btn" onclick="openPurchaseRequired('basic'); return false;" style="background: rgba(255, 255, 255, 0.2); color: #fff; margin-bottom: 0;">▶️ How to Use</button>
+        <p style="color: rgba(255,255,255,0.7); font-size: 14px; margin-bottom: 25px;">Choose an option below:</p>
+        <div style="display: flex; gap: 12px; flex-direction: column;">
+          <button id="originalApkBtn" class="modal-buy-btn">
+            ⬇️ Download APK
+          </button>
+          <button id="originalObbBtn" class="modal-buy-btn" style="background: rgba(255, 255, 255, 0.2); color: #fff;">
+            ⬇️ Download OBB
+          </button>
         </div>
       </div>
     </div>
   </div>
 
-  <div id="proModal" class="modal">
-    <div class="modal-content">
-      <img src="https://i.imgur.com/BsF2LR5.gif?w=400&h=250&fit=crop" alt="Pro Plan" class="modal-image">
-      <div class="modal-body">
-        <div class="modal-header">
-          <h2>VIP MAGIC BULLET FILE 4.5</h2>
-          <button class="close-btn" onclick="closeModal('pro')">&times;</button>
-        </div>
-        <div class="modal-price">PKR: <del>1500</del> - 1000</div>
-        <div class="modal-features">
-          <h3>VIP Features Included</h3>
-          <ul class="feature-list">
-            <li>Magic Bullet File</li>
-            <li>Aim Assist</li>
-            <li>Advanced Protection</li>
-            <li>Main Account Safe</li>
-            <li>More Basic Feature</li>
-            <li>Weekly updates</li>
-          </ul>
-        </div>
-        <div style="display: flex; gap: 10px; flex-direction: column;">
-          <button class="modal-buy-btn" onclick="window.open('https://wa.link/8ehxik', '_blank'); return false;" style="margin-bottom: 0;">💳 Buy Now</button>
-          <button class="modal-buy-btn" onclick="openPurchaseRequired('pro'); return false;" style="background: rgba(255, 255, 255, 0.2); color: #fff; margin-bottom: 0;">▶️ How to Use</button>
-        </div>
-      </div>
-    </div>
+  <!-- IMAGE LIGHTBOX (shows apk/obb link images inline, without leaving the site) -->
+  <div id="imageLightbox" class="image-lightbox" onclick="closeImageLightbox()">
+    <button class="image-lightbox-close" onclick="closeImageLightbox()">&times;</button>
+    <img id="imageLightboxImg" src="" alt="" onclick="event.stopPropagation()">
   </div>
 
-  <div id="lifetimeModal" class="modal">
-    <div class="modal-content">
-      <img src="https://i.imgur.com/PUIyJgq.gif?w=400&h=250&fit=crop" alt="Lifetime" class="modal-image">
-      <div class="modal-body">
-        <div class="modal-header">
-          <h2>ALL IN ONE VIP</h2>
-          <button class="close-btn" onclick="closeModal('lifetime')">&times;</button>
-        </div>
-        <div class="modal-price">PKR: <del>3000</del> - 2500</div>
-        <div class="modal-features">
-          <h3>All VIP Features Included</h3>
-          <ul class="feature-list">
-            <li>WALLHACK V6 VIP & COLOR BODY</li>
-            <li>MAGIC BULLET VIP & SAFE AIMBOT</li>
-            <li>20+ PBC FEATURES ADDED</li>
-            <li>50+ VIP FEATURES ADDED</li>
-            <li>MAIN 100% SAFE GUARANTEED</li>
-            <li>INSTANT CUSTOMER SUPPORT</li>
-          </ul>
-        </div>
-        <div style="display: flex; gap: 10px; flex-direction: column;">
-          <button class="modal-buy-btn" onclick="window.open('https://wa.link/sx7y8f', '_blank'); return false;" style="margin-bottom: 0;">💳 Buy Now</button>
-          <button class="modal-buy-btn" onclick="openPurchaseRequired('lifetime'); return false;" style="background: rgba(255, 255, 255, 0.2); color: #fff; margin-bottom: 0;">▶️ How to Use</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- PAID MODALS + PURCHASE-REQUIRED MODALS (auto-generated from SITE_DATA.paid) -->
+  <div id="paidModals"></div>
 
-  <!-- PURCHASE REQUIRED MODALS -->
-  <div id="basicPurchaseModal" class="purchase-required-modal">
-    <div class="purchase-required-content">
-      <button class="purchase-required-close" onclick="closePurchaseRequired('basic')">&times;</button>
-      <div class="purchase-required-title">⚠️ Purchase Required</div>
-      <div class="purchase-required-message">Please buy the File first to view the how to use tutorial.</div>
-      <button class="purchase-required-btn" onclick="closeModal('basic'); closeDownloadModal('basic'); window.open('https://wa.link/xcgi3o', '_blank'); return false;">Buy Now</button>
-    </div>
-  </div>
+  <!-- PAYMENT MODAL (JazzCash / Binance) -->
+  <div id="paymentModalContainer"></div>
 
-  <div id="proPurchaseModal" class="purchase-required-modal">
-    <div class="purchase-required-content">
-      <button class="purchase-required-close" onclick="closePurchaseRequired('pro')">&times;</button>
-      <div class="purchase-required-title">⚠️ Purchase Required</div>
-      <div class="purchase-required-message">Please buy the file first to view the how to use tutorial.</div>
-      <button class="purchase-required-btn" onclick="closeModal('pro'); closeDownloadModal('pro'); window.open('https://wa.link/8ehxik', '_blank'); return false;">Buy Now</button>
-    </div>
-  </div>
-
-  <div id="lifetimePurchaseModal" class="purchase-required-modal">
-    <div class="purchase-required-content">
-      <button class="purchase-required-close" onclick="closePurchaseRequired('lifetime')">&times;</button>
-      <div class="purchase-required-title">⚠️ Purchase Required</div>
-      <div class="purchase-required-message">Please buy the fILE Access first to view the how to use tutorial.</div>
-      <button class="purchase-required-btn" onclick="closeModal('lifetime'); closeDownloadModal('lifetime'); window.open('https://wa.link/sx7y8f', '_blank'); return false;">Buy Now</button>
-    </div>
-  </div>
-
+  <!-- Build every section from SITE_DATA — runs after all containers above exist -->
+  <script>
+    renderOriginalCards();
+    renderFreeCards();
+    renderPaidCards();
+    renderPaymentModal();
+  </script>
 </div>
 
 <script>
@@ -1635,14 +2052,8 @@ const sections = document.querySelectorAll('.section');
 const pill = document.getElementById('tabPill');
 
 function updatePill(activeBtn) {
-  const tabs = activeBtn.closest('.tabs');
-  const allBtns = [...tabs.querySelectorAll('.tab-btn')];
-  const idx = allBtns.indexOf(activeBtn);
-  if (idx === 1) {
-    pill.classList.add('slide-right');
-  } else {
-    pill.classList.remove('slide-right');
-  }
+  pill.style.width = activeBtn.offsetWidth + 'px';
+  pill.style.transform = `translateX(${activeBtn.offsetLeft - 4}px)`;
 }
 
 tabButtons.forEach(button => {
@@ -1657,6 +2068,9 @@ tabButtons.forEach(button => {
 });
 // Set initial pill state
 updatePill(document.querySelector('.tab-btn.active'));
+window.addEventListener('resize', () => {
+  updatePill(document.querySelector('.tab-btn.active'));
+});
 
 // ─── BLOB BACKGROUND ────────────────────────────────────────────────
 (function() {
