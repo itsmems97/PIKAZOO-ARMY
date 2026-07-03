@@ -86,10 +86,10 @@ body.dark-mode .tabs {
 
 /* DARK/LIGHT TOGGLE BUTTON */
 .theme-toggle {
-  position: fixed;
-  top: 18px;
+  position: absolute;
+  top: -15px;
   left: 18px;
-  z-index: 9999;
+  z-index: 101;
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -1443,9 +1443,9 @@ body.dark-mode .purchase-required-btn:hover {
 </script>
 
 
-<button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">☀️ <span>Light</span></button>
-
 <div class="container">
+
+  <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">☀️ <span>Light</span></button>
 
   <!-- DYNAMIC ISLAND - WhatsApp -->
   <div class="dynamic-island">
