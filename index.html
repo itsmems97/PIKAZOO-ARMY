@@ -276,6 +276,56 @@ body:not(.dark-mode) .profile p {
   color: rgba(30, 20, 60, 0.75);
 }
 
+/* Light mode: fix white text on light/translucent backgrounds */
+body:not(.dark-mode) .theme-toggle {
+  color: #1a1a2e;
+}
+
+body:not(.dark-mode) .tabs button {
+  color: rgba(30, 20, 60, 0.6);
+}
+
+body:not(.dark-mode) .tabs button.active {
+  color: #1a1a2e;
+  text-shadow: none;
+}
+
+body:not(.dark-mode) .link-title {
+  color: #1a1a2e;
+}
+
+body:not(.dark-mode) .link-desc {
+  color: rgba(30, 20, 60, 0.7);
+}
+
+body:not(.dark-mode) .link-date {
+  color: rgba(30, 20, 60, 0.8);
+}
+
+body:not(.dark-mode) .section-title {
+  color: rgba(30, 20, 60, 0.8);
+}
+
+body:not(.dark-mode) .bottom-links a {
+  color: #1a1a2e;
+}
+
+body:not(.dark-mode) .footer-text {
+  color: rgba(30, 20, 60, 0.6);
+}
+
+body:not(.dark-mode) .stat-label {
+  color: rgba(30, 20, 60, 0.75);
+}
+
+body:not(.dark-mode) .countdown-label {
+  color: rgba(30, 20, 60, 0.8);
+}
+
+body:not(.dark-mode) .countdown-unit-label {
+  color: rgba(30, 20, 60, 0.6);
+}
+
 /* ANIMATIONS */
 @keyframes welcomeColorFlow {
   0%   { background-position: 0% 50%; }
@@ -1373,6 +1423,201 @@ body.dark-mode .purchase-required-btn:hover {
   opacity: 1;
   transform: translateX(-50%) translateY(0px);
 }
+
+/* ================================
+   WELCOME FEATURES NOTE MODAL
+================================= */
+#featuresModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 99999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  padding: 20px;
+}
+
+#featuresModalOverlay.show {
+  display: flex;
+  opacity: 1;
+}
+
+#featuresModalBox {
+  background: linear-gradient(160deg, #1b1b26, #101018);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  max-width: 520px;
+  width: 100%;
+  max-height: 82vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  transform: translateY(20px) scale(0.97);
+  transition: transform 0.35s ease;
+  overflow: hidden;
+}
+
+#featuresModalOverlay.show #featuresModalBox {
+  transform: translateY(0) scale(1);
+}
+
+#featuresModalHeader {
+  padding: 20px 22px 12px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#featuresModalHeader span {
+  display: block;
+  font-size: 13px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 4px;
+}
+
+#featuresModalBody {
+  padding: 14px 22px;
+  overflow-y: auto;
+  flex: 1;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 14.5px;
+  line-height: 1.7;
+}
+
+#featuresModalBody::-webkit-scrollbar {
+  width: 6px;
+}
+#featuresModalBody::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+#featuresModalBody ol {
+  margin: 0 0 4px;
+  padding-left: 20px;
+}
+
+#featuresModalBody ol li {
+  margin-bottom: 6px;
+}
+
+.featuresGroupTitle {
+  font-size: 18px;
+  font-weight: 800;
+  color: #a26cf0;
+  margin: 18px 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.featuresGroupTitle:first-child {
+  margin-top: 0;
+}
+
+.featuresGroupNum {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #6c5ce7, #a26cf0);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+#featuresScrollHint {
+  position: absolute;
+  left: 50%;
+  bottom: 78px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 11px;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  animation: scrollHintBounce 1.4s ease-in-out infinite;
+}
+
+#featuresScrollHint.hide {
+  opacity: 0;
+}
+
+#featuresScrollHint svg {
+  width: 18px;
+  height: 18px;
+}
+
+@keyframes scrollHintBounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(6px); }
+}
+
+#featuresModalFooter {
+  padding: 14px 22px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+}
+
+#featuresModalOkBtn {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #6c5ce7, #a26cf0);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.2s ease, visibility 0.2s ease;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#featuresModalOkBtn.show-btn {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+#featuresModalOkBtn:active {
+  transform: scale(0.97);
+  opacity: 0.9;
+}
+
+body:not(.dark-mode) #featuresModalBox {
+  background: linear-gradient(160deg, #ffffff, #f2f2f7);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+body:not(.dark-mode) #featuresModalHeader {
+  color: #111;
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+body:not(.dark-mode) #featuresModalHeader span {
+  color: rgba(0, 0, 0, 0.55);
+}
+body:not(.dark-mode) #featuresModalBody {
+  color: rgba(0, 0, 0, 0.8);
+}
+body:not(.dark-mode) #featuresModalFooter {
+  border-top-color: rgba(0, 0, 0, 0.08);
+}
+body:not(.dark-mode) #featuresScrollHint {
+  color: rgba(0, 0, 0, 0.5);
+}
 </style>
 
 </head>
@@ -1384,6 +1629,152 @@ body.dark-mode .purchase-required-btn:hover {
 
 <!-- TOUCH GLOW -->
 <div id="touchGlow"></div>
+
+<!-- ================================
+  WELCOME FEATURES NOTE MODAL
+  Shows before the main menu on every visit.
+  Edit the FEATURES_GROUPS array below to change the text.
+================================= -->
+<div id="featuresModalOverlay">
+  <div id="featuresModalBox">
+    <div id="featuresModalHeader">
+      🎉 Welcome! 
+      <span>Here's everything you get — scroll to see all features </span>
+    </div>
+    <div id="featuresModalBody">
+      <div id="featuresGroups"></div>
+    </div>
+    <div id="featuresModalFooter">
+      <div id="featuresScrollHint">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        Scroll for more
+      </div>
+      <button id="featuresModalOkBtn" onclick="closeFeaturesModal()">Okay, Got It 👍</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ← Edit this array to change/add/remove groups and feature lines.
+  // Each group has a "title" (the bold headline) and an "items" list (the numbered features under it).
+  const FEATURES_GROUPS = [
+
+{
+  title: "☁️VIP PBC FEATURE🪐",
+  items: [
+    "🌱 No Grass",
+    "🌴 Less Trees (100m)",
+    "🌊 No Water",
+    "🏢 Less Buildings",
+    "🪞 Glass UI Bidding",
+    "❄️ No Smoke",
+    "🌃 Black Sky",
+    "📱 iPad View",
+    "📡 Antenna PBC"
+  ]
+},
+
+{
+  title: "📂VIP Files-Tools FEATURE🪐",
+  items: [
+    "💯 Paks Mod Data Safe",
+    "💯 Pak Lua Safe File",
+    "💯 VIP Shizuku GFX Tool Safe",
+    "💯 VIP Content File Safe",
+    "💯 VIP OBB Mod Safe"
+  ]
+},
+
+{
+  title: "🏃🏻VIP Movement Pak FEATURE",
+  items: [
+    "⚡ Knock Speed",
+    "🚶 Prone Movement Speed",
+    "🦵 Crouch Movement Speed",
+    "↔️ Left-Right Movement Speed",
+    "🪂 Fast Parachute Landing",
+    "🏊 Fast Swimming Speed"
+  ]
+},
+
+{
+  title: "⚡ VIP Recoil Control FEATURE",
+  items: [
+    "🎯 Less Recoil (All Guns)",
+    "📉 Less Shake (All Guns)",
+    "🛡️ Anti-Shake & Anti-Recoil",
+    "🔄 Fast Reload (All Guns)"
+  ]
+},
+
+{
+  title: "🎯 VIP Aim FEATURE",
+  items: [
+    "🎯 Aim Prediction",
+    "🤫 Silent Aim",
+    "🎯 Auto Headshot",
+    "✨ Magic Bullet",
+    "📏 Headshot Line",
+    "📦 Hitbox Resizing",
+    "👁️ FOV Changer (Field of View)"
+  ]
+},
+
+{
+  title: "👁️ VIP PAK ESP FEATURE",
+  items: [
+    "📦 Box ESP",
+    "❤️ Health Bar ESP",
+    "📍 Distance ESP"
+  ]
+}
+
+];
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('featuresGroups');
+    const frag = document.createDocumentFragment();
+
+    FEATURES_GROUPS.forEach((group, gIndex) => {
+      const heading = document.createElement('div');
+      heading.className = 'featuresGroupTitle';
+      heading.innerHTML = `<span class="featuresGroupNum">${gIndex + 1}</span> ${group.title}`;
+      frag.appendChild(heading);
+
+      const ol = document.createElement('ol');
+      group.items.forEach(text => {
+        const li = document.createElement('li');
+        li.textContent = text;
+        ol.appendChild(li);
+      });
+      frag.appendChild(ol);
+    });
+
+    container.appendChild(frag);
+    document.getElementById('featuresModalOverlay').classList.add('show');
+
+    // OK button stays hidden until the user scrolls all the way to the bottom
+    const body = document.getElementById('featuresModalBody');
+    const hint = document.getElementById('featuresScrollHint');
+    const okBtn = document.getElementById('featuresModalOkBtn');
+
+    function checkScroll() {
+      const canScroll = body.scrollHeight > body.clientHeight + 10;
+      const atBottom = body.scrollTop + body.clientHeight >= body.scrollHeight - 5;
+
+      // If the list is short and doesn't need scrolling, show the button right away
+      okBtn.classList.toggle('show-btn', atBottom || !canScroll);
+      hint.classList.toggle('hide', !canScroll || atBottom);
+    }
+    checkScroll();
+    body.addEventListener('scroll', checkScroll);
+    window.addEventListener('resize', checkScroll);
+  });
+
+  function closeFeaturesModal() {
+    document.getElementById('featuresModalOverlay').classList.remove('show');
+  }
+</script>
 
 <!-- ================================
   DISCOUNT TOGGLE — SET true OR false
@@ -1415,7 +1806,8 @@ body.dark-mode .purchase-required-btn:hover {
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    if (typeof DISCOUNT_ON !== 'undefined' && DISCOUNT_ON === true) {
+    const discountNotExpired = typeof DISCOUNT_EXPIRY === 'undefined' || new Date().getTime() < DISCOUNT_EXPIRY.getTime();
+    if (typeof DISCOUNT_ON !== 'undefined' && DISCOUNT_ON === true && discountNotExpired) {
       const overlay = document.getElementById('discountOverlay');
       const toast = document.getElementById('discountToast');
 
