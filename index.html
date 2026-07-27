@@ -763,6 +763,9 @@ body.dark-mode .link-card a::before {
   font-size: 24px;
   font-weight: 700;
   margin: 0;
+  min-width: 0;
+  flex: 1 1 auto;
+  padding-right: 10px;
 }
 
 .close-btn {
@@ -773,6 +776,9 @@ body.dark-mode .link-card a::before {
   cursor: pointer;
   width: 40px;
   height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  flex-shrink: 0;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1784,10 +1790,74 @@ body:not(.dark-mode) #featuresScrollHint {
   DISCOUNT TOGGLE — SET true OR false
 ================================= -->
 <script>
-  const DISCOUNT_ON = true;       // ← Change to false to turn off discount animation
-
+  const DISCOUNT_ON = true;       // ← Change to false to turn off discount animation/overlay
   const COUNTDOWN_ON = true;      // ← Change to false to hide the countdown timer
-  const DISCOUNT_EXPIRY = new Date('2026-07-08T00:00:00'); // ← Set your expiry date/time here
+
+  // ============================================================
+  //  VIP PRICE PHASES — edit dates/prices here, everything else
+  //  (badges, countdown, overlay, toast) updates automatically.
+  //  Item keys: basic = Button 1, pro = Button 2, lifetime = Button 3
+  // ============================================================
+  const PRICE_PHASES = [
+    {
+      key: 'phase1',
+      label: '🔥 Limited Time Discount',
+      start: new Date('2026-08-01T00:00:00'),
+      end:   new Date('2026-08-20T00:00:00'),
+      prices: {
+        basic:    [2000, 1500],
+        pro:      [1500, 1000],
+        lifetime: [3000, 2000]
+      }
+    },
+    {
+      key: 'phase2',
+      label: '🔥 Mega Price Drop',
+      start: new Date('2026-08-20T00:00:00'),
+      end:   new Date('2026-09-01T00:00:00'),
+      prices: {
+        basic:    [1500, 1000],
+        pro:      [1000, 500],
+        lifetime: [2000, 1400]
+      }
+    },
+    {
+      key: 'phase3',
+      label: '🚀 PUBG Mobile 4.6 Update Pre-Booking (25% OFF)',
+      start: new Date('2026-09-01T00:00:00'),
+      end:   new Date('2026-09-15T00:00:00'),
+      preBooking: true,
+      prices: {
+        basic:    [2000, 1500],
+        pro:      [1500, 1000],
+        lifetime: [3000, 2000]
+      }
+    }
+  ];
+
+  // Returns the active phase object, or null if no phase is currently running
+  function getCurrentPhase() {
+    const now = new Date();
+    return PRICE_PHASES.find(p => now >= p.start && now < p.end) || null;
+  }
+
+  // Checks if a discount is currently active (used by price badges on cards + modals)
+  function isDiscountActive() {
+    return typeof DISCOUNT_ON !== 'undefined' && DISCOUNT_ON && getCurrentPhase() !== null;
+  }
+
+  // Applies the current (or next upcoming, as a preview) phase's prices onto SITE_DATA.paid
+  function applyPhasePricing() {
+    if (typeof SITE_DATA === 'undefined' || !SITE_DATA.paid) return;
+    const phase = getCurrentPhase() || PRICE_PHASES[0];
+    SITE_DATA.paid.forEach(item => {
+      const p = phase.prices[item.key];
+      if (p) {
+        item.priceOld = p[0];
+        item.priceNew = p[1];
+      }
+    });
+  }
 </script>
 
 <!-- DISCOUNT ANIMATION OVERLAY -->
@@ -1800,18 +1870,28 @@ body:not(.dark-mode) #featuresScrollHint {
     <span class="discount-floating-item">💥</span>
     <span class="discount-floating-item">🌟</span>
     <span class="discount-floating-item">🎉</span>
-    <div class="discount-main-symbol">25% OFF</div>
-    <li class="discount-subtext">Pre-Order PUBG VIP 4.5</li>
+    <div class="discount-main-symbol" id="discountMainSymbol">25% OFF</div>
+    <li class="discount-subtext" id="discountSubtext">Pre-Order PUBG VIP 4.5</li>
   </div>
 </div>
 
 <!-- DISCOUNT TOAST -->
-<div id="discountToast">🏷️ Discount Available In VIP 4.5 Section!</div>
+<div id="discountToast">🏷️ Discount Available In VIP Section!</div>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    const discountNotExpired = typeof DISCOUNT_EXPIRY === 'undefined' || new Date().getTime() < DISCOUNT_EXPIRY.getTime();
-    if (typeof DISCOUNT_ON !== 'undefined' && DISCOUNT_ON === true && discountNotExpired) {
+    const activePhase = typeof getCurrentPhase === 'function' ? getCurrentPhase() : null;
+    if (typeof DISCOUNT_ON !== 'undefined' && DISCOUNT_ON === true && activePhase) {
+      // Update overlay + toast text to match the currently running phase
+      if (activePhase.preBooking) {
+        document.getElementById('discountMainSymbol').textContent = '25% OFF';
+        document.getElementById('discountSubtext').textContent = 'Pre-Booking Now Open — PUBG 4.6 Update';
+      } else {
+        document.getElementById('discountMainSymbol').textContent = activePhase.label;
+        document.getElementById('discountSubtext').textContent = 'Limited Time — VIP Section';
+      }
+      document.getElementById('discountToast').textContent = `🏷️ ${activePhase.label} — VIP Section!`;
+
       const overlay = document.getElementById('discountOverlay');
       const toast = document.getElementById('discountToast');
 
@@ -1883,7 +1963,7 @@ body:not(.dark-mode) #featuresScrollHint {
 
     <!-- DISCOUNT COUNTDOWN -->
     <div class="countdown-box" id="countdownBox" style="display:none;">
-      <div class="countdown-label">⏳ Discount Expires In</div>
+      <div class="countdown-label" id="countdownLabel">⏳ Discount Expires In</div>
       <div class="countdown-timer" id="countdownTimer">
         <div class="countdown-unit">
           <span class="countdown-number" id="cdDays">00</span>
@@ -2211,7 +2291,7 @@ body:not(.dark-mode) #featuresScrollHint {
               <div class="link-text">
                 <div class="link-title">${item.title}</div>
                 <div class="link-desc">${item.desc}</div>
-                <div class="price-badge">PKR: <del>${item.priceOld}</del> - ${item.priceNew}${extras}</div>
+                <div class="price-badge">${isDiscountActive() ? `PKR: <del>${item.priceOld}</del> - ${item.priceNew}` : `PKR: ${item.priceOld}`}${extras}</div>
                 <div class="link-date">${item.date} &nbsp;|&nbsp; 🔥 ${String(item.sold).padStart(2, '0')} Sold</div>
               </div>
             </div>
@@ -2242,7 +2322,7 @@ body:not(.dark-mode) #featuresScrollHint {
                 <h2>${item.modalTitle || item.title}</h2>
                 <button class="close-btn" onclick="closeModal('${item.key}')">&times;</button>
               </div>
-              <div class="modal-price">PKR: <del>${item.priceOld}</del> - ${item.priceNew}</div>
+              <div class="modal-price">${isDiscountActive() ? `PKR: <del>${item.priceOld}</del> - ${item.priceNew}` : `PKR: ${item.priceOld}`}</div>
               ${validityBadge}
               ${workingBadge}
               <div class="modal-features">
@@ -2434,6 +2514,7 @@ body:not(.dark-mode) #featuresScrollHint {
 
   <!-- Build every section from SITE_DATA — runs after all containers above exist -->
   <script>
+    applyPhasePricing();
     renderOriginalCards();
     renderFreeCards();
     renderPaidCards();
@@ -2638,19 +2719,38 @@ function animateCount(id, target, suffix) {
   }, 25);
 }
 
-// ── COUNTDOWN TIMER ──
+// ── COUNTDOWN TIMER (phase-aware) ──
+function getCountdownTarget() {
+  const now = new Date();
+  const activePhase = getCurrentPhase();
+  if (activePhase) {
+    return { time: activePhase.end, label: `⏳ ${activePhase.label} Ends In` };
+  }
+  const nextPhase = PRICE_PHASES.find(p => now < p.start);
+  if (nextPhase) {
+    return { time: nextPhase.start, label: `⏳ ${nextPhase.label} Starts In` };
+  }
+  return null; // all phases have ended
+}
+
 function updateCountdown() {
   if (typeof COUNTDOWN_ON === 'undefined' || !COUNTDOWN_ON) return;
   const box = document.getElementById('countdownBox');
   if (!box) return;
+
+  const target = getCountdownTarget();
+  if (!target) {
+    box.style.display = 'none';
+    return;
+  }
   box.style.display = 'block';
+  document.getElementById('countdownLabel').textContent = target.label;
 
   const now = new Date().getTime();
-  const expiry = DISCOUNT_EXPIRY.getTime();
-  const diff = expiry - now;
+  const diff = target.time.getTime() - now;
 
   if (diff <= 0) {
-    document.getElementById('countdownTimer').innerHTML = '<div class="countdown-expired">🚫 Discount Expired</div>';
+    document.getElementById('countdownTimer').innerHTML = '<div class="countdown-expired">🚫 Offer Ended</div>';
     return;
   }
 
