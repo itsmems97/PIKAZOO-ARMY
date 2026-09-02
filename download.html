@@ -5,160 +5,564 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>ETQAN TEBA EST (IFTIKHAR)</title>
 <link rel="apple-touch-icon" href="ETQAN.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Cairo:wght@400;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#12141a;
-    --card:#1b1f27;
-    --text:#eef0f4;
-    --muted:#9aa2b1;
-    --accent:#3ddc84;
-    --accent-dark:#2bb968;
-    --accent2:#4f9dff;
-    --accent2-dark:#3a82df;
+    --bg:#17181C;
+    --bg-2:#1D1F24;
+    --surface:#212329;
+    --line:rgba(168,138,222,0.18);
+    --text:#F1F0F4;
+    --muted:#9A9CA6;
+    --purple:#A385E0;
+    --purple-soft:#D2C1F5;
+    --purple-deep:#6C4DB0;
+    --purple-flash:#8F6BDB;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
-  html,body{height:100%;}
+  html{scroll-behavior:smooth;}
   body{
+    min-height:100vh;
     background:var(--bg);
     color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:48px;
+    position:relative;
+    overflow-x:hidden;
   }
-  .card{
-    width:100%;
-    max-width:360px;
-    padding:32px 28px;
-    text-align:center;
-  }
-  .icon{
-    width:88px;
-    height:88px;
-    border-radius:22px;
-    margin:0 auto 20px;
-    display:block;
-    background:var(--card);
-    object-fit:cover;
-  }
-  h1{
-    font-size:20px;
-    font-weight:600;
-    letter-spacing:-0.01em;
-    margin-bottom:6px;
-    word-wrap: break-word;
-  }
-  .meta{
-    color:var(--muted);
-    font-size:14px;
-    margin-bottom:28px;
-  }
-  .btn-row{
-    display:flex;
-    gap:10px;
-  }
-  .btn{
-    flex:1;
-    display:block;
-    padding:15px 0;
-    font-size:15px;
-    font-weight:600;
-    text-decoration:none;
-    border:none;
-    border-radius:12px;
-    transition:background .15s ease, transform .1s ease;
-    cursor:pointer;
-    font-family:inherit;
-  }
-  .btn-android{
-    background:var(--accent);
-    color:#0b1210;
-  }
-  .btn-android:active{
-    background:var(--accent-dark);
-    transform:scale(0.98);
-  }
-  .btn-iphone{
-    background:var(--accent2);
-    color:#0a1420;
-  }
-  .btn-iphone:active{
-    background:var(--accent2-dark);
-    transform:scale(0.98);
-  }
-  .filesize{
-    margin-top:14px;
-    color:var(--muted);
-    font-size:12px;
+  body.lang-en{ font-family:'Sora', system-ui, sans-serif; }
+  body.lang-ur{ font-family:'Noto Nastaliq Urdu', serif; line-height:2.15; }
+  body.lang-ar{ font-family:'Cairo', system-ui, sans-serif; }
+
+  /* plexus live background */
+  #plexus{
+    position:fixed; inset:0; z-index:0; display:block;
+    filter:blur(0.4px);
+    opacity:0.65;
   }
 
+  .wrap{ position:relative; z-index:1; max-width:420px; margin:0 auto; padding:0 22px; }
+
+  /* language switcher — position fixed regardless of text direction */
+  .langbar{
+    direction:ltr;
+    display:flex; justify-content:flex-end; gap:6px;
+    padding:18px 0 6px;
+  }
+  .lang-pill{
+    display:flex; background:var(--surface); border:1px solid var(--line);
+    border-radius:999px; padding:4px; gap:2px;
+  }
+  .lang-btn{
+    border:none; background:transparent; color:var(--muted);
+    font-size:12.5px; font-weight:600; padding:7px 12px; border-radius:999px;
+    cursor:pointer; font-family:inherit; transition:background .15s ease, color .15s ease;
+    white-space:nowrap;
+  }
+  .lang-btn.active{ background:var(--purple); color:#181022; }
+
+  /* hero */
+  .hero{ text-align:center; padding:26px 0 8px; }
+  .icon-frame{
+    width:104px; height:104px; margin:0 auto 22px; border-radius:26px;
+    padding:3px;
+    background:conic-gradient(from 210deg, var(--purple), transparent 40%, var(--purple-deep) 75%, var(--purple));
+    box-shadow:0 18px 40px -14px rgba(163,133,224,0.35);
+  }
+  .icon-frame img{
+    width:100%; height:100%; border-radius:23px; display:block; object-fit:cover;
+    background:var(--surface);
+  }
+  h1.title{
+    font-size:23px; font-weight:800; letter-spacing:-0.01em; line-height:1.3;
+    background:linear-gradient(100deg, var(--purple-soft), var(--purple) 55%, var(--purple-deep));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    margin-bottom:10px; padding:0 6px;
+  }
+  body.lang-ur h1.title{ font-weight:700; font-size:27px; line-height:1.9; }
+  p.tagline{ color:var(--muted); font-size:14.5px; margin-bottom:18px; }
+
+  .badges{ display:flex; justify-content:center; gap:8px; flex-wrap:wrap; margin-bottom:26px; }
+  .badge{
+    display:flex; align-items:center; gap:6px;
+    border:1px solid var(--line); background:rgba(163,133,224,0.07);
+    color:var(--purple-soft); font-size:11.5px; font-weight:600;
+    padding:7px 12px; border-radius:999px;
+  }
+  .badge svg{ width:13px; height:13px; flex:none; }
+
+  /* CTA — iOS-style fully rounded pills */
+  .cta-row{ display:flex; gap:10px; margin-bottom:10px; }
+  .cta{
+    position:relative; flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:2px; padding:14px 8px; border-radius:999px; text-decoration:none;
+    font-family:inherit; cursor:pointer; border:1px solid transparent;
+    transition:transform .12s ease, background-color .18s ease, filter .15s ease;
+    overflow:hidden; -webkit-tap-highlight-color:transparent;
+  }
+  .cta:active{ transform:scale(0.96); }
+  .cta-primary{
+    background:linear-gradient(180deg, var(--purple-soft), var(--purple));
+    color:#181022;
+  }
+  .cta-primary.flash{ background:var(--purple-flash); }
+  .cta-secondary{
+    background:var(--surface); border-color:var(--line); color:var(--text);
+  }
+  .cta-secondary.flash{ background:var(--purple-deep); color:#F4EFFF; border-color:var(--purple); }
+  .cta-label{ font-size:14.5px; font-weight:700; }
+  .cta-sub{ font-size:10.5px; opacity:0.75; font-weight:500; }
+  .cta svg{ width:20px; height:20px; margin-bottom:2px; }
+
+  /* ripple touch effect */
+  .ripple{
+    position:absolute; border-radius:50%; transform:scale(0);
+    background:rgba(255,255,255,0.5); pointer-events:none;
+    animation:ripple-anim .55s ease-out forwards;
+  }
+  @keyframes ripple-anim{
+    to{ transform:scale(2.6); opacity:0; }
+  }
+
+  .versionline{ text-align:center; color:var(--muted); font-size:11.5px; margin:12px 0 14px; }
+
+  /* live link button */
+  .livewrap{ display:flex; justify-content:center; margin-bottom:30px; }
+  .live-btn{
+    position:relative; overflow:hidden; -webkit-tap-highlight-color:transparent;
+    display:inline-flex; align-items:center; gap:8px;
+    padding:9px 18px; border-radius:999px;
+    background:rgba(163,133,224,0.08); border:1px solid var(--line);
+    color:var(--purple-soft); font-size:12.5px; font-weight:700;
+    text-decoration:none; font-family:inherit;
+    transition:background-color .18s ease, transform .12s ease;
+  }
+  .live-btn:active{ transform:scale(0.96); }
+  .live-btn.flash{ background:rgba(163,133,224,0.22); }
+  .live-dot{
+    width:8px; height:8px; border-radius:50%; background:#3DDC84; flex:none;
+    box-shadow:0 0 0 0 rgba(61,220,132,0.6);
+    animation:live-pulse 1.6s ease-out infinite;
+  }
+  @keyframes live-pulse{
+    0%{ box-shadow:0 0 0 0 rgba(61,220,132,0.55); }
+    70%{ box-shadow:0 0 0 8px rgba(61,220,132,0); }
+    100%{ box-shadow:0 0 0 0 rgba(61,220,132,0); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .live-dot{ animation:none; }
+  }
+
+  /* description */
+  .section{ margin-bottom:30px; }
+  .description{ color:var(--text); font-size:14.5px; line-height:1.75; opacity:0.92; }
+  body.lang-ur .description{ font-size:17px; }
+
+  .section-heading{
+    font-size:13px; font-weight:700; color:var(--purple-soft); margin-bottom:14px;
+  }
+  body.lang-ur .section-heading{ font-size:16px; }
+
+  /* features */
+  .feature{
+    display:flex; gap:14px; align-items:flex-start;
+    padding:16px 0; border-bottom:1px solid var(--line);
+  }
+  .feature:last-child{ border-bottom:none; }
+  .feature-icon{
+    flex:none; width:38px; height:38px; border-radius:11px;
+    background:rgba(163,133,224,0.1); border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .feature-icon svg{ width:18px; height:18px; stroke:var(--purple); }
+  .feature-title{ font-size:14.5px; font-weight:700; margin-bottom:3px; }
+  body.lang-ur .feature-title{ font-size:17px; }
+  .feature-desc{ font-size:13px; color:var(--muted); line-height:1.6; }
+  body.lang-ur .feature-desc{ font-size:15.5px; }
+
+  footer{ text-align:center; color:var(--muted); font-size:11.5px; opacity:0.7; padding-top:6px; }
+
+  /* iPhone sheet */
   .overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.6);
-    display:none;
-    align-items:flex-end;
-    justify-content:center;
-    z-index:10;
+    position:fixed; inset:0; background:rgba(10,10,14,0.72);
+    display:none; align-items:flex-end; justify-content:center; z-index:20;
+    backdrop-filter:blur(2px);
   }
-  .overlay.show{
-    display:flex;
-  }
+  .overlay.show{ display:flex; }
   .sheet{
-    width:100%;
-    max-width:360px;
-    background:var(--card);
-    border-radius:20px 20px 0 0;
-    padding:24px 24px 28px;
-    text-align:left;
+    width:100%; max-width:420px; background:var(--bg-2);
+    border:1px solid var(--line); border-bottom:none;
+    border-radius:22px 22px 0 0; padding:26px 24px 30px;
   }
-  .sheet h2{
-    font-size:16px;
-    margin-bottom:14px;
-  }
-  .sheet ol{
-    padding-left:20px;
-    color:var(--text);
-    font-size:14px;
-    line-height:1.7;
-  }
+  .sheet h2{ font-size:16px; font-weight:700; margin-bottom:16px; color:var(--purple-soft); }
+  body.lang-ur .sheet h2{ font-size:19px; }
+  .sheet ol{ padding-inline-start:20px; font-size:14px; line-height:1.85; color:var(--text); }
+  body.lang-ur .sheet ol{ font-size:16.5px; }
   .sheet-close{
-    margin-top:20px;
-    width:100%;
-    padding:13px 0;
-    background:var(--accent2);
-    color:#0a1420;
-    border:none;
-    border-radius:10px;
-    font-weight:600;
-    font-size:14px;
-    font-family:inherit;
+    position:relative; overflow:hidden; -webkit-tap-highlight-color:transparent;
+    margin-top:22px; width:100%; padding:14px 0; border:none; border-radius:999px;
+    background:var(--purple); color:#181022; font-weight:700; font-size:14px; font-family:inherit;
+    transition:background-color .18s ease;
   }
+  .sheet-close.flash{ background:var(--purple-flash); }
+
+  /* offline overlay */
+  .offline-overlay{
+    position:fixed; inset:0; background:rgba(10,10,14,0.92);
+    display:none; align-items:center; justify-content:center; z-index:30;
+    padding:24px;
+  }
+  .offline-overlay.show{ display:flex; }
+  .offline-card{
+    width:100%; max-width:340px; text-align:center;
+    background:var(--bg-2); border:1px solid var(--line); border-radius:22px;
+    padding:32px 26px;
+  }
+  .offline-icon{
+    width:52px; height:52px; margin:0 auto 18px; border-radius:16px;
+    background:rgba(163,133,224,0.1); border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .offline-icon svg{ width:26px; height:26px; stroke:var(--purple); }
+  .offline-card h2{ font-size:16.5px; font-weight:700; margin-bottom:8px; }
+  body.lang-ur .offline-card h2{ font-size:19px; }
+  .offline-card p{ font-size:13.5px; color:var(--muted); line-height:1.6; margin-bottom:20px; }
+  body.lang-ur .offline-card p{ font-size:16px; }
+  .offline-retry{
+    position:relative; overflow:hidden; -webkit-tap-highlight-color:transparent;
+    width:100%; padding:13px 0; border:none; border-radius:999px;
+    background:var(--purple); color:#181022; font-weight:700; font-size:14px; font-family:inherit;
+    transition:background-color .18s ease;
+  }
+  .offline-retry.flash{ background:var(--purple-flash); }
 </style>
 </head>
-<body>
-  <div class="card">
-    <img class="icon" src="ETQAN.png" alt="App icon">
-    <h1>ETQAN TEBA EST (IFTIKHAR)</h1>
-    <p class="meta">Version 3.1 · For company use</p>
-    <div class="btn-row">
-      <a class="btn btn-android" href="ETQAN TEBA EST (IFTIKHAR).apk" download>Android</a>
-      <button class="btn btn-iphone" onclick="document.getElementById('iphoneOverlay').classList.add('show')">iPhone</button>
+<body class="lang-en" dir="ltr">
+  <canvas id="plexus"></canvas>
+  <div class="wrap">
+
+    <div class="langbar">
+      <div class="lang-pill">
+        <button class="lang-btn active" data-lang="en" onclick="setLang('en')">English</button>
+        <button class="lang-btn" data-lang="ur" onclick="setLang('ur')">اردو</button>
+        <button class="lang-btn" data-lang="ar" onclick="setLang('ar')">عربي</button>
+      </div>
     </div>
-    <p class="filesize">~ 9MB · Android 6.0+</p>
+
+    <div class="hero">
+      <div class="icon-frame">
+        <img src="ETQAN.png" alt="App icon" onerror="this.style.display='none'">
+      </div>
+      <h1 class="title" data-i18n="appTitle">ETQAN TEBA EST (IFTIKHAR)</h1>
+      <p class="tagline" data-i18n="tagline">Find stores. Get there. Every time.</p>
+      <div class="badges">
+        <span class="badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+          <span data-i18n="badgeSecure">Secure &amp; verified</span>
+        </span>
+        <span class="badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.4"/></svg>
+          <span data-i18n="badgeRegion">Saudi Arabia</span>
+        </span>
+      </div>
+
+      <div class="cta-row">
+        <a class="cta cta-primary" href="ETQAN TEBA EST (IFTIKHAR).apk" download>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+          <span class="cta-label" data-i18n="ctaAndroid">Android</span>
+          <span class="cta-sub" data-i18n="ctaAndroidSub">Download APK</span>
+        </a>
+        <button class="cta cta-secondary" onclick="document.getElementById('iphoneOverlay').classList.add('show')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg>
+          <span class="cta-label" data-i18n="ctaIphone">iPhone</span>
+          <span class="cta-sub" data-i18n="ctaIphoneSub">Add to Home Screen</span>
+        </button>
+      </div>
+      <p class="versionline" data-i18n="versionLine">Version 3.1 · 9 MB · Requires Android 6.0+</p>
+      <div class="livewrap">
+        <a class="live-btn" href="https://itsmems97.github.io/PIKAZOO-ARMY/ETQAN.html" target="_blank" rel="noopener">
+          <span class="live-dot"></span>
+          <span data-i18n="useLive">Use Live</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="section">
+      <p class="description" data-i18n="description">Simplify how you find and navigate to your favorite stores in Saudi Arabia. This app organizes store locations, details, and brands by city and category, saving you time and effort.</p>
+    </div>
+
+    <div class="section">
+      <p class="section-heading" data-i18n="featuresHeading">What you can do</p>
+
+      <div class="feature">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div>
+        <div>
+          <div class="feature-title" data-i18n="f1Title">Advanced search</div>
+          <div class="feature-desc" data-i18n="f1Desc">Easily find store names, brands, or categories.</div>
+        </div>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-8-8 18-2-8-8-2z"/></svg></div>
+        <div>
+          <div class="feature-title" data-i18n="f2Title">Smart navigation</div>
+          <div class="feature-desc" data-i18n="f2Desc">Get precise directions straight to your destination.</div>
+        </div>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20s-7-4.4-9.5-9C1 7.5 2.7 4 6.2 4c2 0 3.4 1 4.8 2.6C12.4 5 13.8 4 15.8 4 19.3 4 21 7.5 19.5 11 17 15.6 12 20 12 20z"/></svg></div>
+        <div>
+          <div class="feature-title" data-i18n="f3Title">Favorites</div>
+          <div class="feature-desc" data-i18n="f3Desc">Save your top locations for quick access.</div>
+        </div>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></svg></div>
+        <div>
+          <div class="feature-title" data-i18n="f4Title">Share location</div>
+          <div class="feature-desc" data-i18n="f4Desc">Easily send store details to friends.</div>
+        </div>
+      </div>
+
+      <div class="feature">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <div>
+          <div class="feature-title" data-i18n="f5Title">Secure &amp; safe</div>
+          <div class="feature-desc" data-i18n="f5Desc">Your device's security is verified on launch to ensure a safe experience.</div>
+        </div>
+      </div>
+    </div>
+
+    <footer data-i18n="footer">ETQAN TEBA EST (IFTIKHAR) · For company use</footer>
   </div>
 
   <div class="overlay" id="iphoneOverlay">
     <div class="sheet">
-      <h2>Add to your Home Screen</h2>
+      <h2 data-i18n="sheetTitle">Add to your Home Screen</h2>
       <ol>
-        <li>Tap the <strong>Share</strong> button in Safari (square with an arrow, at the bottom)</li>
-        <li>Scroll down and tap <strong>Add to Home Screen</strong></li>
-        <li>Tap <strong>Add</strong> in the top right</li>
+        <li data-i18n="sheetStep1">Tap the Share button in Safari (square with an arrow, at the bottom)</li>
+        <li data-i18n="sheetStep2">Scroll down and tap Add to Home Screen</li>
+        <li data-i18n="sheetStep3">Tap Add in the top right</li>
       </ol>
-      <button class="sheet-close" onclick="document.getElementById('iphoneOverlay').classList.remove('show')">Got it</button>
+      <button class="sheet-close" data-i18n="sheetClose" onclick="document.getElementById('iphoneOverlay').classList.remove('show')">Got it</button>
     </div>
   </div>
+
+  <div class="offline-overlay" id="offlineOverlay">
+    <div class="offline-card">
+      <div class="offline-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 8.5a16 16 0 0120 0"/><path d="M5.5 12.5a11 11 0 0113 0"/><path d="M9 16.5a6 6 0 016 0"/><line x1="3" y1="3" x2="21" y2="21"/></svg>
+      </div>
+      <h2 data-i18n="offlineTitle">No internet connection</h2>
+      <p data-i18n="offlineDesc">Check your Wi-Fi or mobile data, then try again.</p>
+      <button class="offline-retry" id="retryBtn" data-i18n="offlineRetry" onclick="checkOnline()">Try again</button>
+    </div>
+  </div>
+
+<script>
+const translations = {
+  en: {
+    appTitle:"ETQAN TEBA EST (IFTIKHAR)",
+    tagline:"Find stores. Get there. Every time.",
+    badgeSecure:"Secure & verified",
+    badgeRegion:"Saudi Arabia",
+    ctaAndroid:"Android",
+    ctaAndroidSub:"Download APK",
+    ctaIphone:"iPhone",
+    ctaIphoneSub:"Add to Home Screen",
+    versionLine:"Version 3.1 · 9 MB · Requires Android 6.0+",
+    description:"Simplify how you find and navigate to your favorite stores in Saudi Arabia. This app organizes store locations, details, and brands by city and category, saving you time and effort.",
+    featuresHeading:"What you can do",
+    f1Title:"Advanced search", f1Desc:"Easily find store names, brands, or categories.",
+    f2Title:"Smart navigation", f2Desc:"Get precise directions straight to your destination.",
+    f3Title:"Favorites", f3Desc:"Save your top locations for quick access.",
+    f4Title:"Share location", f4Desc:"Easily send store details to friends.",
+    f5Title:"Secure & safe", f5Desc:"Your device's security is verified on launch to ensure a safe experience.",
+    footer:"ETQAN TEBA EST (IFTIKHAR) · For company use",
+    sheetTitle:"Add to your Home Screen",
+    sheetStep1:"Tap the Share button in Safari (square with an arrow, at the bottom)",
+    sheetStep2:"Scroll down and tap Add to Home Screen",
+    sheetStep3:"Tap Add in the top right",
+    sheetClose:"Got it",
+    offlineTitle:"No internet connection",
+    offlineDesc:"Check your Wi-Fi or mobile data, then try again.",
+    offlineRetry:"Try again",
+    useLive:"Use Live"
+  },
+  ur: {
+    appTitle:"ETQAN TEBA EST (IFTIKHAR)",
+    tagline:"اسٹورز تلاش کریں۔ وہاں پہنچیں۔ ہر بار۔",
+    badgeSecure:"محفوظ اور تصدیق شدہ",
+    badgeRegion:"سعودی عرب",
+    ctaAndroid:"اینڈرائیڈ",
+    ctaAndroidSub:"اے پی کے ڈاؤن لوڈ کریں",
+    ctaIphone:"آئی فون",
+    ctaIphoneSub:"ہوم اسکرین پر شامل کریں",
+    versionLine:"ورژن 3.1 · 9 ایم بی · اینڈرائیڈ 6.0+ درکار",
+    description:"سعودی عرب میں اپنی پسندیدہ دکانوں کو تلاش کرنا اور وہاں تک رسائی حاصل کرنا آسان بنائیں۔ یہ ایپ اسٹور کے مقامات، تفصیلات اور برانڈز کو شہر اور کیٹیگری کے لحاظ سے ترتیب دیتی ہے، جس سے آپ کا وقت اور محنت بچتی ہے۔",
+    featuresHeading:"آپ کیا کر سکتے ہیں",
+    f1Title:"جدید تلاش", f1Desc:"اسٹورز کے نام، برانڈز یا کیٹیگریز آسانی سے تلاش کریں۔",
+    f2Title:"ہوشیار نیویگیشن", f2Desc:"اپنی منزل تک درست ہدایات حاصل کریں۔",
+    f3Title:"پسندیدہ", f3Desc:"اپنی پسندیدہ جگہیں فوری رسائی کے لیے محفوظ کریں۔",
+    f4Title:"مقام شیئر کریں", f4Desc:"دوستوں کو اسٹور کی تفصیلات آسانی سے بھیجیں۔",
+    f5Title:"محفوظ اور قابلِ اعتماد", f5Desc:"محفوظ تجربے کو یقینی بنانے کے لیے آپ کے آلے کی سیکیورٹی لانچ پر تصدیق کی جاتی ہے۔",
+    footer:"ETQAN TEBA EST (IFTIKHAR) · کمپنی کے استعمال کے لیے",
+    sheetTitle:"ہوم اسکرین پر شامل کریں",
+    sheetStep1:"سفاری میں شیئر بٹن پر ٹیپ کریں (نیچے موجود، تیر والا مربع)",
+    sheetStep2:"نیچے اسکرول کریں اور 'Add to Home Screen' پر ٹیپ کریں",
+    sheetStep3:"اوپر دائیں جانب 'Add' پر ٹیپ کریں",
+    sheetClose:"سمجھ گیا",
+    offlineTitle:"انٹرنیٹ کنکشن دستیاب نہیں",
+    offlineDesc:"اپنا وائی فائی یا موبائل ڈیٹا چیک کریں، پھر دوبارہ کوشش کریں۔",
+    offlineRetry:"دوبارہ کوشش کریں",
+    useLive:"لائیو استعمال کریں"
+  },
+  ar: {
+    appTitle:"ETQAN TEBA EST (IFTIKHAR)",
+    tagline:"ابحث عن المتاجر. صل إليها. في كل مرة.",
+    badgeSecure:"آمن وموثّق",
+    badgeRegion:"المملكة العربية السعودية",
+    ctaAndroid:"أندرويد",
+    ctaAndroidSub:"تنزيل ملف APK",
+    ctaIphone:"آيفون",
+    ctaIphoneSub:"إضافة إلى الشاشة الرئيسية",
+    versionLine:"الإصدار 3.1 · 9 ميجابايت · يتطلب أندرويد 6.0+",
+    description:"سهّل طريقة عثورك على متاجرك المفضلة والتنقل إليها في المملكة العربية السعودية. يقوم هذا التطبيق بتنظيم مواقع المتاجر وتفاصيلها وعلاماتها التجارية حسب المدينة والفئة، مما يوفر عليك الوقت والجهد.",
+    featuresHeading:"ما يمكنك فعله",
+    f1Title:"بحث متقدم", f1Desc:"اعثر بسهولة على أسماء المتاجر أو العلامات التجارية أو الفئات.",
+    f2Title:"ملاحة ذكية", f2Desc:"احصل على اتجاهات دقيقة مباشرة إلى وجهتك.",
+    f3Title:"المفضلة", f3Desc:"احفظ مواقعك المفضلة للوصول السريع إليها.",
+    f4Title:"مشاركة الموقع", f4Desc:"أرسل تفاصيل المتجر إلى أصدقائك بسهولة.",
+    f5Title:"آمن وموثوق", f5Desc:"يتم التحقق من أمان جهازك عند التشغيل لضمان تجربة آمنة.",
+    footer:"ETQAN TEBA EST (IFTIKHAR) · للاستخدام الداخلي للشركة",
+    sheetTitle:"أضف إلى الشاشة الرئيسية",
+    sheetStep1:"اضغط على زر المشاركة في سفاري (مربع بسهم، أسفل الشاشة)",
+    sheetStep2:"مرّر للأسفل واضغط على \"إضافة إلى الشاشة الرئيسية\"",
+    sheetStep3:"اضغط على \"إضافة\" أعلى اليمين",
+    sheetClose:"حسناً",
+    offlineTitle:"لا يوجد اتصال بالإنترنت",
+    offlineDesc:"تحقق من واي فاي أو بيانات الجوال، ثم حاول مرة أخرى.",
+    offlineRetry:"إعادة المحاولة",
+    useLive:"استخدام النسخة المباشرة"
+  }
+};
+
+function setLang(lang){
+  const dict = translations[lang];
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.getAttribute('data-i18n');
+    if(dict[key] !== undefined) el.innerHTML = dict[key];
+  });
+  document.body.className = 'lang-' + lang;
+  document.body.setAttribute('dir', (lang === 'en') ? 'ltr' : 'rtl');
+  document.querySelectorAll('.lang-btn').forEach(b=>{
+    b.classList.toggle('active', b.getAttribute('data-lang') === lang);
+  });
+  try{ localStorage.setItem('etqan_lang', lang); }catch(e){}
+}
+
+/* tap touch effect: ripple + brief color flash, then revert */
+function attachTapEffect(el){
+  el.addEventListener('pointerdown', function(e){
+    const rect = el.getBoundingClientRect();
+    const ripple = document.createElement('span');
+    const size = Math.max(rect.width, rect.height) * 1.4;
+    ripple.className = 'ripple';
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = ((e.clientX ?? rect.left + rect.width/2) - rect.left - size/2) + 'px';
+    ripple.style.top = ((e.clientY ?? rect.top + rect.height/2) - rect.top - size/2) + 'px';
+    el.appendChild(ripple);
+    setTimeout(()=> ripple.remove(), 600);
+
+    el.classList.add('flash');
+    setTimeout(()=> el.classList.remove('flash'), 180);
+  });
+}
+document.querySelectorAll('.cta, .sheet-close, .offline-retry, .live-btn').forEach(attachTapEffect);
+
+/* plexus background animation */
+(function(){
+  const canvas = document.getElementById('plexus');
+  const ctx = canvas.getContext('2d');
+  let w, h, particles;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function resize(){
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+
+  function initParticles(){
+    const count = Math.max(24, Math.min(55, Math.floor((w*h)/24000)));
+    particles = Array.from({length: count}, () => ({
+      x: Math.random()*w,
+      y: Math.random()*h,
+      vx: (Math.random()-0.5)*0.28,
+      vy: (Math.random()-0.5)*0.28,
+      r: Math.random()*1.6 + 1
+    }));
+  }
+
+  function step(){
+    ctx.clearRect(0,0,w,h);
+    const maxDist = Math.min(150, w/5);
+
+    for(let p of particles){
+      p.x += p.vx; p.y += p.vy;
+      if(p.x < 0 || p.x > w) p.vx *= -1;
+      if(p.y < 0 || p.y > h) p.vy *= -1;
+    }
+
+    for(let i=0; i<particles.length; i++){
+      for(let j=i+1; j<particles.length; j++){
+        const a = particles[i], b = particles[j];
+        const dx = a.x-b.x, dy = a.y-b.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist < maxDist){
+          const alpha = (1 - dist/maxDist) * 0.35;
+          ctx.strokeStyle = `rgba(163,133,224,${alpha})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    for(let p of particles){
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(210,193,245,0.55)';
+      ctx.fill();
+    }
+
+    if(!reduceMotion) requestAnimationFrame(step);
+  }
+
+  resize();
+  initParticles();
+  step();
+  window.addEventListener('resize', ()=>{ resize(); initParticles(); if(reduceMotion) step(); });
+})();
+
+/* offline detection */
+function checkOnline(){
+  const overlay = document.getElementById('offlineOverlay');
+  if(navigator.onLine){
+    overlay.classList.remove('show');
+  } else {
+    overlay.classList.add('show');
+  }
+}
+window.addEventListener('online', checkOnline);
+window.addEventListener('offline', checkOnline);
+window.addEventListener('load', checkOnline);
+checkOnline();
+</script>
 </body>
 </html>
