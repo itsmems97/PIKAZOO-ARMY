@@ -624,28 +624,40 @@
   }
 
   /* ---- Favourites pill (below the WhatsApp pill) ---- */
-  .di-fab-fav {
+  .di-fab-fav-wrap {
+    position: fixed;
     top: calc(max(14px, env(safe-area-inset-top)) + 46px);
-    animation-delay: 0.55s;
+    right: 16px;
+    z-index: 40;
+    transition: top 0.28s cubic-bezier(0.4,0,0.2,1), right 0.28s cubic-bezier(0.4,0,0.2,1);
+  }
+  .di-fab-fav-wrap .di-fab-fav {
+    position: static;
+    top: auto;
+    right: auto;
   }
   .di-icon { position: relative; }
   .fav-count-badge {
     position: absolute;
-    top: -3px;
-    right: -3px;
-    min-width: 15px;
-    height: 15px;
-    padding: 0 4px;
+    top: -6px;
+    right: -6px;
+    min-width: 19px;
+    height: 19px;
+    padding: 0 5px;
     border-radius: 999px;
     background: #ff3b30;
     color: #fff;
     font-family: var(--sf);
-    font-size: 0.58rem;
-    font-weight: 700;
+    font-size: 0.72rem;
+    line-height: 1;
+    font-weight: 800;
     display: none;
     align-items: center;
     justify-content: center;
-    border: 1.5px solid #0a0a0a;
+    border: 2px solid #0a0a0a;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    z-index: 41;
+    pointer-events: none;
   }
 
   /* Once the sticky bar is showing, glide both pills up into it,
@@ -654,7 +666,7 @@
     top: 3px;
     right: 66px;
   }
-  #navBar.visible ~ .di-fab-fav {
+  #navBar.visible ~ .di-fab-fav-wrap {
     top: 3px;
     right: 16px;
   }
@@ -864,13 +876,15 @@
   <span class="di-label">Support</span>
 </a>
 
-<button type="button" class="di-fab di-fab-fav" id="favFab" aria-label="View favourites">
-  <span class="di-icon">
-    <svg id="favFabHeart" viewBox="0 0 24 24" fill="var(--muted-2)"><path d="M12 21s-6.7-4.35-9.33-8.5C.86 9.35 1.9 5.7 5.6 4.8c2.1-.5 4.1.55 5.15 2.15C11.8 5.35 13.8 4.3 15.9 4.8c3.7.9 4.74 4.55 2.93 7.7C15.4 16.65 12 21 12 21z"/></svg>
-    <span class="fav-count-badge" id="favCountBadge">0</span>
-  </span>
-  <span class="di-label">Favourites</span>
-</button>
+<div class="di-fab-fav-wrap">
+  <button type="button" class="di-fab di-fab-fav" id="favFab" aria-label="View favourites">
+    <span class="di-icon">
+      <svg id="favFabHeart" viewBox="0 0 24 24" fill="var(--muted-2)"><path d="M12 21s-6.7-4.35-9.33-8.5C.86 9.35 1.9 5.7 5.6 4.8c2.1-.5 4.1.55 5.15 2.15C11.8 5.35 13.8 4.3 15.9 4.8c3.7.9 4.74 4.55 2.93 7.7C15.4 16.65 12 21 12 21z"/></svg>
+    </span>
+    <span class="di-label">Favourites</span>
+  </button>
+  <span class="fav-count-badge" id="favCountBadge">0</span>
+</div>
 
 <div class="fav-tab" id="favTab">
   <div class="fav-tab-header">
