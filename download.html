@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>ETQAN TEBA EST (IFTIKHAR)</title>
+<link rel="apple-touch-icon" href="ETQAN.png">
 <style>
   :root{
     --bg:#12141a;
@@ -12,6 +13,8 @@
     --muted:#9aa2b1;
     --accent:#3ddc84;
     --accent-dark:#2bb968;
+    --accent2:#4f9dff;
+    --accent2-dark:#3a82df;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html,body{height:100%;}
@@ -51,26 +54,86 @@
     font-size:14px;
     margin-bottom:28px;
   }
-  .download-btn{
+  .btn-row{
+    display:flex;
+    gap:10px;
+  }
+  .btn{
+    flex:1;
     display:block;
-    width:100%;
     padding:15px 0;
-    background:var(--accent);
-    color:#0b1210;
-    font-size:16px;
+    font-size:15px;
     font-weight:600;
     text-decoration:none;
+    border:none;
     border-radius:12px;
     transition:background .15s ease, transform .1s ease;
+    cursor:pointer;
+    font-family:inherit;
   }
-  .download-btn:active{
+  .btn-android{
+    background:var(--accent);
+    color:#0b1210;
+  }
+  .btn-android:active{
     background:var(--accent-dark);
+    transform:scale(0.98);
+  }
+  .btn-iphone{
+    background:var(--accent2);
+    color:#0a1420;
+  }
+  .btn-iphone:active{
+    background:var(--accent2-dark);
     transform:scale(0.98);
   }
   .filesize{
     margin-top:14px;
     color:var(--muted);
     font-size:12px;
+  }
+
+  .overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.6);
+    display:none;
+    align-items:flex-end;
+    justify-content:center;
+    z-index:10;
+  }
+  .overlay.show{
+    display:flex;
+  }
+  .sheet{
+    width:100%;
+    max-width:360px;
+    background:var(--card);
+    border-radius:20px 20px 0 0;
+    padding:24px 24px 28px;
+    text-align:left;
+  }
+  .sheet h2{
+    font-size:16px;
+    margin-bottom:14px;
+  }
+  .sheet ol{
+    padding-left:20px;
+    color:var(--text);
+    font-size:14px;
+    line-height:1.7;
+  }
+  .sheet-close{
+    margin-top:20px;
+    width:100%;
+    padding:13px 0;
+    background:var(--accent2);
+    color:#0a1420;
+    border:none;
+    border-radius:10px;
+    font-weight:600;
+    font-size:14px;
+    font-family:inherit;
   }
 </style>
 </head>
@@ -79,8 +142,23 @@
     <img class="icon" src="ETQAN.png" alt="App icon">
     <h1>ETQAN TEBA EST (IFTIKHAR)</h1>
     <p class="meta">Version 3.1 · For company use</p>
-    <a class="download-btn" href="ETQAN TEBA EST (IFTIKHAR).apk" download>Download APK</a>
+    <div class="btn-row">
+      <a class="btn btn-android" href="ETQAN TEBA EST (IFTIKHAR).apk" download>Android</a>
+      <button class="btn btn-iphone" onclick="document.getElementById('iphoneOverlay').classList.add('show')">iPhone</button>
+    </div>
     <p class="filesize">~ 9MB · Android 6.0+</p>
+  </div>
+
+  <div class="overlay" id="iphoneOverlay">
+    <div class="sheet">
+      <h2>Add to your Home Screen</h2>
+      <ol>
+        <li>Tap the <strong>Share</strong> button in Safari (square with an arrow, at the bottom)</li>
+        <li>Scroll down and tap <strong>Add to Home Screen</strong></li>
+        <li>Tap <strong>Add</strong> in the top right</li>
+      </ol>
+      <button class="sheet-close" onclick="document.getElementById('iphoneOverlay').classList.remove('show')">Got it</button>
+    </div>
   </div>
 </body>
 </html>
