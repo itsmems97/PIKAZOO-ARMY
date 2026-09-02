@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ETQAN TEBA EST (IFTIKHAR)</title>
+<style>
+  :root{
+    --bg:#12141a;
+    --card:#1b1f27;
+    --text:#eef0f4;
+    --muted:#9aa2b1;
+    --accent:#3ddc84;
+    --accent-dark:#2bb968;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+  }
+  .card{
+    width:100%;
+    max-width:360px;
+    padding:32px 28px;
+    text-align:center;
+  }
+  .icon{
+    width:88px;
+    height:88px;
+    border-radius:22px;
+    margin:0 auto 20px;
+    display:block;
+    background:var(--card);
+    object-fit:cover;
+  }
+  h1{
+    font-size:20px;
+    font-weight:600;
+    letter-spacing:-0.01em;
+    margin-bottom:6px;
+    word-wrap: break-word;
+  }
+  .meta{
+    color:var(--muted);
+    font-size:14px;
+    margin-bottom:28px;
+  }
+  .download-btn{
+    display:block;
+    width:100%;
+    padding:15px 0;
+    background:var(--accent);
+    color:#0b1210;
+    font-size:16px;
+    font-weight:600;
+    text-decoration:none;
+    border-radius:12px;
+    transition:background .15s ease, transform .1s ease;
+  }
+  .download-btn:active{
+    background:var(--accent-dark);
+    transform:scale(0.98);
+  }
+  .filesize{
+    margin-top:14px;
+    color:var(--muted);
+    font-size:12px;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <img class="icon" src="ETQAN.png" alt="App icon">
+    <h1>ETQAN TEBA EST (IFTIKHAR)</h1>
+    <p class="meta">Version 3.1 · For company use</p>
+    <a class="download-btn" href="ETQAN TEBA EST (IFTIKHAR).apk" download>Download APK</a>
+    <p class="filesize">~ 9MB · Android 6.0+</p>
+  </div>
+</body>
+</html>
