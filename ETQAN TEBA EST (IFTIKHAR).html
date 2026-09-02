@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eastern Province Store Directory</title>
+<style>
+  :root {
+    --bg: #0f1d1f;
+    --bg-raised: #16292b;
+    --bg-raised-2: #1c3234;
+    --line: #294345;
+    --gold: #d9a55c;
+    --gold-dim: #a67a3f;
+    --text: #f2ede4;
+    --muted: #93a6a3;
+    --muted-2: #6c807d;
+
+    --cat-food: #d98e5c;
+    --cat-apparel: #7ea3c4;
+    --cat-beauty: #c4809f;
+    --cat-home: #8fae7e;
+    --cat-other: #a3a3a3;
+
+    --sf: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    --fill-tertiary: rgba(118,118,128,0.24);
+    --fill-quaternary: rgba(118,118,128,0.14);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; background: var(--bg); }
+  body {
+    margin: 0;
+    font-family: var(--sf);
+    background: transparent;
+    color: var(--text);
+    padding-bottom: 48px;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---- Animated plexus background ---- */
+  #plexusBg {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    filter: blur(1px) brightness(1.3);
+    opacity: 0.92;
+    pointer-events: none;
+  }
+
+  /* ---- Header: iOS Large Title nav bar ---- */
+  #navBar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    height: 0;
+    overflow: hidden;
+    padding: 0 20px;
+    background: rgba(15,29,31,0.72);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid transparent;
+    font-family: var(--sf);
+    transition: height 0.18s ease, border-color 0.18s ease;
+  }
+  #navBar.visible { height: 44px; border-bottom-color: var(--line); }
+  .navbar-title {
+    font-weight: 600;
+    font-size: 1.02rem;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  header {
+    position: relative;
+    z-index: 1;
+    padding: 8px 20px 16px;
+  }
+  .eyebrow-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--gold);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    margin-bottom: 12px;
+    padding: 5px 11px 5px 9px;
+    border-radius: 100px;
+    background: rgba(217,165,92,0.14);
+  }
+  .eyebrow-row svg { flex-shrink: 0; }
+  header h1 {
+    margin: 0;
+    font-family: var(--sf);
+    font-weight: 800;
+    font-size: 2.1rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  header p {
+    color: var(--muted);
+    margin: 6px 0 0;
+    font-size: 0.9rem;
+    max-width: 34ch;
+    line-height: 1.4;
+  }
+
+  /* ---- Controls ---- */
+  .controls {
+    padding: 8px 20px 10px;
+    position: sticky;
+    top: 44px;
+    background: var(--bg);
+    z-index: 20;
+  }
+
+  .search-row {
+    display: flex;
+    gap: 8px;
+  }
+  .search-field {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .search-field svg {
+    position: absolute;
+    left: 12px;
+    color: var(--muted-2);
+    pointer-events: none;
+  }
+  #searchInput {
+    width: 100%;
+    padding: 9px 14px 9px 34px;
+    font-size: 1rem;
+    font-family: var(--sf);
+    border-radius: 12px;
+    border: none;
+    background: var(--fill-tertiary);
+    color: var(--text);
+    outline: none;
+  }
+  #searchInput::placeholder { color: var(--muted-2); }
+  #searchInput:focus { background: var(--fill-quaternary); box-shadow: 0 0 0 1.5px var(--gold-dim); }
+
+  .sort-select {
+    padding: 0 14px;
+    border-radius: 12px;
+    border: none;
+    background: var(--fill-tertiary);
+    color: var(--gold);
+    font-family: var(--sf);
+    font-weight: 500;
+    font-size: 0.88rem;
+    outline: none;
+  }
+
+  .cat-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+  .cat-row::-webkit-scrollbar { display: none; }
+  .cat-chip {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 100px;
+    border: none;
+    background: var(--fill-tertiary);
+    color: var(--text);
+    font-family: var(--sf);
+    font-size: 0.86rem;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    transition: background 0.12s, box-shadow 0.12s;
+  }
+  .cat-chip .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+  .cat-chip.active {
+    background: var(--gold);
+    color: #1a1512;
+    font-weight: 700;
+    box-shadow: 0 2px 6px rgba(217,165,92,0.35);
+  }
+  .cat-chip.active .dot { background: #1a1512; }
+
+  .count-row {
+    padding: 12px 34px 4px 20px;
+    color: var(--muted-2);
+    font-size: 0.8rem;
+    font-family: var(--sf);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ---- Group headers (alphabet / city) ---- */
+  .group-header {
+    padding: 18px 20px 6px;
+    font-family: var(--sf);
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: var(--gold);
+  }
+  .group-header:first-child { padding-top: 10px; }
+
+  #results { padding: 0 30px 0 14px; }
+
+  /* ---- A-Z / 0-9 quick-jump index ---- */
+  .az-index {
+    position: fixed;
+    right: 2px;
+    top: 300px;
+    bottom: 90px;
+    z-index: 25;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 3px;
+    border-radius: 14px;
+    background: rgba(10, 18, 19, 0.35);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    transition: top 0.18s ease;
+  }
+  /* once the sticky nav bar is showing, the header has scrolled away, so
+     the index can tuck in closer to the top instead of floating mid-page */
+  #navBar.visible ~ .az-index { top: 178px; }
+  .az-index button {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: var(--muted-2);
+    font-family: var(--sf);
+    font-size: 0.58rem;
+    font-weight: 700;
+    line-height: 1.35;
+    padding: 0 5px;
+    cursor: pointer;
+  }
+  .az-index button.active {
+    color: var(--gold);
+  }
+  .az-index button.disabled {
+    color: rgba(147, 166, 163, 0.25);
+    cursor: default;
+  }
+  .az-index button.touching {
+    color: var(--bg);
+    background: var(--gold);
+    border-radius: 50%;
+    transform: scale(1.3);
+  }
+
+  /* ---- Cards ---- */
+  .result-card {
+    display: flex;
+    background: var(--bg-raised);
+    border: none;
+    border-left: 4px solid var(--cat-other);
+    border-radius: 18px;
+    padding: 14px 15px;
+    margin: 0 6px 9px;
+    cursor: pointer;
+    transition: background 0.12s, transform 0.1s;
+    gap: 10px;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.03);
+  }
+  .result-card:active { background: var(--bg-raised-2); transform: scale(0.985); }
+  .result-card.no-link { cursor: default; }
+  .result-card.no-link:active { transform: none; }
+
+  .card-main { flex: 1; min-width: 0; }
+
+  .card-top-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .brand {
+    color: var(--text);
+    font-weight: 700;
+    font-size: 1.02rem;
+    font-family: var(--sf);
+    letter-spacing: -0.01em;
+  }
+  .status-badge {
+    font-size: 0.68rem;
+    font-weight: 600;
+    font-family: var(--sf);
+    padding: 2px 8px;
+    border-radius: 100px;
+    letter-spacing: 0;
+  }
+  .status-badge.new { background: rgba(143,174,126,0.18); color: var(--cat-home); }
+  .status-badge.opening_soon { background: rgba(217,165,92,0.18); color: var(--gold); }
+  .status-badge.closed { background: rgba(163,163,163,0.18); color: var(--muted-2); }
+
+  /* ---- Favourite heart button on each store card ---- */
+  .fav-btn {
+    appearance: none;
+    -webkit-appearance: none;
+    border: none;
+    background: transparent;
+    margin-left: auto;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .fav-btn svg {
+    width: 19px;
+    height: 19px;
+    transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .fav-btn .heart-path {
+    fill: none;
+    stroke: var(--muted-2);
+    stroke-width: 2;
+    transition: fill 0.15s ease, stroke 0.15s ease;
+  }
+  .fav-btn.active .heart-path { fill: #ff3b30; stroke: #ff3b30; }
+  .fav-btn:active svg { transform: scale(0.8); }
+  .fav-btn.active svg { transform: scale(1.08); }
+
+  .store-line {
+    color: var(--muted);
+    font-size: 0.86rem;
+    font-family: var(--sf);
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+  .store-line .city { color: var(--text); opacity: 0.85; }
+
+  .type-tag {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 0.7rem;
+    font-family: var(--sf);
+    color: var(--muted-2);
+    background: var(--fill-quaternary);
+    padding: 2px 8px;
+    border-radius: 100px;
+  }
+
+  /* ---- Map + Share action column ---- */
+  .card-actions {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* shared icon-button base */
+  .icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: #1a2a2c;
+    border: 1px solid rgba(255,255,255,0.07);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+    cursor: pointer;
+    transition: transform 0.1s, background 0.12s;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+  .icon-btn:active { transform: scale(0.90); background: #223234; }
+  .icon-btn svg { display: block; }
+
+  /* map button — green icon */
+  .directions {
+    color: #4ade80;
+  }
+  .directions.disabled {
+    color: #3a4a48;
+    background: #131f20;
+    border-color: rgba(255,255,255,0.04);
+    opacity: 0.5;
+    pointer-events: none !important;
+    cursor: default !important;
+  }
+
+  /* share button */
+  .share-btn {
+    appearance: none;
+    -webkit-appearance: none;
+    padding: 0;
+    color: #4ade80;
+  }
+  .share-btn.disabled {
+    color: #4a5a58;
+    opacity: 0.6;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  /* ---- Share fallback toast ---- */
+  .share-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 100px;
+    transform: translateX(-50%) translateY(12px);
+    z-index: 60;
+    background: var(--bg-raised-2);
+    color: var(--text);
+    font-family: var(--sf);
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 100px;
+    border: 1px solid var(--line);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .share-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* ---- Share fallback modal (last-resort, guarantees a visible action) ---- */
+  .share-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(0,0,0,0.55);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+  }
+  .share-modal.show {
+    opacity: 1;
+    visibility: visible;
+  }
+  .share-modal-card {
+    width: 100%;
+    max-width: 360px;
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+  }
+  .share-modal-title {
+    font-family: var(--sf);
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .share-modal-text {
+    width: 100%;
+    min-height: 70px;
+    resize: none;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--fill-tertiary);
+    color: var(--text);
+    font-family: var(--sf);
+    font-size: 0.85rem;
+    padding: 10px 12px;
+    outline: none;
+  }
+  .share-modal-close {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    margin-top: 12px;
+    padding: 10px;
+    border: none;
+    border-radius: 12px;
+    background: var(--gold);
+    color: #1a1512;
+    font-family: var(--sf);
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+  }
+
+  .no-results {
+    text-align: center;
+    color: var(--muted);
+    padding: 60px 20px;
+    font-size: 0.9rem;
+  }
+
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: var(--muted-2);
+    font-size: 0.72rem;
+    padding: 8px 20px 8px;
+    line-height: 1.6;
+  }
+
+  .site-link-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 28px 20px 18px;
+    padding: 13px 20px;
+    border-radius: 100px;
+    background: var(--fill-tertiary);
+    color: var(--gold);
+    font-family: var(--sf);
+    font-weight: 600;
+    font-size: 0.92rem;
+    text-decoration: none;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    transition: background 0.12s, transform 0.1s;
+  }
+  .site-link-btn:active { background: var(--fill-quaternary); transform: scale(0.98); }
+  .site-link-btn svg { flex-shrink: 0; }
+
+  .credit-line {
+    text-align: center;
+    color: var(--muted-2);
+    font-family: var(--sf);
+    font-size: 0.7rem;
+    line-height: 1.6;
+    padding: 4px 20px 24px;
+  }
+
+  #countRow, #results, .group-header { position: relative; z-index: 1; }
+
+  /* ---- Dynamic-Island style WhatsApp pill (top right) ---- */
+  @keyframes diPop {
+    0%   { opacity: 0; transform: scale(0.5); }
+    60%  { opacity: 1; transform: scale(1.08); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  .di-fab {
+    position: fixed;
+    top: max(14px, env(safe-area-inset-top));
+    right: 16px;
+    z-index: 40;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    border-radius: 999px;
+    background: #0a0a0a;
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow:
+      0 8px 20px rgba(0,0,0,0.55),
+      0 2px 6px rgba(0,0,0,0.4),
+      inset 0 1px 1px rgba(255,255,255,0.12);
+    text-decoration: none;
+    overflow: hidden;
+    opacity: 0;
+    animation: diPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s forwards;
+    transition: transform 0.2s ease, opacity 0.2s ease, top 0.28s cubic-bezier(0.4,0,0.2,1), right 0.28s cubic-bezier(0.4,0,0.2,1);
+  }
+  .di-fab:active { transform: scale(0.94); }
+  .di-icon {
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .di-icon svg { width: 20px; height: 20px; }
+  .di-label {
+    max-width: 0;
+    opacity: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    color: #f2ede4;
+    font-family: var(--sf);
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: max-width 0.45s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, padding-right 0.45s ease;
+  }
+  .di-fab.expanded .di-label {
+    max-width: 140px;
+    opacity: 1;
+    padding-right: 14px;
+  }
+  button.di-fab {
+    appearance: none;
+    -webkit-appearance: none;
+    font: inherit;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  /* ---- Favourites pill (below the WhatsApp pill) ---- */
+  .di-fab-fav {
+    top: calc(max(14px, env(safe-area-inset-top)) + 46px);
+    animation-delay: 0.55s;
+  }
+  .di-icon { position: relative; }
+  .fav-count-badge {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    min-width: 15px;
+    height: 15px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #ff3b30;
+    color: #fff;
+    font-family: var(--sf);
+    font-size: 0.58rem;
+    font-weight: 700;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid #0a0a0a;
+  }
+
+  /* Once the sticky bar is showing, glide both pills up into it,
+     side by side on the right, instead of floating separately */
+  #navBar.visible ~ .di-fab {
+    top: 3px;
+    right: 66px;
+  }
+  #navBar.visible ~ .di-fab-fav {
+    top: 3px;
+    right: 16px;
+  }
+
+  /* ---- Favourites tab (full-screen sheet) ---- */
+  .fav-tab {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: translateY(100%);
+    transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .fav-tab.open { transform: translateY(0); }
+  .fav-tab-header {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: max(16px, env(safe-area-inset-top)) 16px 14px;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg-raised);
+  }
+  .fav-tab-title {
+    font-family: var(--sf);
+    font-weight: 800;
+    font-size: 1.15rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .fav-tab-count {
+    color: var(--muted-2);
+    font-family: var(--sf);
+    font-size: 0.8rem;
+    margin-left: auto;
+    margin-right: 4px;
+  }
+  .fav-tab-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--fill-tertiary);
+    color: var(--text);
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .fav-tab-body {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 14px 30px 40px 14px;
+  }
+  /* ---- Splash screen ---- */
+  body.splash-lock { overflow: hidden; height: 100vh; }
+  #splashScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    background: radial-gradient(circle at 50% 38%, var(--bg-raised) 0%, var(--bg) 72%);
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+  }
+  #splashScreen.splash-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .splash-mark svg {
+    width: 84px;
+    height: 84px;
+    filter: drop-shadow(0 4px 16px rgba(217,165,92,0.35));
+  }
+  .splash-roof, .splash-body {
+    stroke-dasharray: 60;
+    stroke-dashoffset: 60;
+    animation: splashDraw 0.9s ease forwards;
+  }
+  .splash-body { animation-delay: 0.22s; }
+  .splash-window {
+    fill: var(--gold);
+    opacity: 0;
+    animation: splashPop 0.4s ease forwards;
+    animation-delay: 0.85s;
+    transform-origin: center;
+  }
+  @keyframes splashDraw { to { stroke-dashoffset: 0; } }
+  @keyframes splashPop {
+    0% { opacity: 0; transform: scale(0.3); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  .splash-title {
+    font-family: var(--sf);
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    opacity: 0;
+    animation: splashFadeUp 0.6s ease forwards;
+    animation-delay: 1.05s;
+  }
+  .splash-sub {
+    font-family: var(--sf);
+    font-weight: 600;
+    font-size: 0.76rem;
+    color: var(--gold);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: splashFadeUp 0.6s ease forwards;
+    animation-delay: 1.2s;
+  }
+  @keyframes splashFadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  /* ---- Security check (single line) ---- */
+  .splash-security-single {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    font-family: var(--sf);
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--muted);
+    opacity: 0;
+    animation: splashFadeUp 0.5s ease forwards;
+    animation-delay: 1.4s;
+  }
+  .sec-dots {
+    display: inline-block;
+    width: 1.1em;
+    text-align: left;
+  }
+  .sec-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #8fae7e;
+    font-weight: 700;
+    font-size: 0.76rem;
+    flex-shrink: 0;
+    opacity: 0;
+    transform: scale(0.4);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .sec-check.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .sec-check svg {
+    width: 13px;
+    height: 13px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .splash-roof, .splash-body, .splash-window, .splash-title, .splash-sub, .splash-security-single, .sec-check {
+      animation: none !important;
+      opacity: 1 !important;
+      stroke-dashoffset: 0 !important;
+      transform: none !important;
+    }
+  }
+</style>
+</head>
+<body class="splash-lock">
+
+<div id="splashScreen">
+  <div class="splash-mark">
+    <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path class="splash-roof" d="M3 9.5 12 3l9 6.5"/>
+      <path class="splash-body" d="M5 9.5V19a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9.5"/>
+      <rect class="splash-window" x="9.4" y="11.8" width="5.2" height="5.2" rx="0.7"/>
+    </svg>
+  </div>
+  <div class="splash-title">ETqan Taiba Co.</div>
+  <div class="splash-sub">Store Directory</div>
+
+  <div class="splash-security-single">
+    <span>Device Security Checking<span class="sec-dots" id="secDots">.</span></span>
+    <span class="sec-check" id="secCheckSingle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Pass</span>
+  </div>
+</div>
+
+<canvas id="plexusBg"></canvas>
+
+<div id="navBar">
+  <div class="navbar-title">Store Directory</div>
+</div>
+
+<a class="di-fab" id="diFab" href="https://wa.me/966545246165" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+  <span class="di-icon">
+    <svg viewBox="0 0 24 24" fill="#25D366"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.85 9.85 0 0 0 12.04 2zm0 18.13h-.01a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.36c0-4.54 3.7-8.24 8.25-8.24a8.2 8.2 0 0 1 8.24 8.24c0 4.55-3.7 8.22-8.24 8.22zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.4-.12-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.15.16-.25.25-.42.08-.17.04-.31-.02-.44-.06-.12-.56-1.36-.77-1.86-.2-.49-.41-.42-.56-.43-.14-.01-.31-.01-.48-.01-.17 0-.44.06-.67.31-.23.25-.87.86-.87 2.09 0 1.23.9 2.42 1.02 2.59.12.17 1.76 2.7 4.27 3.78.6.26 1.06.41 1.43.53.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.14-1.18-.06-.11-.23-.17-.48-.29z"/></svg>
+  </span>
+  <span class="di-label">Support</span>
+</a>
+
+<button type="button" class="di-fab di-fab-fav" id="favFab" aria-label="View favourites">
+  <span class="di-icon">
+    <svg id="favFabHeart" viewBox="0 0 24 24" fill="var(--muted-2)"><path d="M12 21s-6.7-4.35-9.33-8.5C.86 9.35 1.9 5.7 5.6 4.8c2.1-.5 4.1.55 5.15 2.15C11.8 5.35 13.8 4.3 15.9 4.8c3.7.9 4.74 4.55 2.93 7.7C15.4 16.65 12 21 12 21z"/></svg>
+    <span class="fav-count-badge" id="favCountBadge">0</span>
+  </span>
+  <span class="di-label">Favourites</span>
+</button>
+
+<div class="fav-tab" id="favTab">
+  <div class="fav-tab-header">
+    <div class="fav-tab-title">
+      <svg id="favTabHeart" width="18" height="18" viewBox="0 0 24 24" fill="var(--muted-2)"><path d="M12 21s-6.7-4.35-9.33-8.5C.86 9.35 1.9 5.7 5.6 4.8c2.1-.5 4.1.55 5.15 2.15C11.8 5.35 13.8 4.3 15.9 4.8c3.7.9 4.74 4.55 2.93 7.7C15.4 16.65 12 21 12 21z"/></svg>
+      Favourites
+    </div>
+    <div class="fav-tab-count" id="favTabCount">0 stores</div>
+    <button type="button" class="fav-tab-close" id="favTabClose" aria-label="Close favourites">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div class="fav-tab-body" id="favTabBody"></div>
+</div>
+
+<header id="pageHeader">
+  <div class="eyebrow-row">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 12 3l9 6.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg>
+    ETqan Taiba Co.
+  </div>
+  <h1>Store Directory</h1>
+  <p>170 stores across 8 cities. Search by brand, mall, or city — or browse the list below.</p>
+</header>
+
+<div class="controls" id="controls">
+  <div class="search-row">
+    <div class="search-field">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" id="searchInput" placeholder="Search Starbucks, Khobar, Rashid Mall..." autocomplete="off">
+    </div>
+    <select class="sort-select" id="sortSelect">
+      <option value="brand">Brand A–Z</option>
+      <option value="city">By city</option>
+    </select>
+  </div>
+  <div class="cat-row" id="catRow"></div>
+</div>
+
+<div class="count-row" id="countRow"></div>
+<div id="results"></div>
+<div class="az-index" id="azIndex"></div>
+
+<footer>Eastern Province retail partners &middot; closed locations excluded &middot; map links open in Google Maps</footer>
+
+<a class="site-link-btn" href="https://etqanteba.com/" target="_blank" rel="noopener">
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18"/></svg>
+  etqanteba.com
+</a>
+
+<div class="credit-line">© 2026 ETqan Taiba Co. | All Rights Reserved | Application Design By IFTIKHAR AHMED Riyadh Design.</div>
+
+
+<script>
+/* ---- Minimalist grayscale plexus network background ---- */
+(function () {
+  const canvas = document.getElementById('plexusBg');
+  const ctx = canvas.getContext('2d');
+  let w, h, nodes;
+  const LINK_DIST = 150;
+  const NODE_COUNT_DENSITY = 7000; // px^2 per node
+
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+    const count = Math.min(70, Math.max(28, Math.round((w * h) / NODE_COUNT_DENSITY)));
+    nodes = Array.from({ length: count }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.18,
+      vy: (Math.random() - 0.5) * 0.18,
+      r: Math.random() * 1.4 + 0.6,
+    }));
+  }
+
+  function step() {
+    ctx.clearRect(0, 0, w, h);
+    for (const n of nodes) {
+      n.x += n.vx;
+      n.y += n.vy;
+      if (n.x < 0 || n.x > w) n.vx *= -1;
+      if (n.y < 0 || n.y > h) n.vy *= -1;
+    }
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j];
+        const dx = a.x - b.x, dy = a.y - b.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < LINK_DIST) {
+          const alpha = (1 - dist / LINK_DIST) * 0.9;
+          ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+          ctx.lineWidth = 0.9;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+      }
+    }
+    for (const n of nodes) {
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r * 2.4, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(217, 165, 92, 0.18)';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+      ctx.shadowColor = 'rgba(255,255,255,0.9)';
+      ctx.shadowBlur = 6;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+    requestAnimationFrame(step);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  requestAnimationFrame(step);
+})();
+
+/* ---- Dynamic-Island style pill: expand to show label, then collapse ---- */
+(function () {
+  const fab = document.getElementById('diFab');
+  setTimeout(() => {
+    fab.classList.add('expanded');
+    setTimeout(() => fab.classList.remove('expanded'), 2600);
+  }, 1000);
+  fab.addEventListener('mouseenter', () => fab.classList.add('expanded'));
+  fab.addEventListener('mouseleave', () => fab.classList.remove('expanded'));
+})();
+
+const DATA = [{"brand":"Raising Cane's","store":"Nakheel Mall -Dammam","mall":"Nakheel Mall Dammam","city":"Dammam","category":"Food & Drink","status":"opening_soon","type":"Mall Location","link":"https://maps.app.goo.gl/5ZpuuYN7fYmBchj36"},{"brand":"Hennes and Mauritz","store":"West Avenue, Dammam","mall":"West Avenue Dammam","city":"Dammam","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/vKCk9UEaBYP1Jfr59"},{"brand":"Starbucks","store":"King Saud Aramco DT-Khobar","mall":"Stand Alone","city":"Khobar","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/8jYGEUDQv3BBLL8j8"},{"brand":"Hennes and Mauritz","store":"The Galleria, Jubail","mall":"The Galleria Jubail","city":"Jubail","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/kvSDytKWuR1B1CnQ8"},{"brand":"Raising Cane's","store":"Tamimi Raka, Khobar","mall":"Tamimi Raka, Khobar","city":"Khobar","category":"Food & Drink","status":"open","type":"Plaza","link":"https://maps.app.goo.gl/Bk8DBAyG9XENwYiE7"},{"brand":"Starbucks","store":"King Abdulaziz Road City DT, Hafir Al Batin","mall":"Stand Alone","city":"Hafir Al Batin","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/UraJq9ZQ6Sm7e2Ng6"},{"brand":"Starbucks","store":"Bright Future, Dhahran","mall":"Stand Alone","city":"Dhahran","category":"Food & Drink","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/eXj9n3Pjav5F8NLj6"},{"brand":"The Cheesecake Factory","store":"Ajdaan Walk, Khobar","mall":"Ajdaan Walk,Khobar","city":"Khobar","category":"Food & Drink","status":"open","type":"Plaza","link":"https://maps.app.goo.gl/hPMJrbB3ptdG4SLx9"},{"brand":"Starbucks","store":"Coast Road DT, Dammam","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/psSSWzdmTQwSu835A"},{"brand":"Starbucks","store":"Al Khalij Road DT, Dammam","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/qUfuAoYDa1BVrVu6A"},{"brand":"Starbucks","store":"KFIA - Domestic Airside, Dammam","mall":"KFIA, Dammam","city":"Dammam","category":"Food & Drink","status":"open","type":"Others, Airport","link":"https://maps.app.goo.gl/TjQ8QYNK9iXpi25Z6"},{"brand":"Pottery Barn - Kids","store":"Rashid Mall, Khobar","mall":"Rashid Mall, Khobar","city":"Khobar","category":"Beauty & Wellness","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/RVyVWTetie3rsaHu6"},{"brand":"Starbucks","store":"Mouawsat-Hospital","mall":"Stand Alone","city":"Khobar","category":"Food & Drink","status":"open","type":"Others, Hospital","link":"https://maps.app.goo.gl/tKydjfGqfazenWvM8"},{"brand":"MAC","store":"Rashid Mall, Khobar","mall":"Rashid Mall, Khobar","city":"Khobar","category":"Beauty & Wellness","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/RVyVWTetie3rsaHu6"},{"brand":"Pottery Barn","store":"Rashid Mall, Khobar","mall":"Rashid Mall, Khobar","city":"Khobar","category":"Beauty & Wellness","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/RVyVWTetie3rsaHu6"},{"brand":"Starbucks","store":"Olaya DT  Khobar","mall":"Stand Alone","city":"Khobar","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/rJDDU2ZTkEvczeou7"},{"brand":"Bath and Body Works","store":"Katif Commercial Centre","mall":"Katif Commercial Centre","city":"Katif","category":"Beauty & Wellness","status":"open","type":"Plaza","link":"https://maps.app.goo.gl/Kg8NPq3G7tm18rKQA"},{"brand":"Starbucks","store":"Al Derah Walk-Jubail","mall":"Stand Alone","city":"Jubail","category":"Food & Drink","status":"open","type":"Shopping Mall / Center","link":"https://maps.app.goo.gl/oswtvFo2mSccXdxQ8"},{"brand":"Starbucks","store":"The Galleria, Jubail","mall":"The Galleria Jubail","city":"Jubail","category":"Food & Drink","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/kvSDytKWuR1B1CnQ8"},{"brand":"Starbucks","store":"Makkah Rd Total Energies -Khobar","mall":"Stand Alone","city":"Khobar","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/CadDuYgC2HN1n8z67"},{"brand":"Starbucks","store":"Al Nuzha-Dammam DT","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/myHEVUZPv5uDs4qDA"},{"brand":"Starbucks","store":"Dammam Medical Complex, Dammam","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"open","type":"Others, Hospital","link":"https://maps.app.goo.gl/WqqdgfrbcFryARGA7"},{"brand":"Starbucks","store":"Nakheel Mall Dammam","mall":"Nakheel Mall Dammam","city":"Dammam","category":"Food & Drink","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/5ZpuuYN7fYmBchj36"},{"brand":"Pinkberry","store":"Othaim Mall, Dammam","mall":"Othaim Mall, Dammam","city":"Dammam","category":"Food & Drink","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/MwdzUaKr4mxHTZCPA"},{"brand":"Next","store":"Rashid Mall, Khobar","mall":"Rashid Mall, Khobar","city":"Khobar","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/RVyVWTetie3rsaHu6"},{"brand":"Starbucks","store":"18th street DT,Dammam","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/dmsUC7Rfxp1wE7RA6"},{"brand":"Raising Cane's","store":"King Abdulaziz Rd Riyadh Way DT-Hafir Al Batin","mall":"Stand Alone","city":"Hafir Al Batin","category":"Food & Drink","status":"opening_soon","type":"Drive-Thru","link":"https://maps.app.goo.gl/srwrhwGQMhBNepsUA"},{"brand":"Starbucks","store":"Al Faisalliah-Dammam DT","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/Rp5q6YvpK4NgNrGGA"},{"brand":"Starbucks","store":"Centro Corniche","mall":"Centro Corniche","city":"Khobar","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/v1fz6VYTkKdnmDL56"},{"brand":"Starbucks","store":"Novotel DT, Dammam","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/oVSP7k762rJL2W9q8"},{"brand":"Starbucks","store":"Mall of Daharan","mall":"Mall of Dhahran","city":"Dhahran","category":"Food & Drink","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/dmrXXRfijX1KqVcf9"},{"brand":"Starbucks","store":"King Fahad Specialist Hospital","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"open","type":"Others, Hospital","link":"https://maps.app.goo.gl/YeQywXKwBeXnVQxV7"},{"brand":"Mothercare","store":"Rashid Mall, Khobar (MB)","mall":"Rashid Mall, Khobar","city":"Khobar","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/RVyVWTetie3rsaHu6"},{"brand":"NYX","store":"Othaim Mall","mall":"Othaim Mall, Dammam","city":"Dammam","category":"Beauty & Wellness","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/MwdzUaKr4mxHTZCPA"},{"brand":"Bath and Body Works","store":"Othaim Mall, Dammam","mall":"Othaim Mall, Dammam","city":"Dammam","category":"Beauty & Wellness","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/MwdzUaKr4mxHTZCPA"},{"brand":"Starbucks","store":"Almana hospital Khobar – Tower 2","mall":"Stand Alone","city":"Khobar","category":"Food & Drink","status":"open","type":"Others, Hospital","link":"https://maps.app.goo.gl/KQyBhXPyoGA4sirMA"},{"brand":"Starbucks","store":"ENOC Khozama","mall":"Stand Alone","city":"Khobar","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/eL7DxdUKqubG4A9a9"},{"brand":"Starbucks","store":"Al Salam Hospital, Khobar","mall":"Stand Alone","city":"Khobar","category":"Food & Drink","status":"open","type":"Hospital","link":"https://maps.app.goo.gl/zfDYdrL5QoHZZ7u36"},{"brand":"Hennes and Mauritz","store":"Rashid Mall, Khobar","mall":"Rashid Mall, Khobar","city":"Khobar","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/RVyVWTetie3rsaHu6"},{"brand":"Bath and Body Works","store":"Othaim Mall, Hofuf","mall":"Othaim Mall, Hofuf","city":"Hofuf","category":"Beauty & Wellness","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/fo9ZVU64C7X1Aeqj7"},{"brand":"Starbucks","store":"Jarir King Abdullah-Hofuf","mall":"Jarir King Abdullah-Hofuf","city":"Hofuf","category":"Food & Drink","status":"open","type":"Plaza","link":"https://maps.app.goo.gl/Dy8u6YQe4ihhHqTXA"},{"brand":"Starbucks","store":"ORA King Saud DT","mall":"Stand Alone","city":"Dhahran","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/tkU1GtBLLjKt3Jxw7?g_st=iw"},{"brand":"Starbucks","store":"Al Jubail","mall":"Stand Alone","city":"Jubail","category":"Food & Drink","status":"open","type":"High Street","link":"https://maps.app.goo.gl/CyMkEokZtkfL9u4P7"},{"brand":"Starbucks","store":"Fuel Way DT , Jubail","mall":"Stand Alone","city":"Jubail","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/ydjMSEucfG8UP3UE7"},{"brand":"Starbucks","store":"Prince Faisal Street, Khobar","mall":"Prince Faisal Street, Khobar","city":"Khobar","category":"Food & Drink","status":"open","type":"High Street","link":"https://maps.app.goo.gl/bRJQaXJti4pCFmUA7"},{"brand":"Starbucks","store":"AHAH Tower-Khobar","mall":"Stand Alone","city":"Khobar","category":"Food & Drink","status":"open","type":"Residential / Commercial Bldg","link":"https://maps.app.goo.gl/ujF373Cc39Mvc9cL6"},{"brand":"West Elm","store":"Turki Centre, Khobar","mall":"Turki Centre Khobar","city":"Khobar","category":"Beauty & Wellness","status":"open","type":"Plaza","link":"https://maps.app.goo.gl/1NeMcg7jXUFXFsRs7"},{"brand":"Bath and Body Works","store":"Prince Faisal Street, Khobar","mall":"Prince Faisal Street, Khobar","city":"Khobar","category":"Beauty & Wellness","status":"open","type":"High Street","link":"https://maps.app.goo.gl/bRJQaXJti4pCFmUA7"},{"brand":"Milano","store":"Rashid Mall, Khobar","mall":"Rashid Mall, Khobar","city":"Khobar","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/RVyVWTetie3rsaHu6"},{"brand":"Starbucks","store":"Badia-DT","mall":"Stand Alone","city":"Khobar","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/hHfDeaBXK5QLwjtj8"},{"brand":"Victoria's Secret International-Pink","store":"Rashid Mall-Pink","mall":"Rashid Mall, Khobar","city":"Khobar","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/RVyVWTetie3rsaHu6"},{"brand":"Starbucks","store":"MBF DT-Dammam","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"opening_soon","type":"Drive-Thru","link":"https://maps.app.goo.gl/K46ak4GmwpLENyyT7"},{"brand":"Starbucks","store":"Marina Mall","mall":"Marina Mall","city":"Jubail","category":"Food & Drink","status":"opening_soon","type":"Shopping Mall / Center","link":null},{"brand":"Foot Locker","store":"Rashid Mall, Khobar","mall":"Rashid Mall, Khobar","city":"Khobar","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/RVyVWTetie3rsaHu6"},{"brand":"Starbucks","store":"King Abdulaziz Rd Riyadh Way DT,Hafir Al Batin","mall":"Stand Alone","city":"Hafir Al Batin","category":"Food & Drink","status":"opening_soon","type":"Drive-Thru","link":"https://maps.app.goo.gl/srwrhwGQMhBNepsUA"},{"brand":"Mothercare","store":"Dareen Mall, Dammam","mall":"Dareen Mall, Dammam","city":"Dammam","category":"Apparel","status":"closed","type":"Mall Location","link":"https://maps.app.goo.gl/r7J4rKbDaRh21JBw6"},{"brand":"Starbucks","store":"Al Khobar City Walk","mall":"Stand Alone","city":"Khobar","category":"Food & Drink","status":"open","type":"Plaza","link":"https://maps.app.goo.gl/PMRv3AWXB3j9c7Co8"},{"brand":"Starbucks","store":"Curvature DT  Khobar","mall":"Stand Alone","city":"Khobar","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/QXLxGj6LWBLpVcmb9"},{"brand":"Starbucks","store":"Tamimi Plaza, Hofuf","mall":"Tamimi Plaza Hofuf","city":"Hofuf","category":"Food & Drink","status":"closed","type":"Plaza","link":null},{"brand":"Next","store":"Marina Mall, Dammam","mall":"Marina Mall, Dammam","city":"Dammam","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/h8DRAjUwkwb1i45X6"},{"brand":"Claire's","store":"Othaim Mall, Dammam","mall":"Othaim Mall, Dammam","city":"Dammam","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/MwdzUaKr4mxHTZCPA"},{"brand":"Starbucks","store":"Oomco Katif DT","mall":"Stand Alone","city":"Katif","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/dwt1vGRrvAsgwKco7"},{"brand":"Next","store":"Othaim Mall, Hofuf","mall":"Othaim Mall, Hofuf","city":"Hofuf","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/fo9ZVU64C7X1Aeqj7"},{"brand":"Starbucks","store":"The Walk DT,Hufuf","mall":"The Walk","city":"Hofuf","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/9fdDK849Cw358D3k8"},{"brand":"Starbucks","store":"Corniche, Dammam","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/MZBRc6CCmQURpeZr9"},{"brand":"Starbucks","store":"Sulaiman Habib Hospital G8, Khobar","mall":"Sulaiman Habib Hospital, Khobar","city":"Khobar","category":"Food & Drink","status":"open","type":"Others, Hospital","link":"https://maps.app.goo.gl/RnJQdC3XQdYXA5SN8"},{"brand":"Jo Malone","store":"Rashid Mall, Khobar","mall":"Rashid Mall, Khobar","city":"Khobar","category":"Beauty & Wellness","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/RVyVWTetie3rsaHu6"},{"brand":"Starbucks","store":"Ajdaan Walk, Khobar","mall":"Ajdaan Walk,Khobar","city":"Khobar","category":"Food & Drink","status":"open","type":"Plaza","link":"https://maps.app.goo.gl/hPMJrbB3ptdG4SLx9"},{"brand":"Starbucks","store":"Port Plaza – Coast road DT","mall":"Stand Alone","city":"Khobar","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/5mU2qK2WjbV1HuB1A"},{"brand":"Starbucks","store":"Othaim Mall, Hofuf","mall":"Othaim Mall, Hofuf","city":"Hofuf","category":"Food & Drink","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/fo9ZVU64C7X1Aeqj7"},{"brand":"Starbucks","store":"Salmaniya Plaza, Hofuf","mall":"Stand Alone","city":"Hofuf","category":"Food & Drink","status":"open","type":"Plaza","link":"https://maps.app.goo.gl/MDV3o5iUa5aN7wSy6"},{"brand":"Starbucks","store":"Mart Zone DT , Dammam","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/WAE9qHEt1sBjyBt46"},{"brand":"Milano","store":"The Galleria, Jubail","mall":"The Galleria Jubail","city":"Jubail","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/kvSDytKWuR1B1CnQ8"},{"brand":"Starbucks","store":"Extra Box, Khobar","mall":"Extra Box Khobar","city":"Khobar","category":"Food & Drink","status":"open","type":"Plaza","link":"https://maps.app.goo.gl/oaPVXhvdCph8KgLT7"},{"brand":"Next","store":"Othaim Mall, Dammam","mall":"Othaim Mall, Dammam","city":"Dammam","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/MwdzUaKr4mxHTZCPA"},{"brand":"Starbucks","store":"KFIA Dam, Dammam","mall":"KFIA, Dammam","city":"Dammam","category":"Food & Drink","status":"open","type":"Others, Airport","link":"https://maps.app.goo.gl/TjQ8QYNK9iXpi25Z6"},{"brand":"Starbucks","store":"Mall of Dhahran (Gate 5)","mall":"Mall of Dhahran","city":"Dhahran","category":"Food & Drink","status":"open","type":"Shopping Mall / Center","link":"https://maps.app.goo.gl/dmrXXRfijX1KqVcf9"},{"brand":"Hennes and Mauritz","store":"Othaim Mall, Hofuf","mall":"Othaim Mall, Hofuf","city":"Hofuf","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/fo9ZVU64C7X1Aeqj7"},{"brand":"Starbucks","store":"Manar Plaza, Dammam","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"open","type":"Plaza","link":"https://maps.app.goo.gl/JKtqBKrqN6Gq2Agu5"},{"brand":"MAC","store":"Othaim Mall, Hofuf","mall":"Othaim Mall, Hofuf","city":"Hofuf","category":"Beauty & Wellness","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/fo9ZVU64C7X1Aeqj7"},{"brand":"Starbucks","store":"Makkah Road DT","mall":"Stand Alone","city":"Hofuf","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/RDySKYWHzw4YejHS6"},{"brand":"Starbucks","store":"Ansab Plaza","mall":"Stand Alone","city":"Khobar","category":"Food & Drink","status":"open","type":"Plaza","link":"https://maps.app.goo.gl/MPub9JghBvDVGNBbA"},{"brand":"Foot Locker","store":"Nakheel Mall Dammam","mall":"Nakheel Mall Dammam","city":"Dammam","category":"Apparel","status":"new","type":"Shopping Mall / Center","link":"https://maps.app.goo.gl/5ZpuuYN7fYmBchj36"},{"brand":"Hennes and Mauritz","store":"Othaim Mall, Dammam","mall":"Othaim Mall, Dammam","city":"Dammam","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/MwdzUaKr4mxHTZCPA"},{"brand":"Starbucks","store":"Sulaiman Habib Hospital G6, Khobar","mall":"Sulaiman Habib Hospital, Khobar","city":"Khobar","category":"Food & Drink","status":"open","type":"Others, Hospital","link":"https://maps.app.goo.gl/9ngn5rf1rmjC7Pa9A"},{"brand":"Starbucks","store":"Bahrain Causeway - DT","mall":"Stand Alone","city":"Khobar","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/Sa93gK1PXe15ngZQ7"},{"brand":"Starbucks","store":"Rakkah Plaza-Khobar","mall":"Stand Alone","city":"Khobar","category":"Food & Drink","status":"open","type":"Shopping Mall / Center","link":"https://maps.app.goo.gl/Ttwcto3Y2fKZMYRx7"},{"brand":"Bath and Body Works","store":"West Avenue, Dammam","mall":"West Avenue Dammam","city":"Dammam","category":"Beauty & Wellness","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/vKCk9UEaBYP1Jfr59"},{"brand":"NYX","store":"Othaim Mall Hofuf","mall":"Othaim Mall, Hofuf","city":"Hofuf","category":"Beauty & Wellness","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/fo9ZVU64C7X1Aeqj7"},{"brand":"Starbucks","store":"Othaim Rashdiya DT Hofuf","mall":"Stand Alone","city":"Hofuf","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/ivYUoD3oG8r1eVa1A"},{"brand":"Starbucks","store":"Centro Khaleej DT","mall":"Centro Khaleej","city":"Dammam","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/CpTVZAsjbw9NkJK57"},{"brand":"Starbucks","store":"Tamimi Raka, Khobar","mall":"Tamimi Raka, Khobar","city":"Khobar","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/Bk8DBAyG9XENwYiE7"},{"brand":"Starbucks","store":"Othaim Mall, Dammam","mall":"Othaim Mall, Dammam","city":"Dammam","category":"Food & Drink","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/MwdzUaKr4mxHTZCPA"},{"brand":"Bath and Body Works","store":"Nakheel Mall  Dammam","mall":"Nakheel Mall Dammam","city":"Dammam","category":"Beauty & Wellness","status":"open","type":"Shopping Mall / Center","link":"https://maps.app.goo.gl/5ZpuuYN7fYmBchj36"},{"brand":"Starbucks","store":"Doha Street","mall":"Stand Alone","city":"Dhahran","category":"Food & Drink","status":"open","type":"High Street","link":"https://maps.app.goo.gl/vXvg4aGqD7XDkxMWA"},{"brand":"MAC","store":"The Galleria, Jubail","mall":"The Galleria Jubail","city":"Jubail","category":"Beauty & Wellness","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/kvSDytKWuR1B1CnQ8"},{"brand":"Pinkberry","store":"Ajdaan Walk, Khobar","mall":"Ajdaan Walk,Khobar","city":"Khobar","category":"Food & Drink","status":"open","type":"Plaza","link":"https://maps.app.goo.gl/hPMJrbB3ptdG4SLx9"},{"brand":"Starbucks","store":"Danat Al Khaleej DT-Dammam","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"opening_soon","type":"Drive-Thru","link":"https://maps.app.goo.gl/gu5HpzymoQAsoMJx6"},{"brand":"Bath and Body Works","store":"The Galleria, Jubail","mall":"The Galleria Jubail","city":"Jubail","category":"Beauty & Wellness","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/kvSDytKWuR1B1CnQ8"},{"brand":"Next","store":"The Galleria, Jubail","mall":"The Galleria Jubail","city":"Jubail","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/kvSDytKWuR1B1CnQ8"},{"brand":"Starbucks","store":"Jarir, Hofuf","mall":"Stand Alone","city":"Hofuf","category":"Food & Drink","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/dyjeHwHfjd3yoH4t7"},{"brand":"American Eagle","store":"The Galleria, Jubail","mall":"The Galleria Jubail","city":"Jubail","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/kvSDytKWuR1B1CnQ8"},{"brand":"Claire's","store":"Jarir Plaza, Dammam","mall":"Stand Alone","city":"Dhahran","category":"Apparel","status":"open","type":"Plaza","link":"https://maps.app.goo.gl/6MLrVek4BbfTW94A6"},{"brand":"Starbucks","store":"Al Fares Plaza-DT","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/GGDoC1k3XsnDx6ZK6"},{"brand":"Starbucks","store":"Daharan Jubail Way DT, Dammam","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/Qyv4v2YdxzgCwwsW7"},{"brand":"American Eagle","store":"West Avenue, Dammam","mall":"West Avenue Dammam","city":"Dammam","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/vKCk9UEaBYP1Jfr59"},{"brand":"Starbucks","store":"Lulu Al Hasa, Hofuf","mall":"Lulu Al Hasa, Hofuf","city":"Hofuf","category":"Food & Drink","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/SLzt1sGoHQ8PjjKW7"},{"brand":"Starbucks","store":"Turki Street DT","mall":"Stand Alone","city":"Khobar","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/97K3d5AiD19YfPYY6"},{"brand":"Boots","store":"Rashid Mall, Khobar","mall":"Rashid Mall, Khobar","city":"Khobar","category":"Beauty & Wellness","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/RVyVWTetie3rsaHu6"},{"brand":"Starbucks","store":"Khafji Downtown","mall":"Stand Alone","city":"Khafji","category":"Food & Drink","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/kGWuTqvThTETGgJj6"},{"brand":"Bath and Body Works","store":"Dareen Mall, Dammam","mall":"Dareen Mall, Dammam","city":"Dammam","category":"Beauty & Wellness","status":"closed","type":"Mall Location","link":"https://maps.app.goo.gl/r7J4rKbDaRh21JBw6"},{"brand":"Starbucks","store":"Rashid Mall (New)","mall":"Rashid Mall, Khobar","city":"Khobar","category":"Food & Drink","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/RVyVWTetie3rsaHu6"},{"brand":"Bath and Body Works","store":"Mall of Dhahran Dhahran","mall":"Mall of Dhahran","city":"Dhahran","category":"Beauty & Wellness","status":"open","type":"Shopping Mall / Center","link":"https://maps.app.goo.gl/dmrXXRfijX1KqVcf9"},{"brand":"Bath and Body Works","store":"Rashid Mall, Khobar","mall":"Rashid Mall, Khobar","city":"Khobar","category":"Beauty & Wellness","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/RVyVWTetie3rsaHu6"},{"brand":"MAC","store":"Mall of Dhahran-KSA","mall":"Mall of Dhahran","city":"Dhahran","category":"Beauty & Wellness","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/dmrXXRfijX1KqVcf9"},{"brand":"Victoria's Secret International-BA","store":"Othaim Mall, Hofuf-BA","mall":"Othaim Mall, Hofuf","city":"Hofuf","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/fo9ZVU64C7X1Aeqj7"},{"brand":"Starbucks","store":"Kady-DT, Dammam","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/t1qnMd5PDankxsdx8"},{"brand":"Starbucks","store":"Al Fakharia DT, Dammam","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/zk4y1cHj7n93VGK5A"},{"brand":"Foot Locker","store":"The Galleria, Jubail","mall":"The Galleria Jubail","city":"Jubail","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/kvSDytKWuR1B1CnQ8"},{"brand":"Starbucks","store":"Katif DT, Katif","mall":"Stand Alone","city":"Katif","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/U37rEyfYeuZsF19H7"},{"brand":"Starbucks","store":"Hofuf Ain Negm DT","mall":"Stand Alone","city":"Hofuf","category":"Food & Drink","status":"opening_soon","type":"Drive-Thru","link":"https://maps.app.goo.gl/gQRVtt73wnyVfoEJ9"},{"brand":"Starbucks","store":"Tamimi Al Nahada DT Dammam","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/Pf7pWLSxDqnd7CEi9"},{"brand":"Claire's","store":"Rashid Mall, Khobar","mall":"Rashid Mall, Khobar","city":"Khobar","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/RVyVWTetie3rsaHu6"},{"brand":"Starbucks","store":"Tamimi Doha","mall":"Stand Alone","city":"Dhahran","category":"Food & Drink","status":"open","type":"Plaza","link":"https://maps.app.goo.gl/rZQVaUbyK6dU1wT9A"},{"brand":"PF Chang's","store":"Ajdaan Walk, Khobar","mall":"Ajdaan Walk,Khobar","city":"Khobar","category":"Food & Drink","status":"open","type":"Plaza","link":"https://maps.app.goo.gl/hPMJrbB3ptdG4SLx9"},{"brand":"Hennes and Mauritz","store":"Turki Centre, Khobar","mall":"Turki Centre Khobar","city":"Khobar","category":"Apparel","status":"open","type":"Plaza","link":"https://maps.app.goo.gl/1NeMcg7jXUFXFsRs7"},{"brand":"American Eagle","store":"Qatif City Mall","mall":"Katif Commercial Centre","city":"Katif","category":"Apparel","status":"open","type":"Plaza","link":"https://maps.app.goo.gl/Kg8NPq3G7tm18rKQA"},{"brand":"Starbucks","store":"Izdhar DT,Dammam","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/tP4QA2EprPaGH5VW8"},{"brand":"Starbucks","store":"Asha Hospital, Hofuf","mall":"Stand Alone","city":"Hofuf","category":"Food & Drink","status":"open","type":"Hospital","link":"https://maps.app.goo.gl/BuiW1N4SRZvWcg1h7"},{"brand":"Starbucks","store":"Marriot, Jubail","mall":"Stand Alone","city":"Jubail","category":"Food & Drink","status":"open","type":"Others","link":"https://maps.app.goo.gl/dKkVrUcUu3oYxQQ59"},{"brand":"Starbucks","store":"Aramco Rabbia","mall":"Stand Alone","city":"Khobar","category":"Food & Drink","status":"open","type":"Others","link":"https://maps.app.goo.gl/Cho5dZ8G8FzJwYyw9"},{"brand":"Mothercare","store":"Othaim Mall, Dammam","mall":"Othaim Mall, Dammam","city":"Dammam","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/MwdzUaKr4mxHTZCPA"},{"brand":"Starbucks","store":"The Move Jubail","mall":"Stand Alone","city":"Jubail","category":"Food & Drink","status":"open","type":"Shopping Mall / Center","link":"https://maps.app.goo.gl/kw1FQhPMm3ecCSJK8"},{"brand":"Milano","store":"Othaim Mall, Dammam","mall":"Othaim Mall, Dammam","city":"Dammam","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/MwdzUaKr4mxHTZCPA"},{"brand":"Milano","store":"Othaim Mall, Hofuf","mall":"Othaim Mall, Hofuf","city":"Hofuf","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/fo9ZVU64C7X1Aeqj7"},{"brand":"Raising Cane's","store":"Centro Corniche","mall":"Centro Corniche","city":"Khobar","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/v1fz6VYTkKdnmDL56"},{"brand":"Starbucks","store":"Abuhaddriya DT  Dammam","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/BbcXGzRBSwVJ3gr46"},{"brand":"Starbucks","store":"Tamimi Jubail","mall":"Stand Alone","city":"Jubail","category":"Food & Drink","status":"open","type":"Plaza","link":"https://maps.app.goo.gl/MhRHZfc9od1PeHeq9"},{"brand":"Starbucks","store":"Alsalam Center, Jubail","mall":"Stand Alone","city":"Jubail","category":"Food & Drink","status":"open","type":"Plaza","link":"https://maps.app.goo.gl/nLXn6sgp3u8w5GdL6"},{"brand":"Mothercare","store":"West Avenue, Dammam","mall":"West Avenue Dammam","city":"Dammam","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/vKCk9UEaBYP1Jfr59"},{"brand":"Starbucks","store":"KFIA - Departure Landside, Dammam","mall":"KFIA, Dammam","city":"Dammam","category":"Food & Drink","status":"open","type":"Others, Airport","link":"https://maps.app.goo.gl/TjQ8QYNK9iXpi25Z6"},{"brand":"Starbucks","store":"10th street DT ,Khobar","mall":"Stand Alone","city":"Khobar","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/GzZjEQG14qQpTSkS7"},{"brand":"Hennes and Mauritz","store":"Dareen Mall, Dammam","mall":"Dareen Mall, Dammam","city":"Dammam","category":"Apparel","status":"closed","type":"Mall Location","link":"https://maps.app.goo.gl/r7J4rKbDaRh21JBw6"},{"brand":"Starbucks","store":"Almana Hospital Dammam Aziziyah","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"open","type":"Hospital","link":"https://maps.app.goo.gl/dqMFA2Nbs5t548dM8"},{"brand":"Starbucks","store":"Shorofat Park-Khobar","mall":"Stand Alone","city":"Khobar","category":"Food & Drink","status":"opening_soon","type":"","link":"https://maps.app.goo.gl/W7GpeajCG4rr9frp8"},{"brand":"Raising Cane's","store":"Centro Khaleej DT, Dammam","mall":"Centro Khaleej","city":"Dammam","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/CpTVZAsjbw9NkJK57"},{"brand":"Starbucks","store":"Quds Street DT  Katif","mall":"Stand Alone","city":"Katif","category":"Food & Drink","status":"opening_soon","type":"Drive-Thru","link":"https://maps.app.goo.gl/A57sSo4kDUKtDcwPA"},{"brand":"Starbucks","store":"Dana DT, Dhahran","mall":"Stand Alone","city":"Dhahran","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/crzV31LNpwq1dNZi7"},{"brand":"Bath and Body Works","store":"The Walk Hufof","mall":"The Walk","city":"Hofuf","category":"Beauty & Wellness","status":"open","type":"Shopping Mall / Center","link":"https://maps.app.goo.gl/6NBkWod63ZgtTFeS8"},{"brand":"NYX","store":"Mall of Dharan","mall":"Stand Alone","city":"Dhahran","category":"Beauty & Wellness","status":"opening_soon","type":"Mall Location","link":"https://maps.app.goo.gl/5kN42wTUzTpadQy99"},{"brand":"MAC","store":"Othaim Mall, Dammam","mall":"Othaim Mall, Dammam","city":"Dammam","category":"Beauty & Wellness","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/MwdzUaKr4mxHTZCPA"},{"brand":"Texas Roadhouse","store":"Ajdaan Walk, Khobar","mall":"Ajdaan Walk,Khobar","city":"Khobar","category":"Food & Drink","status":"open","type":"Plaza","link":"https://maps.app.goo.gl/hPMJrbB3ptdG4SLx9"},{"brand":"Starbucks","store":"Aramco Camp","mall":"Stand Alone","city":"Dhahran","category":"Food & Drink","status":"open","type":"Plaza","link":"https://maps.app.goo.gl/APJpWEUEpDNrqFsJ8"},{"brand":"Starbucks","store":"Khobar Beach DT, Khobar","mall":"Stand Alone","city":"Khobar","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/uErn2ZzUt7AaW7rTA"},{"brand":"Starbucks","store":"Piano Plaza","mall":"Stand Alone","city":"Jubail","category":"Food & Drink","status":"open","type":"Plaza","link":"https://maps.app.goo.gl/JKXmEG5Tg6HE3CC89"},{"brand":"Mothercare","store":"Sulaiman Habib Hospital, Khobar","mall":"Sulaiman Habib Hospital, Khobar","city":"Khobar","category":"Apparel","status":"open","type":"Others, Hospital","link":"https://maps.app.goo.gl/9ngn5rf1rmjC7Pa9A"},{"brand":"Starbucks","store":"Dammam Petroly DT  Dammam","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/L1k3Cdy7r6j9mvpc6"},{"brand":"Starbucks","store":"Suhool Plaza","mall":"Stand Alone","city":"Jubail","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/6Jta7HwKUugd44ag6"},{"brand":"Starbucks","store":"Retal Valley, Hofuf","mall":"Stand Alone","city":"Hofuf","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/MQ8CwQmrPJ4FJov6A"},{"brand":"Bath and Body Works","store":"Lulu Al Hasa, Hofuf","mall":"Lulu Al Hasa, Hofuf","city":"Hofuf","category":"Beauty & Wellness","status":"closed","type":"Mall Location","link":"https://maps.app.goo.gl/GcVfFXeNH5Tc295N8"},{"brand":"Starbucks","store":"Dammam Water Front DT,Dammam","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/9GwYCscdQtz8UhHr5"},{"brand":"Starbucks","store":"West Avenue, Dammam","mall":"West Avenue Dammam","city":"Dammam","category":"Food & Drink","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/vKCk9UEaBYP1Jfr59"},{"brand":"Starbucks","store":"Tamimi Oruba DT Dammam","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/cZ8qfaJ22sKbEK7A9"},{"brand":"Claire's","store":"Othaim Mall, Hofuf","mall":"Othaim Mall, Hofuf","city":"Hofuf","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/fo9ZVU64C7X1Aeqj7"},{"brand":"Starbucks","store":"ORA Fuel DT","mall":"Stand Alone","city":"Khobar","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/YZx42yZP7AyDcxXd9?g_st=iw"},{"brand":"Muji","store":"Rashid Mall, Khobar","mall":"Rashid Mall, Khobar","city":"Khobar","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/RVyVWTetie3rsaHu6"},{"brand":"Mothercare","store":"Othaim Mall, Hofuf","mall":"Othaim Mall, Hofuf","city":"Hofuf","category":"Apparel","status":"open","type":"Mall Location","link":"https://maps.app.goo.gl/fo9ZVU64C7X1Aeqj7"},{"brand":"American Eagle","store":"Nakheel Mall  Dammam","mall":"Nakheel Mall Dammam","city":"Dammam","category":"Apparel","status":"opening_soon","type":"Mall Location","link":"https://maps.app.goo.gl/5ZpuuYN7fYmBchj36"},{"brand":"Starbucks","store":"Al Hamra DT-Khobar","mall":"Stand Alone","city":"Khobar","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/wMSLkLaGrd2DwmrB6"},{"brand":"Starbucks","store":"Furzan Plaza","mall":"Stand Alone","city":"Dammam","category":"Food & Drink","status":"open","type":"Drive-Thru","link":"https://maps.app.goo.gl/k23QLpKggKcez3dW7"}];
+DATA.forEach((d, i) => { d.id = i; });
+
+const CATEGORY_COLOR = {
+  'Food & Drink': 'var(--cat-food)',
+  'Apparel': 'var(--cat-apparel)',
+  'Beauty & Wellness': 'var(--cat-beauty)',
+  'Home': 'var(--cat-home)',
+  'Other': 'var(--cat-other)',
+};
+
+let activeCategory = 'All';
+let sortMode = 'brand';
+
+/* ---- Favourites ---- */
+let favorites = new Set();
+try {
+  favorites = new Set(JSON.parse(localStorage.getItem('favStores') || '[]'));
+} catch (e) { favorites = new Set(); }
+
+function saveFavorites() {
+  try { localStorage.setItem('favStores', JSON.stringify(Array.from(favorites))); } catch (e) {}
+}
+
+function updateFavCountBadge() {
+  const badge = document.getElementById('favCountBadge');
+  const n = favorites.size;
+  if (n > 0) {
+    badge.style.display = 'flex';
+    badge.textContent = n > 99 ? '99+' : String(n);
+  } else {
+    badge.style.display = 'none';
+  }
+  const heartColor = n > 0 ? '#ff3b30' : 'var(--muted-2)';
+  const fabHeart = document.getElementById('favFabHeart');
+  const tabHeart = document.getElementById('favTabHeart');
+  if (fabHeart) fabHeart.setAttribute('fill', heartColor);
+  if (tabHeart) tabHeart.setAttribute('fill', heartColor);
+}
+
+function toggleFavorite(id, btn) {
+  if (favorites.has(id)) {
+    favorites.delete(id);
+    if (btn) btn.classList.remove('active');
+  } else {
+    favorites.add(id);
+    if (btn) btn.classList.add('active');
+  }
+  saveFavorites();
+  updateFavCountBadge();
+  const favTab = document.getElementById('favTab');
+  if (favTab.classList.contains('open')) renderFavoritesTab();
+}
+
+function getFavoriteStores() {
+  return DATA.filter(d => favorites.has(d.id));
+}
+
+function renderFavoritesTab() {
+  const list = getFavoriteStores();
+  list.sort((a, b) => (a.brand || '').localeCompare(b.brand || ''));
+  const body = document.getElementById('favTabBody');
+  const countEl = document.getElementById('favTabCount');
+  countEl.textContent = `${list.length} store${list.length !== 1 ? 's' : ''}`;
+  if (list.length === 0) {
+    body.innerHTML = '<div class="no-results">No favourites yet. Tap the heart on any store to save it here.</div>';
+    return;
+  }
+  body.innerHTML = list.map(renderCardHtml).join('');
+}
+
+function openFavTab() {
+  renderFavoritesTab();
+  document.getElementById('favTab').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeFavTab() {
+  document.getElementById('favTab').classList.remove('open');
+  document.body.style.overflow = '';
+  runSearch();
+}
+
+function getCategories() {
+  const set = new Set(DATA.map(d => d.category));
+  return ['All', ...Array.from(set).sort()];
+}
+
+function renderCats() {
+  const wrap = document.getElementById('catRow');
+  wrap.innerHTML = '';
+  getCategories().forEach(c => {
+    const chip = document.createElement('div');
+    chip.className = 'cat-chip' + (c === activeCategory ? ' active' : '');
+    const color = c === 'All' ? 'var(--gold)' : CATEGORY_COLOR[c];
+    chip.innerHTML = (c !== 'All' ? `<span class="dot" style="color:${color}"></span>` : '') + escapeHtml(c);
+    chip.onclick = () => { activeCategory = c; renderCats(); runSearch(); };
+    wrap.appendChild(chip);
+  });
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
+}
+
+function groupKey(d) {
+  if (sortMode === 'city') return d.city;
+  return (d.brand[0] || '#').toUpperCase();
+}
+
+function statusLabel(s) {
+  if (s === 'new') return 'NEW';
+  if (s === 'opening_soon') return 'OPENING SOON';
+  if (s === 'closed') return 'CLOSED';
+  return '';
+}
+
+function renderCardHtml(d) {
+  const hasLink = !!d.link;
+  const color = CATEGORY_COLOR[d.category] || CATEGORY_COLOR['Other'];
+  const badge = statusLabel(d.status);
+  const isFav = favorites.has(d.id);
+  return `
+    <div class="result-card${hasLink ? '' : ' no-link'}" style="border-left-color:${color}" ${hasLink ? `onclick="window.open('${d.link}', '_blank')"` : ''}>
+      <div class="card-main">
+        <div class="card-top-row">
+          <span class="brand">${escapeHtml(d.brand)}</span>
+          ${badge ? `<span class="status-badge ${d.status}">${badge}</span>` : ''}
+          <button type="button" class="fav-btn${isFav ? ' active' : ''}" data-id="${d.id}" aria-label="Toggle favourite" onclick="event.stopPropagation(); toggleFavorite(${d.id}, this)">
+            <svg viewBox="0 0 24 24"><path class="heart-path" d="M12 21s-6.7-4.35-9.33-8.5C.86 9.35 1.9 5.7 5.6 4.8c2.1-.5 4.1.55 5.15 2.15C11.8 5.35 13.8 4.3 15.9 4.8c3.7.9 4.74 4.55 2.93 7.7C15.4 16.65 12 21 12 21z"/></svg>
+          </button>
+        </div>
+        <div class="store-line">${escapeHtml(d.store)}${d.store !== d.mall && d.mall ? ' &middot; ' + escapeHtml(d.mall) : ''} &middot; <span class="city">${escapeHtml(d.city)}</span></div>
+        ${d.type && !/^Others?$/.test(d.type) ? `<span class="type-tag">${escapeHtml(d.type)}</span>` : ''}
+      </div>
+      <div class="card-actions">
+        ${hasLink
+          ? `<a class="icon-btn directions" href="${d.link}" target="_blank" rel="noopener" aria-label="Open in Maps" onclick="event.stopPropagation()">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 7l4-2 10 3 4-2v14l-4 2-10-3-4 2V7z"/>
+                <path d="M7 5v14M17 8v14"/>
+              </svg>
+            </a>`
+          : `<div class="icon-btn directions disabled" aria-label="No map link" style="pointer-events:none !important; cursor:default !important;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 7l4-2 10 3 4-2v14l-4 2-10-3-4 2V7z"/>
+                <path d="M7 5v14M17 8v14"/>
+              </svg>
+            </div>`
+        }
+        <button type="button" class="icon-btn share-btn" aria-label="Share location" onclick="event.stopPropagation(); shareStore(${d.id})">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="18" cy="5" r="2.2"/>
+            <circle cx="6" cy="12" r="2.2"/>
+            <circle cx="18" cy="19" r="2.2"/>
+            <path d="M8.1 10.9l7.8-4.4M8.1 13.1l7.8 4.4"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+/* ---- Share a store's full details + location link (opens native share sheet, with safe fallbacks) ---- */
+function buildShareText(d) {
+  const lines = [];
+  lines.push(`🏬 ${d.brand}`);
+  if (d.store && d.store !== d.brand) lines.push(`📌 ${d.store}`);
+  if (d.mall && d.mall !== d.store) lines.push(`🏢 ${d.mall}`);
+  lines.push(`📍 ${d.city}`);
+  if (d.type && !/^Others?$/.test(d.type)) lines.push(`🏷️ ${d.type}`);
+
+  if (d.status === 'closed') {
+    lines.push(`🔴 Permanently Closed`);
+  } else if (d.status === 'opening_soon') {
+    lines.push(`🟡 Opening Soon`);
+  } else if (d.status === 'new') {
+    lines.push(`🟢 Newly Opened`);
+  } else {
+    lines.push(`🟢 Open`);
+  }
+
+  lines.push('');
+  if (d.link) {
+    lines.push(`🗺️ Location & Live Hours (Google Maps):`);
+    lines.push(d.link);
+    lines.push('');
+    lines.push(`👆 Tap the link to view live timings, current status & directions on Google Maps.`);
+  } else {
+    lines.push(`⚠️ Location link available nahi hai.`);
+  }
+  return lines.join('\n');
+}
+
+function shareStore(id) {
+  const d = DATA.find(s => s.id === id);
+  if (!d) return;
+  // Allow sharing even without link (closed stores etc)
+  if (!d.link && d.status !== 'closed' && d.status !== 'opening_soon') return;
+  const namePart = d.store && d.store !== d.brand ? `${d.brand} - ${d.store}` : d.brand;
+  const shareTitle = `${namePart} · ${d.city}`;
+  const fullText = buildShareText(d);
+
+  // 1) Native OS share sheet — works on Android Chrome over https OR file://
+  if (navigator.share) {
+    navigator.share({ title: shareTitle, text: fullText })
+      .catch((err) => {
+        // Only fallback if it wasn't user-cancelled
+        if (err && err.name !== 'AbortError') fallbackCopy(fullText);
+      });
+    return;
+  }
+  // 2) No share API — copy to clipboard instead
+  fallbackCopy(fullText);
+}
+
+function fallbackCopy(fullText) {
+  // 2) Clipboard API (needs secure context)
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(fullText).then(showShareToast).catch(() => legacyCopy(fullText));
+  } else {
+    legacyCopy(fullText);
+  }
+}
+
+function legacyCopy(fullText) {
+  // 3) Old-school textarea + execCommand copy (works even without secure context, on most browsers)
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = fullText;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    if (ok) { showShareToast(); return; }
+  } catch (e) {}
+  // 4) Absolute last resort: show the link in a popup so it's never a dead click
+  showShareModal(fullText);
+}
+
+function showShareModal(fullText) {
+  let modal = document.getElementById('shareModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'shareModal';
+    modal.className = 'share-modal';
+    modal.innerHTML = `
+      <div class="share-modal-card">
+        <div class="share-modal-title">Copy this link</div>
+        <textarea class="share-modal-text" id="shareModalText" readonly></textarea>
+        <button type="button" class="share-modal-close" id="shareModalClose">Done</button>
+      </div>`;
+    document.body.appendChild(modal);
+    document.getElementById('shareModalClose').addEventListener('click', () => modal.classList.remove('show'));
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('show'); });
+  }
+  const textarea = document.getElementById('shareModalText');
+  textarea.value = fullText;
+  modal.classList.add('show');
+  setTimeout(() => { textarea.focus(); textarea.select(); }, 50);
+}
+
+function showShareToast() {
+  let toast = document.getElementById('shareToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'shareToast';
+    toast.className = 'share-toast';
+    toast.textContent = 'Link copied';
+    document.body.appendChild(toast);
+  }
+  toast.classList.add('show');
+  clearTimeout(toast._hideTimer);
+  toast._hideTimer = setTimeout(() => toast.classList.remove('show'), 1800);
+}
+
+function runSearch() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const resultsEl = document.getElementById('results');
+  const countEl = document.getElementById('countRow');
+
+  let filtered = DATA.filter(d => {
+    if (activeCategory !== 'All' && d.category !== activeCategory) return false;
+    if (!q) return true;
+    const hay = (d.brand + ' ' + d.store + ' ' + d.mall + ' ' + d.city).toLowerCase();
+    return hay.includes(q);
+  });
+
+  const cities = new Set(filtered.map(d => d.city)).size;
+  countEl.innerHTML = `<span>${filtered.length} store${filtered.length !== 1 ? 's' : ''}</span><span>${cities} cit${cities !== 1 ? 'ies' : 'y'}</span>`;
+
+  if (filtered.length === 0) {
+    resultsEl.innerHTML = '<div class="no-results">No matching stores. Try a different search or category.</div>';
+    document.getElementById('azIndex').innerHTML = '';
+    return;
+  }
+
+  filtered.sort((a, b) => {
+    const ga = groupKey(a), gb = groupKey(b);
+    if (ga !== gb) return ga < gb ? -1 : 1;
+    if (sortMode === 'city') return a.brand.localeCompare(b.brand);
+    return (a.store || a.mall).localeCompare(b.store || b.mall);
+  });
+
+  let html = '';
+  let lastGroup = null;
+  filtered.forEach(d => {
+    const g = groupKey(d);
+    if (g !== lastGroup) {
+      const letter = (g.replace(/[^a-zA-Z0-9]/g, '')[0] || '#').toUpperCase();
+      html += `<div class="group-header" data-letter="${letter}">${escapeHtml(g)}</div>`;
+      lastGroup = g;
+    }
+    html += renderCardHtml(d);
+  });
+
+  resultsEl.innerHTML = html;
+  buildAzIndex();
+}
+
+/* ---- A-Z / 0-9 quick-jump index ---- */
+const AZ_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'.split('');
+
+function buildAzIndex() {
+  const bar = document.getElementById('azIndex');
+  const present = new Set(
+    Array.from(document.querySelectorAll('.group-header')).map(el => el.dataset.letter)
+  );
+  bar.innerHTML = AZ_CHARS.map(ch => {
+    const active = present.has(ch);
+    return `<button type="button" data-char="${ch}" class="${active ? 'active' : 'disabled'}">${ch}</button>`;
+  }).join('');
+}
+
+function jumpToLetter(ch) {
+  const target = document.querySelector(`.group-header[data-letter="${ch}"]`);
+  if (!target) return;
+  const offset = document.getElementById('controls').offsetHeight + 14;
+  const top = target.getBoundingClientRect().top + window.scrollY - offset;
+  window.scrollTo({ top, behavior: 'smooth' });
+}
+
+(function setupAzIndex() {
+  const bar = document.getElementById('azIndex');
+  let touching = false;
+
+  function handleAt(clientY) {
+    const el = document.elementFromPoint(bar.getBoundingClientRect().left + bar.offsetWidth / 2, clientY);
+    if (!el || !el.dataset || !el.dataset.char) return;
+    bar.querySelectorAll('button').forEach(b => b.classList.remove('touching'));
+    if (el.classList.contains('active')) {
+      el.classList.add('touching');
+      jumpToLetter(el.dataset.char);
+    }
+  }
+
+  bar.addEventListener('click', (e) => {
+    const btn = e.target.closest('button.active');
+    if (btn) jumpToLetter(btn.dataset.char);
+  });
+
+  bar.addEventListener('touchstart', (e) => {
+    touching = true;
+    handleAt(e.touches[0].clientY);
+  }, { passive: true });
+  bar.addEventListener('touchmove', (e) => {
+    if (!touching) return;
+    handleAt(e.touches[0].clientY);
+  }, { passive: true });
+  bar.addEventListener('touchend', () => {
+    touching = false;
+    bar.querySelectorAll('button').forEach(b => b.classList.remove('touching'));
+  });
+})();
+
+document.getElementById('searchInput').addEventListener('input', runSearch);
+document.getElementById('sortSelect').addEventListener('change', (e) => {
+  sortMode = e.target.value;
+  runSearch();
+});
+
+const navBarEl = document.getElementById('navBar');
+window.addEventListener('scroll', () => {
+  navBarEl.classList.toggle('visible', window.scrollY > 70);
+});
+
+/* ---- Favourites pill: expand to show label, then collapse ---- */
+(function () {
+  const fab = document.getElementById('favFab');
+  setTimeout(() => {
+    fab.classList.add('expanded');
+    setTimeout(() => fab.classList.remove('expanded'), 2600);
+  }, 1500);
+  fab.addEventListener('mouseenter', () => fab.classList.add('expanded'));
+  fab.addEventListener('mouseleave', () => fab.classList.remove('expanded'));
+  fab.addEventListener('click', openFavTab);
+})();
+
+document.getElementById('favTabClose').addEventListener('click', closeFavTab);
+
+renderCats();
+runSearch();
+updateFavCountBadge();
+
+/* ---- Animated dots + checkmark for security line ---- */
+(function () {
+  const dotsEl = document.getElementById('secDots');
+  const checkEl = document.getElementById('secCheckSingle');
+  if (!dotsEl || !checkEl) return;
+  let count = 1;
+  const dotInterval = setInterval(() => {
+    count = (count % 5) + 1;
+    dotsEl.textContent = '.'.repeat(count);
+  }, 260);
+  setTimeout(() => {
+    clearInterval(dotInterval);
+    dotsEl.textContent = '.....';
+    checkEl.classList.add('show');
+  }, 4000);
+})();
+
+/* ---- Dismiss splash screen once content is ready ---- */
+(function () {
+  const splash = document.getElementById('splashScreen');
+  const dismiss = () => {
+    document.body.classList.remove('splash-lock');
+    splash.classList.add('splash-hidden');
+    setTimeout(() => splash.remove(), 550);
+  };
+  setTimeout(dismiss, 5000);
+})();
+</script>
+
+</body>
+</html>
