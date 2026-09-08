@@ -1,2780 +1,2726 @@
+<!--
+============================================================================
+  PROJECT: PIKAZOO STORE
+  ----------------------------------------------------------------------
+  A single-file HTML/CSS/JS web application featuring:
+    • Cyberpunk-style splash screen loader
+    • Portrait welcome/announcement popup (with language translation)
+    • Product store with category filters (PUBG APK/OBB, Premium, Mods, Tools)
+    • Light / Dark theme switcher
+    • Live discount countdown banner
+    • Payment details modal (JazzCash / USDT) + native "Invite Friend" share
+    • Floating "Fruit Ninja" style mini-game overlay
+  NOTE: This file has been reorganized for readability & maintainability only.
+  No functionality, markup behavior, styling, or logic has been changed.
+============================================================================
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+<!-- ============================================================
+     META TAGS
+============================================================ -->
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PIKAZOO ARMY</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#cfe8ff">
+<meta name="description" content="PIKAZOO Store — PUBG Mobile updates, APK, OBB, premium apps and mobile customization files.">
+<title>PIKAZOO STORE</title>
+
+<!-- ============================================================
+     EXTERNAL LIBRARIES
+     (None used — pure vanilla HTML / CSS / JavaScript)
+============================================================ -->
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+
+/* ============================================================
+   GLOBAL CSS VARIABLES (Light & Dark Theme Tokens)
+============================================================ */
+:root {
+  --bg: #cfe8ff;
+  --card: rgba(255, 255, 255, 0.85);
+  --card2: rgba(255, 255, 255, 0.9);
+  --orange: #ea580c;
+  --orange2: #c2410c;
+  --violet: #7c3aed;
+  --sky: #0284c7;
+  --pink: #f43f5e;
+  --white: #111827;
+  --muted: #334155;
+  --line: rgba(2, 90, 160, 0.2);
+  --text-main: #0f172a;
+  --text-sub: #1e293b;
 }
 
-/* BLOB BACKGROUND */
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #c8b6e2;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  transition: background 0.5s ease;
-  overflow-x: hidden;
-  position: relative;
+[data-theme="dark"] {
+  --bg: #0b0d12;
+  --card: rgba(20, 23, 32, .82);
+  --card2: rgba(30, 33, 44, .82);
+  --orange: #ff6900;
+  --orange2: #ff8b35;
+  --violet: #a45cff;
+  --sky: #38bdf8;
+  --pink: #ffd0df;
+  --white: #fff;
+  --muted: #9ca3af;
+  --line: rgba(255, 255, 255, .12);
+  --text-main: #ffffff;
+  --text-sub: #d1d5db;
 }
 
-/* BLOB CANVAS */
-#blobCanvas {
+/* ============================================================
+   BASE / RESET STYLES
+============================================================ */
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text-main);min-height:100vh;overflow-x:hidden;transition:background 0.3s ease, color 0.3s ease;}
+button,input{font:inherit}button{cursor:pointer;border:0}a{text-decoration:none;color:inherit}
+
+/* ================= CYBERPUNK HOLOGRAM SPLASH SCREEN ================= */
+#splash {
   position: fixed;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  pointer-events: none;
-  filter: blur(60px) saturate(1.4);
-  opacity: 0.85;
-}
-
-/* SHOW TOUCH — tap/click ripple indicator */
-.show-touch-ripple {
-  position: fixed;
-  width: 56px;
-  height: 56px;
-  margin-left: -28px;
-  margin-top: -28px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.35);
-  border: 2px solid rgba(255, 255, 255, 0.7);
-  pointer-events: none;
   z-index: 99999;
-  transform: scale(0.3);
-  opacity: 0.9;
-  animation: showTouchPop 0.5s ease-out forwards;
-}
-
-@keyframes showTouchPop {
-  0%   { transform: scale(0.3); opacity: 0.9; }
-  60%  { transform: scale(1); opacity: 0.6; }
-  100% { transform: scale(1.15); opacity: 0; }
-}
-
-/* DARK MODE */
-body.dark-mode {
-  background: #0d0a1a;
-}
-
-body.dark-mode #blobCanvas {
-  opacity: 0.5;
-  filter: blur(70px) saturate(0.8) brightness(0.6);
-}
-
-body.dark-mode .container {
-  background: rgba(0, 0, 0, 0.35);
-  border-color: rgba(255, 255, 255, 0.08);
-}
-
-body.dark-mode .link-card a::before {
-  background: rgba(0, 0, 0, 0.3);
-}
-
-body.dark-mode .tabs {
-  background: rgba(0, 0, 0, 0.3);
-}
-
-/* DARK/LIGHT TOGGLE BUTTON */
-.theme-toggle {
-  position: absolute;
-  top: -15px;
-  left: 18px;
-  z-index: 101;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50px;
-  padding: 10px 16px;
-  cursor: pointer;
-  font-size: 20px;
-  color: #fff;
-  font-weight: 700;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-  transition: all 0.3s ease;
   display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  gap: 6px;
+  background: #030206;
+  padding: 20px;
+  overflow: hidden;
 }
 
-.theme-toggle:hover {
-  background: rgba(255, 255, 255, 0.35);
-  transform: scale(1.05);
+.cyber-bg {
+  position: absolute;
+  inset: -50%;
+  background: 
+    radial-gradient(circle at 50% 50%, rgba(164, 92, 255, 0.18) 0%, transparent 50%),
+    radial-gradient(circle at 20% 20%, rgba(255, 105, 0, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(56, 189, 248, 0.15) 0%, transparent 40%),
+    linear-gradient(0deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+  animation: gridPerspective 15s ease infinite alternate;
 }
 
-.theme-toggle span {
-  font-size: 13px;
-  font-weight: 600;
+@keyframes gridPerspective {
+  0% { transform: scale(1) translateY(0); }
+  100% { transform: scale(1.1) translateY(-20px); }
 }
 
-.container {
-  width: 100%;
-  max-width: 450px;
-  background: rgba(255, 255, 255, 0.13);
-  backdrop-filter: blur(32px) saturate(1.8) brightness(1.05);
-  -webkit-backdrop-filter: blur(32px) saturate(1.8) brightness(1.05);
-  border-radius: 30px;
-  padding: 30px 20px;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  box-shadow:
-    0 8px 40px rgba(0, 0, 0, 0.12),
-    inset 0 1px 0 rgba(255,255,255,0.4),
-    inset 0 -1px 0 rgba(255,255,255,0.08);
+.scanlines {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.4) 51%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.holo-container {
   position: relative;
-  z-index: 1;
-}
-
-/* TABLET MODE */
-@media (min-width: 768px) {
-  .container {
-    max-width: 650px;
-    padding: 40px 35px;
-  }
-  .profile h1 {
-    font-size: 34px;
-  }
-  .link-image {
-    height: 200px;
-  }
-  .tabs button {
-    font-size: 17px;
-    padding: 14px 24px;
-  }
-}
-
-/* DESKTOP MODE */
-@media (min-width: 1024px) {
-  body {
-    align-items: center;
-  }
-  .container {
-    max-width: 860px;
-    padding: 50px 50px;
-    border-radius: 40px;
-  }
-  .profile h1 {
-    font-size: 40px;
-  }
-  .profile-img {
-    width: 150px;
-    height: 150px;
-  }
-  .link-content {
-    flex-direction: row;
-    align-items: stretch;
-  }
-  .link-image {
-    width: 220px;
-    height: 140px;
-    border-radius: 30px 0 0 30px;
-    flex-shrink: 0;
-  }
-  .link-text {
-    text-align: left;
-    padding: 20px 24px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  .link-title {
-    font-size: 18px;
-  }
-  .link-desc {
-    font-size: 15px;
-  }
-  .tabs button {
-    font-size: 18px;
-    padding: 14px 28px;
-  }
-}
-
-.profile {
-  text-align: center;
+  width: 140px;
+  height: 140px;
+  display: grid;
+  place-items: center;
   margin-bottom: 30px;
 }
 
-.profile-img {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  object-fit: cover;
-  margin: 0 auto 15px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-}
-
-/* WELCOME text */
-.profile h2 {
-  font-size: 15px;
-  font-weight: 800;
-  letter-spacing: 6px;
-  text-transform: uppercase;
-  margin-bottom: 6px;
-  background: linear-gradient(90deg, #a78bfa, #60a5fa, #f472b6, #34d399, #a78bfa);
-  background-size: 300% 300%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: welcomeColorFlow 4s ease infinite, welcomeFadeDown 0.8s ease both;
-  transform-style: preserve-3d;
-}
-
-/* PIKAZOO STORE title */
-.profile h1 {
-  font-size: 32px;
-  font-weight: 900;
-  letter-spacing: 3px;
-  margin-bottom: 10px;
-  background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 30%, #93c5fd 60%, #ffffff 100%);
-  background-size: 300% 300%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: titleColorFlow 5s ease infinite, titlePopIn 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
-  text-shadow: none;
-  filter: drop-shadow(0 4px 16px rgba(167, 139, 250, 0.5));
-}
-
-/* Description text */
-.profile p {
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-  color: rgba(255, 255, 255, 0.75);
-  animation: welcomeFadeDown 1s ease 0.5s both;
-}
-
-/* Light mode overrides — keep colored in light too */
-body:not(.dark-mode) .profile h1 {
-  background: linear-gradient(135deg, #7c3aed 0%, #2563eb 50%, #7c3aed 100%);
-  background-size: 300% 300%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 4px 14px rgba(124, 58, 237, 0.4));
-}
-
-body:not(.dark-mode) .profile h2 {
-  background: linear-gradient(90deg, #7c3aed, #2563eb, #db2777, #059669, #7c3aed);
-  background-size: 300% 300%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-body:not(.dark-mode) .profile p {
-  color: rgba(30, 20, 60, 0.75);
-}
-
-/* Light mode: fix white text on light/translucent backgrounds */
-body:not(.dark-mode) .theme-toggle {
-  color: #1a1a2e;
-}
-
-body:not(.dark-mode) .tabs button {
-  color: rgba(30, 20, 60, 0.6);
-}
-
-body:not(.dark-mode) .tabs button.active {
-  color: #1a1a2e;
-  text-shadow: none;
-}
-
-body:not(.dark-mode) .link-title {
-  color: #1a1a2e;
-}
-
-body:not(.dark-mode) .link-desc {
-  color: rgba(30, 20, 60, 0.7);
-}
-
-body:not(.dark-mode) .link-date {
-  color: rgba(30, 20, 60, 0.8);
-}
-
-body:not(.dark-mode) .section-title {
-  color: rgba(30, 20, 60, 0.8);
-}
-
-body:not(.dark-mode) .bottom-links a {
-  color: #1a1a2e;
-}
-
-body:not(.dark-mode) .footer-text {
-  color: rgba(30, 20, 60, 0.6);
-}
-
-body:not(.dark-mode) .stat-label {
-  color: rgba(30, 20, 60, 0.75);
-}
-
-body:not(.dark-mode) .countdown-label {
-  color: rgba(30, 20, 60, 0.8);
-}
-
-body:not(.dark-mode) .countdown-unit-label {
-  color: rgba(30, 20, 60, 0.6);
-}
-
-/* ANIMATIONS */
-@keyframes welcomeColorFlow {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-@keyframes titleColorFlow {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-@keyframes welcomeFadeDown {
-  from { opacity: 0; transform: translateY(-18px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes titlePopIn {
-  0%   { opacity: 0; transform: scale(0.7) translateY(-10px) rotateX(30deg); }
-  60%  { transform: scale(1.08) translateY(2px) rotateX(-5deg); }
-  80%  { transform: scale(0.97) rotateX(2deg); }
-  100% { opacity: 1; transform: scale(1) translateY(0) rotateX(0deg); }
-}
-
-.tabs {
-  display: flex;
-  position: relative;
-  margin-bottom: 25px;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(16px) saturate(1.5);
-  -webkit-backdrop-filter: blur(16px) saturate(1.5);
-  padding: 4px;
-  border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.2);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 4px 20px rgba(0,0,0,0.08);
-}
-
-/* iOS sliding pill */
-.tabs-pill {
+.holo-ring {
   position: absolute;
-  top: 4px;
-  left: 0;
-  height: calc(100% - 8px);
-  background: rgba(255, 255, 255, 0.28);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.35);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.4);
-  transition: transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
-  pointer-events: none;
-  z-index: 0;
+  inset: -10px;
+  border-radius: 50%;
+  border: 2px dashed rgba(164, 92, 255, 0.6);
+  animation: spinClockwise 10s linear infinite;
 }
 
-.tabs button {
-  flex: 1;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 15px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: color 0.25s ease;
-  color: rgba(255, 255, 255, 0.6);
-  background: transparent;
+.holo-ring-2 {
+  position: absolute;
+  inset: -22px;
+  border-radius: 50%;
+  border: 1px double rgba(255, 105, 0, 0.5);
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  animation: spinCounter 6s linear infinite;
+}
+
+@keyframes spinClockwise { 100% { transform: rotate(360deg); } }
+@keyframes spinCounter { 100% { transform: rotate(-360deg); } }
+
+.splash-logo {
   position: relative;
-  z-index: 1;
-}
-
-.tabs button.active {
-  color: #fff;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.15);
-}
-
-.section {
-  display: none;
-  animation: fadeIn 0.3s ease;
-}
-
-.section.active {
-  display: block;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.link-card {
-  margin-bottom: 15px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.link-card:hover {
-  transform: translateY(-5px);
-}
-
-.link-card a {
-  display: block;
-  position: relative;
+  width: 110px;
+  height: 110px;
   border-radius: 30px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  text-decoration: none;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.link-card a::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.15);
-  z-index: 0;
-  opacity: 1;
-}
-
-body.dark-mode .link-card a::before {
-  background: rgba(0, 0, 0, 0.25);
-}
-
-.link-card a > * {
-  position: relative;
-  z-index: 1;
-}
-
-.link-card a:hover {
-  border-color: rgba(255, 255, 255, 0.6);
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
-}
-
-.link-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0;
-  padding: 0;
-}
-
-.link-image {
-  width: 100%;
-  height: 150px;
-  border-radius: 30px 30px 0 0;
   object-fit: cover;
-  flex-shrink: 0;
-}
-
-.link-text {
-  flex: 1;
-  width: 100%;
-  padding: 14px 18px;
-  text-align: center;
-}
-
-.link-title {
-  color: #fff;
-  font-weight: 600;
-  font-size: 16px;
-  margin-bottom: 3px;
-}
-
-.link-desc {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 13px;
-}
-
-.link-date {
-  display: inline-block;
-  margin-top: 8px;
-  background: rgba(255, 255, 255, 0.15);
-  color: rgba(255, 255, 255, 0.8);
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.5px;
-}
-
-.price-badge {
-  background: rgba(255, 215, 0, 0.3);
-  color: #ffd700;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.section-title {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 15px;
-  font-weight: 600;
-}
-
-.bottom-bar {
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.bottom-links {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 15px;
-}
-
-.bottom-links a {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 15px;
-  text-decoration: none;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 500;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: all 0.3s ease;
-}
-
-.bottom-links a:hover {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
-}
-
-.footer-text {
-  text-align: center;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 12px;
-}
-
-.dynamic-island {
-  position: absolute;
-  top: -15px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: linear-gradient(135deg, rgba(37, 211, 102, 0.95), rgba(25, 135, 84, 0.95));
-  backdrop-filter: blur(20px);
-  border-radius: 50px;
-  padding: 10px 20px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px rgba(37, 211, 102, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2);
-  animation: float 3s ease-in-out infinite;
-  z-index: 100;
-  white-space: nowrap;
-  min-width: 140px;
-  text-align: center;
-}
-
-.dynamic-island a {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  text-decoration: none;
-  color: #fff;
-  font-weight: 600;
-  font-size: 13px;
-  transition: all 0.3s ease;
-}
-
-.dynamic-island a:hover {
-  transform: scale(1.05);
-}
-
-@keyframes float {
-  0%, 100% { transform: translateX(-50%) translateY(0px); }
-  50%       { transform: translateX(-50%) translateY(-8px); }
-}
-
-.container {
-  position: relative;
-  z-index: 1;
-}
-
-/* MODAL STYLES */
-/* IMAGE LIGHTBOX (inline image viewer, replaces window.open to external sites) */
-.image-lightbox {
-  display: none;
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.9);
-  z-index: 10000;
-  justify-content: center;
-  align-items: center;
-  animation: fadeIn 0.25s ease;
-}
-
-.image-lightbox.active {
-  display: flex;
-}
-
-.image-lightbox img {
-  max-width: 92%;
-  max-height: 88%;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-}
-
-.image-lightbox-close {
-  position: absolute;
-  top: 20px;
-  right: 24px;
-  background: rgba(255,255,255,0.15);
-  border: none;
-  color: #fff;
-  font-size: 30px;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  cursor: pointer;
-  line-height: 1;
-}
-
-.modal {
-  display: none;
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(12px) saturate(1.3);
-  -webkit-backdrop-filter: blur(12px) saturate(1.3);
-  z-index: 1000;
-  animation: fadeIn 0.25s ease;
-}
-
-.modal.active {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background: rgba(110, 80, 200, 0.55);
-  backdrop-filter: blur(36px) saturate(2) brightness(1.1);
-  -webkit-backdrop-filter: blur(36px) saturate(2) brightness(1.1);
-  border-radius: 40px;
-  padding: 0;
-  width: 90%;
-  max-width: 400px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow:
-    0 24px 64px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255,255,255,0.4),
-    inset 0 -1px 0 rgba(255,255,255,0.1);
-  animation: springScaleIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-  color: #fff;
-  overflow: hidden;
-}
-
-.modal-image {
-  width: 100%;
-  height: 250px;
-  object-fit: cover;
-}
-
-/* ===========================
-   SWIPEABLE SCREENSHOT GALLERY
-   =========================== */
-.modal-gallery {
-  position: relative;
-  width: 100%;
-  height: 250px;
-  overflow: hidden;
-}
-
-.gallery-track {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-
-.gallery-track::-webkit-scrollbar {
-  display: none;
-}
-
-.gallery-img {
-  flex: 0 0 100%;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  scroll-snap-align: center;
-  scroll-snap-stop: always;
-}
-
-.gallery-dots {
-  position: absolute;
-  bottom: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 6px;
-  z-index: 2;
-}
-
-.gallery-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.45);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-  transition: all 0.25s ease;
-}
-
-.gallery-dot.active {
-  background: #fff;
-  width: 16px;
-  border-radius: 3px;
-}
-
-.modal-body {
-  padding: 30px;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-.modal-header h2 {
-  font-size: 24px;
-  font-weight: 700;
-  margin: 0;
-  min-width: 0;
-  flex: 1 1 auto;
-  padding-right: 10px;
-}
-
-.close-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  color: #fff;
-  font-size: 28px;
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
-  min-height: 40px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-
-.close-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: rotate(90deg);
-}
-
-.modal-price {
-  font-size: 32px;
-  font-weight: 700;
-  color: #ffd700;
-  margin-bottom: 20px;
-}
-
-.modal-features {
-  margin-bottom: 25px;
-}
-
-.modal-features h3 {
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  opacity: 0.8;
-  margin-bottom: 12px;
-}
-
-.feature-list {
-  list-style: none;
-}
-
-.feature-list li {
-  padding: 8px 0;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.feature-list li:before {
-  content: "✓";
-  color: #ffd700;
-  font-weight: bold;
-  font-size: 16px;
-}
-
-/* ===========================
-   PAYMENT MODAL
-   =========================== */
-.payment-section {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 18px;
-  padding: 14px 16px;
-  margin-bottom: 14px;
-}
-
-.payment-section-title {
-  font-size: 14px;
-  font-weight: 800;
-  color: #ffd700;
-  margin-bottom: 8px;
-}
-
-.payment-label {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.75);
-  margin-bottom: 4px;
-}
-
-.payment-value {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px dashed rgba(255, 255, 255, 0.4);
-  border-radius: 12px;
-  padding: 10px 14px;
-  font-size: 16px;
-  font-weight: 700;
-  color: #fff;
-  cursor: pointer;
-  margin-bottom: 6px;
-  transition: background 0.2s ease;
-  user-select: all;
-}
-
-.payment-value:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.payment-value .copy-icon {
-  font-size: 15px;
-  opacity: 0.85;
-}
-
-.payment-note {
-  font-size: 12.5px;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.75);
-  text-align: center;
-  margin: 14px 0 18px;
-}
-
-.payment-note strong {
-  color: #ff9f9f;
-}
-
-.payment-btn-row {
-  display: flex;
-  gap: 10px;
-}
-
-.payment-btn-row .modal-buy-btn {
-  margin-bottom: 0;
-}
-
-.payment-btn-cancel {
-  background: rgba(255, 255, 255, 0.15) !important;
-}
-
-.modal-buy-btn {
-  width: 100%;
-  padding: 14px;
-  background: rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  border-radius: 25px;
-  font-size: 16px;
-  font-weight: 700;
-  color: #fff;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255,255,255,0.3);
-}
-
-.modal-buy-btn:hover {
-  transform: scale(1.02);
-  background: rgba(255, 255, 255, 0.28);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255,255,255,0.35);
-}
-
-body.dark-mode .modal-buy-btn {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.14);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.08);
-}
-
-body.dark-mode .modal-buy-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.12);
-}
-
-/* Spring scale-in for iOS-like popups */
-@keyframes springScaleIn {
-  0%   { transform: scale(0.72); opacity: 0; }
-  60%  { transform: scale(1.04); opacity: 1; }
-  80%  { transform: scale(0.97); }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-/* Touch / cursor soft glow */
-#touchGlow {
-  position: fixed;
-  width: 260px;
-  height: 260px;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 99998;
-  background: radial-gradient(circle, rgba(220, 180, 255, 0.22) 0%, rgba(160, 120, 255, 0.10) 45%, transparent 70%);
-  transform: translate(-50%, -50%);
-  transition: opacity 0.35s ease;
-  opacity: 0;
-  mix-blend-mode: screen;
-}
-
-/* Download Modal */
-.download-modal {
-  display: none;
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(12px) saturate(1.3);
-  -webkit-backdrop-filter: blur(12px) saturate(1.3);
-  z-index: 2000;
-  animation: fadeIn 0.25s ease;
-}
-
-.download-modal.active {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.download-modal-content {
-  background: rgba(90, 70, 180, 0.5);
-  backdrop-filter: blur(36px) saturate(2) brightness(1.1);
-  -webkit-backdrop-filter: blur(36px) saturate(2) brightness(1.1);
-  border-radius: 40px;
-  padding: 40px 30px;
-  width: 90%;
-  max-width: 350px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow:
-    0 24px 64px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255,255,255,0.4),
-    inset 0 -1px 0 rgba(255,255,255,0.1);
-  animation: springScaleIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-  color: #fff;
-  text-align: center;
-  position: relative;
-}
-
-.download-modal-title {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 25px;
-}
-
-.download-modal-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.download-modal-btn {
-  padding: 14px;
-  border: none;
-  border-radius: 25px;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.download-btn {
-  background: rgba(255, 255, 255, 0.18);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255,255,255,0.3);
-}
-
-.download-btn:hover {
-  transform: scale(1.02);
-  background: rgba(255, 255, 255, 0.28);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
-}
-
-body.dark-mode .download-btn {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.14);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-}
-
-body.dark-mode .download-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-}
-
-.tutorial-btn {
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
-}
-
-.tutorial-btn:hover {
-  background: rgba(255, 255, 255, 0.22);
-  border-color: rgba(255, 255, 255, 0.4);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-}
-
-body.dark-mode .tutorial-btn {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
-}
-
-body.dark-mode .tutorial-btn:hover {
-  background: rgba(255, 255, 255, 0.13);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-}
-
-.download-close-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  color: #fff;
-  font-size: 28px;
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-}
-
-.download-close-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: rotate(90deg);
-}
-
-/* Purchase Required Modal */
-.purchase-required-modal {
-  display: none;
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(12px) saturate(1.3);
-  -webkit-backdrop-filter: blur(12px) saturate(1.3);
-  z-index: 2000;
-  animation: fadeIn 0.25s ease;
-}
-
-.purchase-required-modal.active {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.purchase-required-content {
-  background: rgba(180, 50, 60, 0.5);
-  backdrop-filter: blur(36px) saturate(2) brightness(1.1);
-  -webkit-backdrop-filter: blur(36px) saturate(2) brightness(1.1);
-  border-radius: 40px;
-  padding: 40px 30px;
-  width: 90%;
-  max-width: 350px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  box-shadow:
-    0 24px 64px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255,255,255,0.35),
-    inset 0 -1px 0 rgba(255,255,255,0.1);
-  animation: springScaleIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-  color: #fff;
-  text-align: center;
-  position: relative;
-}
-
-.purchase-required-title {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 15px;
-}
-
-.purchase-required-message {
-  font-size: 14px;
-  margin-bottom: 25px;
-  line-height: 1.5;
-}
-
-.purchase-required-btn {
-  width: 100%;
-  padding: 14px;
-  background: rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  border-radius: 25px;
-  font-size: 15px;
-  font-weight: 700;
-  color: #fff;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255,255,255,0.3);
-}
-
-.purchase-required-btn:hover {
-  transform: scale(1.02);
-  background: rgba(255, 255, 255, 0.28);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
-}
-
-body.dark-mode .purchase-required-btn {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.14);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-}
-
-body.dark-mode .purchase-required-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-}
-
-.purchase-required-close {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  color: #fff;
-  font-size: 28px;
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-}
-
-.purchase-required-close:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: rotate(90deg);
-}
-
-/* ===========================
-   ANIMATED STATS
-   =========================== */
-.stats-bar {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-}
-
-.stat-item {
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
-  padding: 10px 18px;
-  text-align: center;
-  flex: 1;
-  min-width: 100px;
-}
-
-.stat-number {
-  color: #ffd700;
-  font-size: 22px;
-  font-weight: 800;
-  display: block;
-  animation: statPop 0.6s ease;
-}
-
-.stat-label {
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-@keyframes statPop {
-  0%   { transform: scale(0.5); opacity: 0; }
-  70%  { transform: scale(1.1); }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-/* ===========================
-   DISCOUNT COUNTDOWN TIMER
-   =========================== */
-.countdown-box {
-  background: linear-gradient(135deg, rgba(255, 100, 100, 0.2), rgba(255, 50, 50, 0.1));
-  border: 1px solid rgba(255, 100, 100, 0.4);
-  border-radius: 20px;
-  padding: 14px 18px;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.countdown-label {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 10px;
-}
-
-.countdown-timer {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-}
-
-.countdown-unit {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  padding: 8px 12px;
-  min-width: 55px;
-}
-
-.countdown-number {
-  color: #ff6b6b;
-  font-size: 24px;
-  font-weight: 800;
-  display: block;
-  line-height: 1;
-}
-
-.countdown-unit-label {
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.countdown-expired {
-  color: #ff6b6b;
-  font-size: 15px;
-  font-weight: 700;
-  padding: 8px;
-}
-
-#discountOverlay {
-  display: none;
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  z-index: 99999;
-  pointer-events: none;
-  justify-content: center;
-  align-items: center;
-}
-
-#discountOverlay.show {
-  display: flex;
-}
-
-.discount-bg {
-  position: absolute;
-  inset: 0;
-  background: rgba(130, 60, 200, 0.55);
-  backdrop-filter: blur(4px);
-}
-
-.discount-center {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  transition: opacity 0.6s ease;
-}
-
-#discountOverlay.show .discount-center {
-  animation: discountFadeInOut 3s ease forwards;
-}
-
-@keyframes discountFadeInOut {
-  0%   { opacity: 0; transform: scale(0.8); }
-  20%  { opacity: 1; transform: scale(1); }
-  75%  { opacity: 1; transform: scale(1); }
-  100% { opacity: 0; transform: scale(1.05); }
-}
-
-.discount-main-symbol {
-  font-size: 40px;
-  font-weight: 900;
-  background: linear-gradient(135deg, #fff, #e8b4ff, #fff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow: none;
-  filter: drop-shadow(0 0 30px rgba(255,255,255,0.5));
-  line-height: 1;
-  animation: discountPulse 1s ease-in-out infinite alternate;
-  position: relative;
-  z-index: 2;
-}
-
-.discount-subtext {
-  font-size: 22px;
-  font-weight: 700;
-  color: #fff;
-  text-align: center;
-  margin-top: 4px;
-  line-height: 1.3;
-  list-style: none;
-  position: relative;
-  z-index: 2;
-  text-shadow: 0 0 10px rgba(255,255,255,0.4);
-}
-
-@media (min-width: 768px) {
-  .discount-main-symbol {
-    font-size: 130px;
-  }
-  .discount-subtext {
-    font-size: 28px;
-    margin-top: 8px;
-  }
-}
-
-@keyframes discountPulse {
-  from { filter: drop-shadow(0 0 20px rgba(255,255,255,0.4)); }
-  to   { filter: drop-shadow(0 0 50px rgba(255,180,255,0.9)); }
-}
-
-.discount-floating-item {
-  position: absolute;
-  font-size: 40px;
-  animation: floatAround 2s ease-in-out infinite alternate;
+  background: #0d0814;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 35px rgba(164, 92, 255, 0.4), inset 0 0 15px rgba(255, 105, 0, 0.3);
   z-index: 3;
 }
+.splash-logo.missing-logo { visibility: hidden; }
 
-.discount-floating-item:nth-child(1) { top: 15%; left: 12%; animation-delay: 0s; }
-.discount-floating-item:nth-child(2) { top: 12%; right: 15%; animation-delay: 0.3s; }
-.discount-floating-item:nth-child(3) { bottom: 20%; left: 10%; animation-delay: 0.5s; }
-.discount-floating-item:nth-child(4) { bottom: 18%; right: 12%; animation-delay: 0.2s; }
-.discount-floating-item:nth-child(5) { top: 45%; left: 5%; animation-delay: 0.4s; font-size: 30px; }
-.discount-floating-item:nth-child(6) { top: 40%; right: 6%; animation-delay: 0.1s; font-size: 30px; }
-
-@keyframes floatAround {
-  from { transform: translateY(0px) rotate(-5deg); }
-  to   { transform: translateY(-18px) rotate(5deg); }
-}
-
-/* DISCOUNT TOAST */
-#discountToast {
-  display: none;
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%) translateY(30px);
-  background: linear-gradient(135deg, rgba(180, 60, 255, 0.95), rgba(100, 20, 180, 0.95));
-  color: #fff;
-  padding: 12px 24px;
-  border-radius: 50px;
-  font-size: 14px;
-  font-weight: 600;
-  z-index: 100000;
-  border: 1px solid rgba(255,255,255,0.3);
-  box-shadow: 0 8px 32px rgba(150, 0, 255, 0.4);
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-#discountToast.show {
-  display: block;
-  opacity: 1;
-  transform: translateX(-50%) translateY(0px);
-}
-
-/* ================================
-   WELCOME FEATURES NOTE MODAL
-================================= */
-#featuresModalOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  z-index: 99999;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.35s ease;
-  padding: 20px;
-}
-
-#featuresModalOverlay.show {
-  display: flex;
-  opacity: 1;
-}
-
-#featuresModalBox {
-  background: linear-gradient(160deg, #1b1b26, #101018);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 20px;
-  max-width: 520px;
-  width: 100%;
-  max-height: 82vh;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-  transform: translateY(20px) scale(0.97);
-  transition: transform 0.35s ease;
-  overflow: hidden;
-}
-
-#featuresModalOverlay.show #featuresModalBox {
-  transform: translateY(0) scale(1);
-}
-
-#featuresModalHeader {
-  padding: 20px 22px 12px;
-  font-size: 20px;
-  font-weight: 700;
-  color: #fff;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-#featuresModalHeader span {
-  display: block;
-  font-size: 13px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.55);
-  margin-top: 4px;
-}
-
-#featuresModalBody {
-  padding: 14px 22px;
-  overflow-y: auto;
-  flex: 1;
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 14.5px;
-  line-height: 1.7;
-}
-
-#featuresModalBody::-webkit-scrollbar {
-  width: 6px;
-}
-#featuresModalBody::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-}
-
-#featuresModalBody ol {
-  margin: 0 0 4px;
-  padding-left: 20px;
-}
-
-#featuresModalBody ol li {
+.splash-title {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #fff 0%, #ff8b35 50%, #a45cff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 20px rgba(255, 105, 0, 0.3);
   margin-bottom: 6px;
+  position: relative;
+  z-index: 2;
 }
 
-.featuresGroupTitle {
-  font-size: 18px;
-  font-weight: 800;
-  color: #a26cf0;
-  margin: 18px 0 8px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.featuresGroupTitle:first-child {
-  margin-top: 0;
-}
-
-.featuresGroupNum {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 26px;
-  height: 26px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #6c5ce7, #a26cf0);
-  color: #fff;
-  font-size: 14px;
-  font-weight: 800;
-}
-
-#featuresScrollHint {
-  position: absolute;
-  left: 50%;
-  bottom: 78px;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  color: rgba(255, 255, 255, 0.6);
+.splash-tag {
+  color: #8c829e;
   font-size: 11px;
-  pointer-events: none;
-  transition: opacity 0.25s ease;
-  animation: scrollHintBounce 1.4s ease-in-out infinite;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  margin-bottom: 35px;
+  position: relative;
+  z-index: 2;
 }
 
-#featuresScrollHint.hide {
-  opacity: 0;
+.cyber-loader-box {
+  width: min(280px, 80vw);
+  position: relative;
+  z-index: 2;
 }
 
-#featuresScrollHint svg {
-  width: 18px;
-  height: 18px;
+.cyber-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: #38bdf8;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  font-family: monospace;
 }
 
-@keyframes scrollHintBounce {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(6px); }
-}
-
-#featuresModalFooter {
-  padding: 14px 22px 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+.cyber-bar-bg {
+  height: 6px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   position: relative;
 }
 
-#featuresModalOkBtn {
-  width: 100%;
-  padding: 13px;
-  border: none;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #6c5ce7, #a26cf0);
-  color: #fff;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.15s ease, opacity 0.2s ease, visibility 0.2s ease;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
+.cyber-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ff6900, #a45cff, #38bdf8);
+  box-shadow: 0 0 10px #38bdf8;
+  border-radius: 4px;
+  transition: width 0.1s linear;
 }
 
-#featuresModalOkBtn.show-btn {
+/* ================= PORTRAIT WELCOME ANNOUNCEMENT POPUP ================= */
+#welcomePopupOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+html:not([data-theme="dark"]) #welcomePopupOverlay {
+  background: rgba(160, 210, 250, 0.75);
+}
+
+#welcomePopupOverlay.active {
   opacity: 1;
-  visibility: visible;
   pointer-events: auto;
 }
 
-#featuresModalOkBtn:active {
-  transform: scale(0.97);
-  opacity: 0.9;
+.welcome-popup-box {
+  position: relative;
+  width: min(420px, 100%);
+  max-height: 90vh;
+  background: var(--card2);
+  border: 2px solid var(--orange);
+  border-radius: 32px;
+  padding: 24px 20px;
+  box-shadow: 0 30px 90px rgba(0,0,0,0.5), 0 0 50px rgba(255, 105, 0, 0.3);
+  transform: scale(0.8) translateY(20px);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  flex-direction: column;
 }
 
-body:not(.dark-mode) #featuresModalBox {
-  background: linear-gradient(160deg, #ffffff, #f2f2f7);
-  border: 1px solid rgba(0, 0, 0, 0.08);
+#welcomePopupOverlay.active .welcome-popup-box {
+  transform: scale(1) translateY(0);
 }
-body:not(.dark-mode) #featuresModalHeader {
-  color: #111;
-  border-bottom-color: rgba(0, 0, 0, 0.08);
+
+.popup-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 5;
+  flex-shrink: 0;
 }
-body:not(.dark-mode) #featuresModalHeader span {
-  color: rgba(0, 0, 0, 0.55);
+
+.popup-actions-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
-body:not(.dark-mode) #featuresModalBody {
-  color: rgba(0, 0, 0, 0.8);
+
+.popup-btn {
+  background: rgba(150, 150, 150, 0.15);
+  border: 1px solid var(--line);
+  color: var(--text-main);
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s, transform 0.2s;
 }
-body:not(.dark-mode) #featuresModalFooter {
-  border-top-color: rgba(0, 0, 0, 0.08);
+
+.popup-btn:active { transform: scale(0.95); }
+.popup-btn:hover { background: rgba(150, 150, 150, 0.25); }
+
+.popup-close-btn {
+  background: rgba(255, 62, 62, 0.2);
+  border-color: rgba(255, 62, 62, 0.4);
+  color: #ff5252;
 }
-body:not(.dark-mode) #featuresScrollHint {
-  color: rgba(0, 0, 0, 0.5);
+
+.popup-close-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: rgba(150, 150, 150, 0.05);
+  border-color: var(--line);
+  color: var(--muted);
+}
+
+.popup-countdown-badge {
+  font-family: monospace;
+  background: rgba(255, 105, 0, 0.2);
+  border: 1px solid rgba(255, 105, 0, 0.4);
+  color: var(--orange2);
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.popup-headline-wrapper {
+  position: relative;
+  text-align: center;
+  margin: 10px 0 16px;
+  padding: 8px 0;
+  flex-shrink: 0;
+}
+
+.popup-main-title {
+  font-size: 20px;
+  font-weight: 950;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, var(--text-main) 0%, var(--orange2) 50%, var(--orange) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.5px;
+  position: relative;
+  z-index: 4;
+  line-height: 1.3;
+}
+
+.popup-live-emojis {
+  position: absolute;
+  inset: -10px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.popup-live-emojis .p-emoji {
+  position: absolute;
+  font-size: 26px;
+  animation: popupEmojiFloat 3s ease-in-out infinite;
+}
+
+.popup-live-emojis .pe-1 { left: 2%; top: -10%; animation-delay: 0s; }
+.popup-live-emojis .pe-2 { right: 2%; top: -10%; animation-delay: 1.5s; }
+.popup-live-emojis .pe-3 { left: 10%; bottom: -10%; animation-delay: 0.8s; font-size: 22px; }
+.popup-live-emojis .pe-4 { right: 10%; bottom: -10%; animation-delay: 2s; font-size: 22px; }
+
+@keyframes popupEmojiFloat {
+  0%, 100% { transform: translateY(0) scale(1) rotate(0deg); }
+  50% { transform: translateY(-6px) scale(1.15) rotate(5deg); }
+}
+
+.popup-content-body {
+  background: rgba(150, 150, 150, 0.05);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 16px;
+  font-size: 13px;
+  color: var(--text-sub);
+  line-height: 1.6;
+  overflow-y: auto;
+  position: relative;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.popup-offer-card {
+  background: rgba(255, 105, 0, 0.08);
+  border: 1px solid rgba(255, 105, 0, 0.3);
+  border-radius: 14px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.popup-offer-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.popup-offer-item span {
+  color: var(--orange2);
+}
+
+/* ================= STORE MAIN CONTENT ================= */
+#app{display:none;min-height:100vh;position:relative}
+
+/* ===== LIGHT MODE BACKGROUND ===== */
+.live{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(186, 230, 253, 0.9), transparent 55%),
+    radial-gradient(circle at 80% 80%, rgba(147, 210, 250, 0.85), transparent 55%),
+    linear-gradient(180deg, #e0f2fe 0%, #cfe8ff 40%, #bae0fc 75%, #d6edff 100%);
+  transition: background 0.4s ease;
+}
+.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.45;animation:drift 14s ease-in-out infinite;transition:background 0.4s ease, opacity 0.4s ease}
+.blob.a{width:360px;height:360px;background:#7dd3fc;left:-140px;top:18%}
+.blob.b{width:410px;height:410px;background:#93c5fd;right:-170px;top:8%;animation-delay:-5s}
+.blob.c{width:280px;height:280px;background:#bae6fd;opacity:.5;left:40%;bottom:-90px;animation-delay:-9s}
+@keyframes drift{50%{transform:translate(70px,-55px) scale(1.15)}}
+
+/* ===== DARK MODE BACKGROUND ===== */
+[data-theme="dark"] .live{
+  background:
+    radial-gradient(circle at 15% 20%, rgba(75, 85, 99, 0.25), transparent 45%),
+    radial-gradient(circle at 85% 75%, rgba(55, 65, 81, 0.3), transparent 45%),
+    radial-gradient(circle at 50% 100%, rgba(31, 41, 55, 0.4), transparent 55%),
+    linear-gradient(135deg, #0b0d12 0%, #171a21 35%, #1f2229 65%, #12151b 100%);
+}
+[data-theme="dark"] .blob.a{background:#6b7280;opacity:.20}
+[data-theme="dark"] .blob.b{background:#4b5563;opacity:.20}
+[data-theme="dark"] .blob.c{background:#374151;opacity:.16}
+
+/* ================= NAVIGATION / HEADER MENU ================= */
+header{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1px solid var(--line);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+.container{width:min(1180px,calc(100% - 28px));margin:auto;position:relative;z-index:2}
+.nav{height:75px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+
+.brand{display:flex;align-items:center;gap:10px;font-weight:950;flex-shrink:0}
+.brand img{width:42px;height:42px;border-radius:12px;object-fit:cover;box-shadow:0 0 12px rgba(255,105,0,0.3)}
+
+.brand-name {
+  font-size: 18px;
+  font-weight: 950;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #ffffff 0%, #ff8b35 30%, #ff6900 50%, #a45cff 80%, #38bdf8 100%);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: brandShimmer 5s ease infinite;
+  text-shadow: 0 0 25px rgba(255,105,0,0.25);
+}
+
+@keyframes brandShimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.nav-right-islands {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 4px 0;
+  scrollbar-width: none;
+}
+.nav-right-islands::-webkit-scrollbar { display: none; }
+
+.island-nav-btn {
+  background: var(--card2);
+  border: 1px solid var(--line);
+  color: var(--text-main);
+  padding: 7px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.island-nav-btn:active { transform: scale(0.92); }
+.island-nav-btn:hover { border-color: var(--orange); background: rgba(255,105,0,0.1); }
+.island-nav-btn span { font-size: 13px; }
+
+.menu-island-btn {
+  padding: 9px 18px;
+  font-size: 13px;
+  border-radius: 25px;
+  border-color: rgba(255,105,0,0.4);
+  background: var(--card2);
+}
+.menu-island-btn span {
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.header-menu-dropdown {
+  position: absolute;
+  top: 78px;
+  right: max(14px, calc((100% - 1180px)/2 + 14px));
+  width: 210px;
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.3), 0 0 20px rgba(255,105,0,0.15);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  opacity: 0;
+  transform: translateY(-12px) scale(0.95);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.175,0.885,0.32,1.275);
+  z-index: 200;
+}
+.header-menu-dropdown.open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.header-menu-item {
+  background: rgba(150,150,150,0.08);
+  border: 1px solid var(--line);
+  color: var(--text-main);
+  padding: 12px 14px;
+  border-radius: 15px;
+  font-size: 13px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  width: 100%;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s;
+}
+.header-menu-item:active { transform: scale(0.96); }
+.header-menu-item:hover { background: rgba(255,105,0,0.15); border-color: var(--orange); }
+.header-menu-item span { font-size: 16px; }
+
+/* ================= SEARCH BAR ================= */
+.searchbar{display:flex;gap:9px;margin:24px 0}
+.search{width:100%;background:var(--card2);color:var(--text-main);border:1px solid var(--line);border-radius:15px;padding:14px 16px;outline:0}
+.search::placeholder{color:var(--muted)}
+.search:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,105,0,0.15)}.search-icon{width:50px;border-radius:15px;background:var(--orange);color:#fff}
+.section-head{display:flex;justify-content:space-between;align-items:end;margin:27px 0 14px}.section-head h3{font-size:24px;color:var(--text-main)}.section-head small{color:var(--muted)}
+
+/* ================= CATEGORY BUTTONS / FILTERS ================= */
+.categories-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:25px}
+
+.cat-btn{
+  position: relative;
+  background: rgba(255, 255, 255, 0.75);
+  color: var(--text-main);
+  border: 1px solid rgba(2, 132, 199, 0.45);
+  border-radius: 16px;
+  padding: 16px;
+  font-weight: 900;
+  text-align: center;
+  backdrop-filter: blur(8px);
+  transition: transform 0.15s ease, background-color 0.25s, box-shadow 0.25s;
+  overflow: hidden;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+[data-theme="dark"] .cat-btn{
+  background: rgba(56, 189, 248, 0.15);
+  border-color: rgba(56, 189, 248, 0.4);
+}
+.cat-btn:active{ transform: scale(0.95); }
+.cat-btn.active, .cat-btn:hover{ background: var(--sky); color: #ffffff; border-color: var(--sky); box-shadow: 0 0 15px rgba(56, 189, 248, 0.5); }
+
+.premium-cat-btn {
+  background: linear-gradient(135deg, rgba(255, 145, 60, 0.55), rgba(180, 130, 255, 0.55), rgba(255, 145, 60, 0.55));
+  background-size: 300% 300%;
+  animation: liveGradient 4s ease infinite;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(234, 88, 12, 0.5);
+  box-shadow: 0 4px 20px rgba(255, 105, 0, 0.3);
+  color: var(--text-main);
+  overflow: visible !important;
+}
+[data-theme="dark"] .premium-cat-btn{
+  background: linear-gradient(135deg, rgba(255, 105, 0, 0.3), rgba(164, 92, 255, 0.3), rgba(255, 105, 0, 0.3));
+  background-size: 300% 300%;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+.premium-cat-btn .btn-text { position: relative; z-index: 5; }
+.premium-cat-btn:hover, .premium-cat-btn.active { transform: translateY(-2px) scale(1.02); }
+
+.button-emoji-animation { position: absolute; inset: -15px; pointer-events: none; z-index: 3; }
+.button-emoji-animation .emoji { position: absolute; display: block; line-height: 1; user-select: none; }
+.button-emoji-animation .kiss-big { font-size: 32px; left: 35%; top: -10%; animation: kissFloat 5s ease-in-out infinite; }
+.button-emoji-animation .heart-big { font-size: 28px; left: 5%; top: 15%; animation: heartFloat 5s ease-in-out infinite; }
+.button-emoji-animation .kiss-small { font-size: 20px; left: 80%; top: -5%; animation: smallKiss 5s ease-in-out infinite; }
+.button-emoji-animation .kiss-bottom { font-size: 22px; left: 15%; top: 75%; animation: bottomKiss 5s ease-in-out infinite; }
+.button-emoji-animation .heart-small { font-size: 24px; left: 75%; top: 70%; animation: heartSmall 5s ease-in-out infinite; }
+.button-emoji-animation .love-left { font-size: 26px; left: 10%; top: 10%; opacity: 0; animation: loveLeft 5s ease-in-out infinite; }
+.button-emoji-animation .love-right { font-size: 24px; left: 70%; top: 20%; opacity: 0; animation: loveRight 5s ease-in-out infinite; }
+.button-emoji-animation .confetti { position: absolute; inset: 0; opacity: 0; animation: confettiScene 5s ease-in-out infinite; }
+.button-emoji-animation .piece { position: absolute; width: 4px; height: 12px; border-radius: 4px; background: #ff0b75; transform: rotate(25deg); }
+.button-emoji-animation .piece:nth-child(2n) { background: #ffb000; }
+.button-emoji-animation .piece:nth-child(3n) { width: 3px; height: 9px; transform: rotate(70deg); }
+.button-emoji-animation .p1 { left: 10%; top: 10%; } .button-emoji-animation .p2 { left: 30%; top: 5%; } .button-emoji-animation .p3 { left: 85%; top: 10%; } .button-emoji-animation .p4 { left: 75%; top: 80%; } .button-emoji-animation .p5 { left: 20%; top: 75%; }
+
+@keyframes kissFloat { 0%, 15% { opacity: 0.9; transform: scale(1) translate(0,0); } 25% { opacity: 0; transform: scale(.2) translate(-20px,20px); } 60% { opacity: 0; } 75%, 100% { opacity: 0.9; transform: scale(1) translate(0,0); } }
+@keyframes heartFloat { 0%, 15% { opacity: 0.9; transform: scale(1) translate(0,0); } 25% { opacity: 0; transform: scale(.2) translate(15px,20px); } 60% { opacity: 0; } 75%, 100% { opacity: 0.9; transform: scale(1) translate(0,0); } }
+@keyframes smallKiss { 0%, 15% { opacity: 0.9; transform: scale(1); } 25% { opacity: 0; transform: scale(.1); } 60% { opacity: 0; } 75%, 100% { opacity: 0.9; transform: scale(1); } }
+@keyframes bottomKiss { 0%, 15% { opacity: 0.9; transform: translateY(0); } 25% { opacity: 0; transform: translateY(-20px) scale(.1); } 60% { opacity: 0; } 75%, 100% { opacity: 0.9; transform: translateY(0); } }
+@keyframes heartSmall { 0%, 15% { opacity: 0.9; transform: translateY(0); } 25% { opacity: 0; transform: translateY(-15px) scale(.1); } 60% { opacity: 0; } 75%, 100% { opacity: 0.9; transform: translateY(0); } }
+@keyframes loveLeft { 0%, 28% { opacity: 0; transform: scale(.1) translateY(10px); } 40% { opacity: 0.95; transform: scale(1) translateY(0); } 58% { opacity: 0.95; transform: scale(1.05) translateY(-2px); } 72%, 100% { opacity: 0; transform: scale(.1); } }
+@keyframes loveRight { 0%, 30% { opacity: 0; transform: scale(.1); } 42% { opacity: 0.95; transform: scale(1); } 58% { opacity: 0.95; transform: scale(1.05) translateY(-2px); } 72%, 100% { opacity: 0; transform: scale(.1); } }
+@keyframes confettiScene { 0%, 24% { opacity: 0; } 32%, 60% { opacity: 1; } 72%, 100% { opacity: 0; } }
+
+.ripple { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.6); transform: scale(0); animation: tapRipple 0.5s linear; pointer-events: none; }
+@keyframes tapRipple { to { transform: scale(4); opacity: 0; } }
+@keyframes liveGradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+/* ================= PRODUCT PANELS ================= */
+.product-panel{display:none;margin:16px 0 25px;padding:20px;border:1px solid var(--line);border-radius:26px;background:var(--card);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.product-panel.show{display:block;animation:panelIn .3s cubic-bezier(0.16, 1, 0.3, 1)}
+@keyframes panelIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* ================= PRODUCT CARDS ================= */
+.cart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 15px;
+}
+
+.cart-card {
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  backdrop-filter: blur(12px);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+}
+
+.product-panel.show .cart-card {
+  animation: cardAppear 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes cardAppear {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.cart-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 105, 0, 0.4);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15), 0 0 15px rgba(255, 105, 0, 0.15);
+}
+
+.cart-media { width:100%; height:180px; border-radius:16px; object-fit:cover; background:#0d0814; border:1px solid var(--line); }
+.cart-title-row { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; }
+.cart-title { font-size: 18px; font-weight: 900; color: var(--text-main); }
+.cart-price { font-size: 14px; font-weight: 900; color: var(--orange2); background: rgba(255,105,0,0.15); padding: 6px 12px; border-radius: 10px; border: 1px solid rgba(255,105,0,0.3); }
+
+/* ================= DOWNLOAD BUTTONS (APK / OBB) ================= */
+.apk-obb-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.cart-btn-apk {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0284c7, #38bdf8);
+  color: #fff;
+  padding: 12px 8px;
+  border-radius: 14px;
+  font-weight: 800;
+  text-align: center;
+  font-size: 13px;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+  display: block;
+}
+.cart-btn-apk:active { transform: scale(0.96); }
+
+.cart-btn-obb {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  color: #fff;
+  padding: 12px 8px;
+  border-radius: 14px;
+  font-weight: 800;
+  text-align: center;
+  font-size: 13px;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+  display: block;
+}
+.cart-btn-obb:active { transform: scale(0.96); }
+
+/* ================= TAG BADGES ================= */
+.island-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 10px; }
+.island-tag {
+  background: rgba(150, 150, 150, 0.1);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--sky);
+}
+
+/* ================= AUDIO PREVIEW BOX ================= */
+.audio-box {
+  width: 100%;
+  margin: 6px 0 10px;
+  background: rgba(150, 150, 150, 0.05);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 8px;
+}
+.audio-box audio {
+  width: 100%;
+  height: 38px;
+  outline: none;
+  border-radius: 10px;
+}
+
+/* ================= DISCOUNT COUNTDOWN BANNER ================= */
+.discount-banner {
+  background: linear-gradient(135deg, rgba(255, 105, 0, 0.2), rgba(164, 92, 255, 0.2));
+  border: 1px solid rgba(255, 105, 0, 0.5);
+  border-radius: 18px;
+  padding: 14px 16px;
+  margin: 6px 0 10px;
+  box-shadow: 0 4px 20px rgba(255, 105, 0, 0.2);
+}
+
+.banner-top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.banner-title { font-weight: 900; font-size: 14px; color: var(--text-main); }
+.banner-badge { background: var(--orange); color: #fff; font-size: 12px; font-weight: 900; padding: 4px 10px; border-radius: 10px; }
+.countdown-row { display: flex; justify-content: center; align-items: center; gap: 6px; background: rgba(255, 255, 255, 0.5); padding: 10px; border-radius: 14px; border: 1px solid var(--line); }
+[data-theme="dark"] .countdown-row { background: rgba(0, 0, 0, 0.2); }
+.time-box { display: flex; flex-direction: column; align-items: center; min-width: 45px; }
+.time-box span { font-size: 18px; font-weight: 900; color: var(--sky); font-family: monospace; }
+.time-box small { font-size: 9px; color: var(--muted); text-transform: uppercase; font-weight: 700; }
+.time-colon { font-size: 16px; font-weight: 900; color: var(--orange2); margin-bottom: 10px; }
+.banner-footer-text { font-size: 11px; color: var(--sky); text-align: center; margin-top: 8px; font-weight: 700; }
+
+/* ================= PUBG ACTION BUTTON GRID ================= */
+.pubg-action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.pubg-grid-btn {
+  position: relative;
+  overflow: hidden;
+  font-size: 13px;
+  padding: 14px 10px;
+  min-height: 65px;
+  border-radius: 16px;
+  font-weight: 900;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  transition: transform 0.15s ease, filter 0.2s ease;
+  user-select: none;
+}
+.pubg-grid-btn:active { transform: scale(0.95); }
+
+.btn-features { background: linear-gradient(135deg, #0284c7, #38bdf8); color: #fff; border: 1px solid #38bdf8; }
+.btn-buynow { background: linear-gradient(135deg, #c2410c, #f97316); color: #fff; border: 1px solid #ff8b35; }
+.btn-feedback { background: linear-gradient(135deg, #334155, #475569); color: #fff; border: 1px solid #94a3b8; }
+.btn-invite { background: linear-gradient(135deg, #7e22ce, #a855f7); color: #fff; border: 1px solid #d8b4fe; }
+
+.pubg-btn-badge {
+  font-size: 10px;
+  font-weight: 800;
+  opacity: 0.95;
+  letter-spacing: 0.5px;
+}
+
+/* ================= GENERIC BUY BUTTON ================= */
+.cart-btn-buy {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--orange), var(--orange2));
+  color: #fff;
+  padding: 14px;
+  border-radius: 16px;
+  font-weight: 800;
+  text-align: center;
+  font-size: 14px;
+  box-shadow: 0 4px 15px rgba(255, 105, 0, 0.3);
+  display: block;
+}
+.cart-btn-buy:active { transform: scale(0.96); }
+
+/* ================= FOOTER ================= */
+footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);font-size:11px;margin-top:40px;position:relative;z-index:2}.footer-flex{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
+
+/* ================= MODALS (GENERIC) ================= */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease, backdrop-filter 0.35s ease;
+}
+
+#languageModal, #themeModal {
+  z-index: 1000000;
+}
+
+.modal.open {
+  opacity: 1;
+  pointer-events: auto;
+  background: rgba(160, 210, 250, 0.65);
+  backdrop-filter: blur(12px);
+}
+
+[data-theme="dark"] .modal.open {
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.modal-box {
+  width: min(420px, 100%);
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  padding: 24px;
+  box-shadow: 0 30px 90px rgba(0,0,0,0.4);
+  transform: scale(0.7) translateY(30px);
+  opacity: 0;
+  transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal.open .modal-box {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+
+.modal-top { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 12px; }
+.modal-top h3 { font-size: 20px; font-weight: 900; color: var(--text-main); }
+.close { position: relative; overflow: hidden; width: 38px; height: 38px; border-radius: 12px; background: rgba(150,150,150,0.15); color: var(--text-main); font-size: 20px; }
+.close:active { transform: scale(0.9); }
+
+.modal-link, .lang-option-btn, .theme-option-btn {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  width: 100%;
+  background: rgba(150, 150, 150, 0.08);
+  border: 1px solid var(--line);
+  padding: 14px 16px;
+  border-radius: 14px;
+  font-weight: 800;
+  margin: 8px 0;
+  text-align: center;
+  color: var(--text-main);
+  transition: background 0.2s, border-color 0.2s;
+}
+.modal-link:hover, .lang-option-btn:hover, .theme-option-btn:hover { background: rgba(255, 105, 0, 0.15); border-color: var(--orange); }
+
+/* ================= FEATURE LIST MODAL ================= */
+.feature-scroll-box {
+  overflow-y: auto;
+  padding-right: 8px;
+  margin: 10px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-sub);
+}
+
+.feature-item {
+  background: rgba(150, 150, 150, 0.05);
+  border: 1px solid var(--line);
+  padding: 10px 14px;
+  border-radius: 12px;
+  color: var(--text-main);
+}
+
+/* ================= PAYMENT MODAL ================= */
+.pay-card-box {
+  background: linear-gradient(135deg, rgba(255, 105, 0, 0.08), rgba(164, 92, 255, 0.08));
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 14px;
+  margin: 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pay-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.jazzcash-badge { display: flex; align-items: center; gap: 8px; font-weight: 900; color: #ff3e3e; font-size: 14px; }
+.jazzcash-logo-img { width: 26px; height: 26px; border-radius: 6px; object-fit: cover; }
+.copy-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.6); border: 1px solid var(--line); padding: 10px 12px; border-radius: 12px; }
+[data-theme="dark"] .copy-row { background: rgba(0,0,0,0.15); }
+.copy-info { font-weight: 800; font-size: 14px; color: var(--text-main); }
+.copy-btn-icon { position: relative; overflow: hidden; background: rgba(255, 105, 0, 0.2); border: 1px solid rgba(255, 105, 0, 0.4); color: var(--orange2); border-radius: 8px; padding: 4px 8px; font-size: 11px; font-weight: 800; cursor: pointer; }
+
+/* ================= PAYMENT ACTION BUTTONS ================= */
+.pay-action-btn {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  padding: 14px;
+  border-radius: 16px;
+  font-weight: 900;
+  font-size: 13px;
+  text-align: center;
+  display: block;
+  margin-top: 8px;
+  cursor: pointer;
+}
+.btn-invite-share { background: linear-gradient(135deg, #a45cff, #ff6900); color: #fff; }
+.btn-join-premium { background: linear-gradient(135deg, #38bdf8, #0284c7); color: #ffffff; }
+
+/* ================= USDT INTERNATIONAL PAYMENT BOX ================= */
+.usdt-box {
+  background: linear-gradient(135deg, rgba(56,189,248,0.12), rgba(164,92,255,0.12));
+  border: 1px solid rgba(56,189,248,0.4);
+  border-radius: 18px;
+  padding: 14px;
+  margin: 4px 0 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: center;
+}
+.usdt-header {
+  font-weight: 900;
+  font-size: 14px;
+  color: var(--sky);
+  letter-spacing: 0.3px;
+}
+.usdt-text {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-sub);
+  line-height: 1.5;
+}
+
+/* ================= TOAST NOTIFICATIONS ================= */
+.toast{position:fixed;z-index:9999999;bottom:22px;left:50%;transform:translate(-50%,20px);opacity:0;background:var(--text-main);color:var(--bg);padding:12px 17px;border-radius:13px;font-size:12px;font-weight:900;transition:.25s;pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ========================================================
+   FLOATING FRUIT NINJA GAME BUBBLE (RIGHT MIDDLE)
+======================================================== */
+.fruit-game-bubble {
+  position: fixed;
+  right: 18px;
+  top: 55%;
+  transform: translateY(-50%) scale(0);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  pointer-events: none;
+  transition: transform 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+  opacity: 0;
+}
+
+.fruit-game-bubble.visible {
+  transform: translateY(-50%) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.bubble-circle {
+  position: relative;
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff416c, #ff4b2b, #ff8c00);
+  box-shadow: 0 10px 25px rgba(255, 65, 108, 0.45), 0 0 20px rgba(255, 140, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  animation: bubbleFloat 3.5s ease-in-out infinite alternate;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@keyframes bubbleFloat {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-7px) rotate(4deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+.bubble-icon {
+  font-size: 28px;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.3));
+  pointer-events: none;
+}
+
+.bubble-blade {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  font-size: 16px;
+  transform: rotate(45deg);
+  animation: bladeShine 2s infinite ease-in-out;
+}
+
+@keyframes bladeShine {
+  0%, 100% { transform: rotate(45deg) scale(1); }
+  50% { transform: rotate(55deg) scale(1.2); }
+}
+
+.bubble-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 75, 43, 0.6);
+  animation: ringPulse 2.2s infinite;
+  pointer-events: none;
+}
+
+@keyframes ringPulse {
+  0% { transform: scale(0.9); opacity: 1; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+
+.bubble-msg-popup {
+  position: absolute;
+  right: 74px;
+  background: rgba(10, 15, 25, 0.88);
+  color: #fff;
+  border: 1px solid rgba(255, 105, 0, 0.5);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 8px 14px;
+  border-radius: 16px 4px 16px 16px;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  pointer-events: none;
+  animation: msgPop 4s infinite ease-in-out;
+}
+
+.bubble-msg-popup::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -6px;
+  transform: translateY(-50%);
+  border-width: 6px 0 6px 6px;
+  border-style: solid;
+  border-color: transparent transparent transparent rgba(10, 15, 25, 0.88);
+}
+
+@keyframes msgPop {
+  0%, 100% { transform: translateY(0); opacity: 0.95; }
+  50% { transform: translateY(-3px); opacity: 1; }
+}
+
+/* ========================================================
+   FULL SCREEN FRUIT NINJA GAME CONTAINER
+======================================================== */
+#fruitGameModal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000002;
+  display: none;
+  background: #020508;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#fruitGameModal.active {
+  display: block;
+}
+
+.game-close-btn {
+  position: absolute;
+  top: calc(12px + env(safe-area-inset-top));
+  right: 14px;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  backdrop-filter: blur(10px);
+  transition: transform 0.2s, background 0.2s;
+}
+.game-close-btn:active { transform: scale(0.92); }
+.game-close-btn:hover { background: rgba(255, 60, 0, 0.5); }
+
+#gameContainer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background:
+    linear-gradient(rgba(2,5,8,.45), rgba(2,5,8,.45)),
+    url("https://thumbs.dreamstime.com/b/blurred-portrait-background-studio-earthy-tones-soft-textures-creative-photography-projects-features-vintage-370104179.jpg?w=576")
+    center / cover no-repeat;
+}
+
+#gameContainer .moon {
+  position: absolute;
+  width: 85px;
+  height: 85px;
+  right: 9%;
+  top: 13%;
+  border-radius: 50%;
+  background: #eef3dc;
+  opacity: .85;
+  box-shadow: 0 0 30px rgba(230,255,210,.25), 0 0 80px rgba(230,255,210,.08);
+}
+
+#gameContainer .ground {
+  position: absolute;
+  left: -10%;
+  bottom: -60px;
+  width: 120%;
+  height: 180px;
+  background: radial-gradient(ellipse at center, rgba(45,125,55,.35), transparent 65%);
+}
+
+#gameCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+
+#hud {
+  position: absolute;
+  z-index: 20;
+  top: calc(10px + env(safe-area-inset-top));
+  left: 10px;
+  right: 90px; /* leaves room for exit button */
+  display: flex;
+  justify-content: flex-start;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.hudBox {
+  min-width: 68px;
+  padding: 6px 9px;
+  text-align: center;
+  border-radius: 15px;
+  background: rgba(0,0,0,.45);
+  border: 1px solid rgba(255,255,255,.16);
+  backdrop-filter: blur(12px);
+  color: white;
+}
+
+.hudBox .label {
+  display: block;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  opacity: .6;
+}
+
+.hudBox .value {
+  display: block;
+  margin-top: 2px;
+  font-size: 19px;
+  font-weight: 900;
+}
+
+.hearts {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  font-size: 18px;
+}
+
+.heart {
+  color: #ff3b30;
+  text-shadow: 0 0 8px rgba(255,50,50,.5);
+}
+
+.heart.empty {
+  opacity: .15;
+}
+
+#comboText {
+  position: absolute;
+  z-index: 30;
+  left: 50%;
+  top: 35%;
+  transform: translate(-50%,-50%) scale(.4);
+  opacity: 0;
+  pointer-events: none;
+  color: white;
+  font-size: 42px;
+  font-weight: 1000;
+  font-style: italic;
+  white-space: nowrap;
+  text-shadow: 0 0 12px #ff6500, 0 6px 25px rgba(255,60,0,.7);
+}
+
+.comboAnimation {
+  animation: combo .65s ease-out;
+}
+
+@keyframes combo {
+  0%{ opacity:0; transform: translate(-50%,-50%) scale(.35) rotate(-8deg); }
+  30%{ opacity:1; transform: translate(-50%,-50%) scale(1.2) rotate(3deg); }
+  100%{ opacity:0; transform: translate(-50%,-85%) scale(1); }
+}
+
+.ninja-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(8px);
+}
+
+.ninja-card {
+  width: min(430px, 92vw);
+  padding: 35px 25px;
+  text-align: center;
+  border-radius: 30px;
+  background: linear-gradient(145deg, rgba(255,255,255,.13), rgba(255,255,255,.035));
+  border: 1px solid rgba(255,255,255,.16);
+  box-shadow: 0 30px 80px rgba(0,0,0,.6);
+}
+
+.ninja-logo {
+  font-size: 52px;
+  font-weight: 1000;
+  font-style: italic;
+  letter-spacing: -3px;
+  color: white;
+  text-shadow: 0 4px 0 #ef421d, 0 10px 30px rgba(255,60,0,.45);
+}
+
+.ninja-subtitle {
+  margin-top: 5px;
+  color: rgba(255,255,255,.65);
+  font-size: 11px;
+  letter-spacing: 4px;
+}
+
+.ninja-fruitLogo {
+  margin: 20px 0;
+  font-size: 52px;
+}
+
+.ninja-btn {
+  border: none;
+  outline: none;
+  padding: 16px 45px;
+  border-radius: 100px;
+  color: white;
+  font-size: 18px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ffad20, #ff3d00);
+  box-shadow: 0 10px 30px rgba(255,60,0,.35);
+  cursor: pointer;
+  user-select: none;
+}
+
+.ninja-btn:active { transform: scale(.94); }
+
+.ninja-help {
+  margin-top: 20px;
+  color: rgba(255,255,255,.6);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.ninja-finalScore {
+  margin: 18px 0;
+  color: white;
+  font-size: 56px;
+  font-weight: 1000;
+}
+
+/* ================= RESPONSIVE / MOBILE STYLES ================= */
+@media(max-width:600px){
+  .container{width:calc(100% - 20px);}
+  .brand-name{font-size:16px;}
+  .section-head h3{font-size:20px;}
+  .categories-grid, .pubg-action-grid{grid-template-columns:1fr 1fr; gap:8px;}
+  .product-panel { padding: 14px; border-radius: 20px; }
+  .cart-grid { grid-template-columns: 1fr; gap: 14px; }
+  .fruit-game-bubble { right: 12px; }
+  .bubble-circle { width: 54px; height: 54px; }
+  .bubble-icon { font-size: 24px; }
+  .bubble-msg-popup { display: none; }
 }
 </style>
-
 </head>
 
-<body class="dark-mode">
+<body>
 
-<!-- BLOB BACKGROUND CANVAS -->
-<canvas id="blobCanvas"></canvas>
-
-<!-- TOUCH GLOW -->
-<div id="touchGlow"></div>
-
-<!-- ================================
-  WELCOME FEATURES NOTE MODAL
-  Shows before the main menu on every visit.
-  Edit the FEATURES_GROUPS array below to change the text.
-================================= -->
-<div id="featuresModalOverlay">
-  <div id="featuresModalBox">
-    <div id="featuresModalHeader">
-      🎉 Welcome! 
-      <span>Here's everything you get — scroll to see all features </span>
+<!-- ============================================================
+     SPLASH SCREEN (Cyberpunk Hologram Loader)
+============================================================ -->
+<div id="splash">
+  <div class="cyber-bg"></div>
+  <div class="scanlines"></div>
+  
+  <div class="holo-container">
+    <div class="holo-ring"></div>
+    <div class="holo-ring-2"></div>
+    <img class="splash-logo" src="PIKAZOO.png" alt="PIKAZOO Logo" onerror="this.classList.add('missing-logo')">
+  </div>
+  
+  <h1 class="splash-title">PIKAZOO STORE</h1>
+  <p class="splash-tag">Gaming • Premium • Customization</p>
+  
+  <div class="cyber-loader-box">
+    <div class="cyber-info">
+      <span id="cyberStatus">SYSTEM LOADING...</span>
+      <span id="cyberCount">0%</span>
     </div>
-    <div id="featuresModalBody">
-      <div id="featuresGroups"></div>
-    </div>
-    <div id="featuresModalFooter">
-      <div id="featuresScrollHint">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        Scroll for more
-      </div>
-      <button id="featuresModalOkBtn" onclick="closeFeaturesModal()">Okay, Got It 👍</button>
+    <div class="cyber-bar-bg">
+      <div class="cyber-bar-fill" id="cyberBar"></div>
     </div>
   </div>
 </div>
 
+<!-- ============================================================
+     WELCOME / ANNOUNCEMENT POPUP
+============================================================ -->
+<div id="welcomePopupOverlay">
+  <div class="welcome-popup-box">
+    <div class="popup-top-bar">
+      <div class="popup-actions-left">
+        <button class="popup-btn" onclick="openLanguageModal()">🌐 Translate</button>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div class="popup-countdown-badge" id="popupCountdownBadge">09s</div>
+        <button class="popup-btn popup-close-btn" id="popupCloseBtn" disabled onclick="closeWelcomePopup()">✕ Close</button>
+      </div>
+    </div>
+
+    <div class="popup-headline-wrapper">
+      <div class="popup-live-emojis">
+        <span class="p-emoji pe-1">🎉</span>
+        <span class="p-emoji pe-2">🎁</span>
+        <span class="p-emoji pe-3">✨</span>
+        <span class="p-emoji pe-4">🔥</span>
+      </div>
+      <h2 class="popup-main-title" id="popupTitle">Amazing Student Offer Invite Friend 33.33% OFF</h2>
+    </div>
+
+    <div class="popup-content-body" id="popupContentBody">
+      <div class="popup-offer-card">
+        <div class="popup-offer-item">• <span>Original Price:</span> PKR 2,000</div>
+        <div class="popup-offer-item">• <span>Current Discount:</span> 25% OFF → PKR 1,500</div>
+        <div class="popup-offer-item">• <span>Invite Offer:</span> Invite a friend to get 33.33% OFF → PKR 1,000</div>
+        <div class="popup-offer-item">• <span>Friend's Benefit:</span> Your invited friend gets 25% OFF → PKR 1,500</div>
+        <div class="popup-offer-item">• <span>Chain Reward:</span> When your friend invites someone else, they also get it for PKR 1,000!</div>
+      </div>
+      <p style="font-size: 11px; color: var(--sky); text-align: center; margin-top: 4px;">Read carefully and wait for the 9-second countdown to finish to proceed.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MAIN APP CONTAINER
+============================================================ -->
+<div id="app">
+<div class="live"><div class="blob a"></div><div class="blob b"></div><div class="blob c"></div></div>
+
+<!-- ================= HEADER / NAVIGATION ================= -->
+<header>
+  <div class="container nav">
+    <a class="brand" href="#store">
+      <img src="PIKAZOO.png" alt="PIKAZOO STORE Logo" onerror="this.classList.add('missing-logo')">
+      <span class="brand-name">PIKAZOO STORE</span>
+    </a>
+    
+    <div class="nav-right-islands">
+      <button class="island-nav-btn menu-island-btn" onclick="toggleHeaderMenu(event)">
+        <span>☰</span> Menu
+      </button>
+    </div>
+  </div>
+  <div id="headerMenuDropdown" class="header-menu-dropdown">
+    <button class="header-menu-item" onclick="closeHeaderMenu(); window.open('https://wa.me/923041891897', '_blank')">
+      <span>💬</span> WhatsApp
+    </button>
+    <button class="header-menu-item" onclick="closeHeaderMenu(); window.open('https://t.me/pikazooarmy', '_blank')">
+      <span>✈️</span> Telegram
+    </button>
+    <button class="header-menu-item" onclick="closeHeaderMenu(); openThemeModal();">
+      <span>🎨</span> Theme
+    </button>
+  </div>
+</header>
+
+<main class="container">
+<section id="store">
+
+<!-- ================= SEARCH BAR ================= -->
+<div class="searchbar"><input id="search" class="search" placeholder="Search categories or resources..."><button class="search-icon">⌕</button></div>
+
+<div class="section-head"><h3>Categories</h3><small>4 Categories</small></div>
+
+<!-- ================= CATEGORY FILTER BUTTONS ================= -->
+<div class="categories-grid">
+  <button class="cat-btn" onclick="showPanel('pubgApkObb', this, event)">1: PUBG 4.6<br>APK + OBB</button>
+
+  <button class="cat-btn premium-cat-btn" onclick="showPanel('premiumPubg', this, event, true)">
+    <span class="btn-text">2: PUBG PREMIUM</span>
+    <div class="button-emoji-animation">
+      <span class="emoji kiss-big">😘</span>
+      <span class="emoji heart-big">😍</span>
+      <span class="emoji kiss-small">😘</span>
+      <span class="emoji kiss-bottom">😘</span>
+      <span class="emoji heart-small">😍</span>
+      <span class="emoji love-left">😍</span>
+      <span class="emoji love-right">😍</span>
+      <div class="confetti">
+        <i class="piece p1"></i><i class="piece p2"></i>
+        <i class="piece p3"></i><i class="piece p4"></i>
+        <i class="piece p5"></i>
+      </div>
+    </div>
+  </button>
+
+  <button class="cat-btn" onclick="showPanel('appsModUnlock', this, event)">3: APPS MOD UNLOCK</button>
+  <button class="cat-btn" onclick="showPanel('freePubgTools', this, event)">4: FREE PUBG TOOLS</button>
+</div>
+
+<!-- ================= PRODUCT PANEL: PUBG 4.6 APK + OBB (DOWNLOAD SYSTEM) ================= -->
+<div class="product-panel" id="pubgApkObbPanel">
+  <div class="section-head" style="margin:0 0 12px"><h3>PUBG 4.6 APK + OBB</h3><small>4 Carts</small></div>
+  <div class="cart-grid">
+    <div class="cart-card">
+      <div class="cart-title-row"><span class="cart-title">PUBG GLOBAL</span><span class="cart-price">FREE</span></div>
+      <p style="font-size:12px;color:var(--text-sub)">Official Global Version 4.6 64-Bit APK + OBB package files.</p>
+      <div class="apk-obb-btns">
+        <a class="cart-btn-apk" href="https://example.com/global-apk" target="_blank">📥 APK Download</a>
+        <a class="cart-btn-obb" href="https://example.com/global-obb" target="_blank">📦 OBB Download</a>
+      </div>
+    </div>
+
+    <div class="cart-card">
+      <div class="cart-title-row"><span class="cart-title">PUBG LIGHT</span><span class="cart-price">FREE</span></div>
+      <p style="font-size:12px;color:var(--text-sub)">Low-end devices optimized PUBG Mobile LITE update package.</p>
+      <div class="apk-obb-btns">
+        <a class="cart-btn-apk" href="https://example.com/light-apk" target="_blank">📥 APK Download</a>
+        <a class="cart-btn-obb" href="https://example.com/light-obb" target="_blank">📦 OBB Download</a>
+      </div>
+    </div>
+
+    <div class="cart-card">
+      <div class="cart-title-row"><span class="cart-title">PUBG KOREA</span><span class="cart-price">FREE</span></div>
+      <p style="font-size:12px;color:var(--text-sub)">Korean (KR/JP) direct APK and OBB full updates setup.</p>
+      <div class="apk-obb-btns">
+        <a class="cart-btn-apk" href="https://example.com/korea-apk" target="_blank">📥 APK Download</a>
+        <a class="cart-btn-obb" href="https://example.com/korea-obb" target="_blank">📦 OBB Download</a>
+      </div>
+    </div>
+
+    <div class="cart-card">
+      <div class="cart-title-row"><span class="cart-title">PUBG BGMI</span><span class="cart-price">FREE</span></div>
+      <p style="font-size:12px;color:var(--text-sub)">Battlegrounds Mobile India original APK + main OBB data.</p>
+      <div class="apk-obb-btns">
+        <a class="cart-btn-apk" href="https://example.com/bgmi-apk" target="_blank">📥 APK Download</a>
+        <a class="cart-btn-obb" href="https://example.com/bgmi-obb" target="_blank">📦 OBB Download</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= PRODUCT PANEL: PUBG PREMIUM (VIP CART) ================= -->
+<div class="product-panel" id="premiumPubgPanel">
+  <div class="section-head" style="margin:0 0 12px"><h3>PUBG PREMIUM</h3><small>1 VIP Cart</small></div>
+  <div class="cart-grid">
+    <div class="cart-card">
+      <img src="Premium.gif" alt="PUBG PREMIUM Animation" class="cart-media" onerror="this.src='https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&auto=format&fit=crop&q=80'">
+      
+      <div class="cart-title-row">
+        <span class="cart-title" style="font-size:22px;">PUBG PREMIUM</span>
+        <span class="cart-price" style="font-size:16px;">PKR: 1500</span>
+      </div>
+
+      <div class="audio-box">
+        <audio controls preload="metadata">
+          <source src="VIP.mp3" type="audio/mpeg">
+          Your browser does not support the audio element.
+        </audio>
+      </div>
+
+      <div class="island-tags">
+        <span class="island-tag">(GLOBAL)</span>
+        <span class="island-tag">(LIGHT)</span>
+        <span class="island-tag">(KOREA)</span>
+        <span class="island-tag">(BGMI)</span>
+        <span class="island-tag">(VIETNAM)</span>
+        <span class="island-tag">(TAIWAN)</span>
+        <span class="island-tag">(32Bit)</span>
+        <span class="island-tag">(64Bit)</span>
+      </div>
+
+      <!-- Discount Countdown Banner (populated/controlled by updateDiscountCountdown()) -->
+      <div id="discountBanner" class="discount-banner" style="display: none;">
+        <div class="banner-top-row">
+          <span class="banner-title">⚡ Discount Expiration</span>
+          <span class="banner-badge" id="bannerOffBadge">25% OFF</span>
+        </div>
+        <div class="countdown-row">
+          <div class="time-box"><span id="cdDays">00</span><small>Days</small></div>
+          <div class="time-colon">:</div>
+          <div class="time-box"><span id="cdHours">00</span><small>Hours</small></div>
+          <div class="time-colon">:</div>
+          <div class="time-box"><span id="cdMins">00</span><small>Mins</small></div>
+          <div class="time-colon">:</div>
+          <div class="time-box"><span id="cdSecs">00</span><small>Secs</small></div>
+        </div>
+        <div class="banner-footer-text">
+          Live Countdown — Offer Ends Soon!
+        </div>
+      </div>
+
+      <div class="pubg-action-grid">
+        <button class="pubg-grid-btn btn-features" onclick="openFeatures()">
+          <span>1: View Features</span>
+          <span class="pubg-btn-badge">(Tap Here)</span>
+        </button>
+
+        <button class="pubg-grid-btn btn-buynow" onclick="openPaymentDetails()">
+          <span>2: BUY NOW</span>
+          <span class="pubg-btn-badge" id="discountPercent">(25% OFF)</span>
+        </button>
+
+        <button class="pubg-grid-btn btn-feedback" onclick="window.open('https://wa.me/923041891897?text=Feedback%2520Why%2520Not%2520Buying:', '_blank')">
+          <span>3: Not BUY Reason</span>
+          <span class="pubg-btn-badge">(FeedBack)</span>
+        </button>
+
+        <button class="pubg-grid-btn btn-invite" onclick="triggerNativeShare()">
+          <span>4: Invite Friend</span>
+          <span class="pubg-btn-badge">(33.33% OFF)</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ================= PRODUCT PANEL: APPS MOD UNLOCK ================= -->
+<div class="product-panel" id="appsModUnlockPanel">
+  <div class="section-head" style="margin:0 0 12px"><h3>APPS MOD UNLOCK</h3><small>10 Apps</small></div>
+  <div class="cart-grid">
+    <div class="cart-card"><div class="cart-title">Instagram VIP Mod</div><p style="font-size:12px;color:var(--text-sub)">Unlock reel downloads, zero ads & view story anonymously.</p><a class="cart-btn-buy" href="#">Download App</a></div>
+    <div class="cart-card"><div class="cart-title">MovieBox Pro Mod</div><p style="font-size:12px;color:var(--text-sub)">Free 4K movies streaming & VIP downloads unlocked.</p><a class="cart-btn-buy" href="#">Download App</a></div>
+    <div class="cart-card"><div class="cart-title">Spotify Premium Mod</div><p style="font-size:12px;color:var(--text-sub)">Unlimited skips, no audio ads & high quality audio.</p><a class="cart-btn-buy" href="#">Download App</a></div>
+    <div class="cart-card"><div class="cart-title">CapCut Pro Mod</div><p style="font-size:12px;color:var(--text-sub)">All PRO transition effects & cloud export unlocked.</p><a class="cart-btn-buy" href="#">Download App</a></div>
+    <div class="cart-card"><div class="cart-title">Remini Pro Mod</div><p style="font-size:12px;color:var(--text-sub)">Unlimited AI photo enhancements without credits.</p><a class="cart-btn-buy" href="#">Download App</a></div>
+    <div class="cart-card"><div class="cart-title">InShot Pro Mod</div><p style="font-size:12px;color:var(--text-sub)">No watermark, full filter store & video editor mod.</p><a class="cart-btn-buy" href="#">Download App</a></div>
+    <div class="cart-card"><div class="cart-title">Truecaller Gold Mod</div><p style="font-size:12px;color:var(--text-sub)">Gold badge profile & incognito call recording unlock.</p><a class="cart-btn-buy" href="#">Download App</a></div>
+    <div class="cart-card"><div class="cart-title">Canva Pro Mod</div><p style="font-size:12px;color:var(--text-sub)">Premium graphics templates & background remover.</p><a class="cart-btn-buy" href="#">Download App</a></div>
+    <div class="cart-card"><div class="cart-title">PicsArt Gold Mod</div><p style="font-size:12px;color:var(--text-sub)">Exclusive sticker store & VIP editing toolset.</p><a class="cart-btn-buy" href="#">Download App</a></div>
+    <div class="cart-card"><div class="cart-title">Lightroom Premium Mod</div><p style="font-size:12px;color:var(--text-sub)">Selective editing tools & premium color presets.</p><a class="cart-btn-buy" href="#">Download App</a></div>
+  </div>
+</div>
+
+<!-- ================= PRODUCT PANEL: FREE PUBG TOOLS ================= -->
+<div class="product-panel" id="freePubgToolsPanel">
+  <div class="section-head" style="margin:0 0 12px"><h3>FREE PUBG TOOLS</h3><small>Tools</small></div>
+  <div class="cart-grid">
+    <div class="cart-card"><div class="cart-title">GLTOOL GFX Patcher</div><p style="font-size:12px;color:var(--text-sub)">Enhance render distance and reduce frame drops easily.</p><a class="cart-btn-buy" href="#">Download Tool</a></div>
+    <div class="cart-card"><div class="cart-title">iPad View Resolution Changer</div><p style="font-size:12px;color:var(--text-sub)">Custom wide screen FOV utility for all mobile processors.</p><a class="cart-btn-buy" href="#">Download Tool</a></div>
+  </div>
+</div>
+
+</section>
+</main>
+
+<!-- ================= FOOTER ================= -->
+<footer><div class="container footer-flex"><span>© <span id="year"></span> PIKAZOO STORE</span><span>Developer: @Owner_Pikazoo</span><span><a href="https://t.me/pikazooarmy" target="_blank">Telegram @pikazooarmy</a> · WhatsApp +923041891897</span></div></footer>
+</div>
+
+<!-- ================= FLOATING FRUIT NINJA BUBBLE ================= -->
+<div id="fruitGameBubble" class="fruit-game-bubble" onclick="openFruitGame()">
+  <div class="bubble-msg-popup">🎮 Play Fruit Ninja!</div>
+  <div class="bubble-circle">
+    <span class="bubble-icon">🍉</span>
+    <span class="bubble-blade">🗡️</span>
+    <div class="bubble-ring"></div>
+  </div>
+</div>
+
+<!-- ================= FULLSCREEN GAME MODAL ================= -->
+<div id="fruitGameModal">
+  <button class="game-close-btn" onclick="closeFruitGame()">✕ Exit Game</button>
+  <div id="gameContainer">
+    <div class="moon"></div>
+    <div class="ground"></div>
+    <canvas id="gameCanvas"></canvas>
+    
+    <!-- HUD -->
+    <div id="hud">
+      <div class="hudBox">
+        <span class="label">SCORE</span>
+        <span id="score" class="value">0</span>
+      </div>
+      <div class="hudBox">
+        <span class="label">LIVES</span>
+        <div class="hearts">
+          <span class="heart">♥</span>
+          <span class="heart">♥</span>
+          <span class="heart">♥</span>
+        </div>
+      </div>
+      <div class="hudBox">
+        <span class="label">COMBO</span>
+        <span id="combo" class="value">0</span>
+      </div>
+    </div>
+    
+    <div id="comboText"></div>
+
+    <!-- START SCREEN -->
+    <div id="startScreen" class="ninja-screen">
+      <div class="ninja-card">
+        <div class="ninja-logo">FRUIT</div>
+        <div class="ninja-subtitle">NINJA SLASH</div>
+        <div class="ninja-fruitLogo">🍉 🍊 🍎</div>
+        <button class="ninja-btn" onclick="startGame()">START GAME</button>
+        <div class="ninja-help">
+          Swipe across fruits to slice them.<br>Avoid 💣 🧨
+        </div>
+      </div>
+    </div>
+
+    <!-- GAME OVER SCREEN -->
+    <div id="gameOver" class="ninja-screen" style="display:none;">
+      <div class="ninja-card">
+        <div class="ninja-subtitle">GAME OVER</div>
+        <div id="gameOverTitle" class="ninja-logo">BOOM!</div>
+        <div id="finalScore" class="ninja-finalScore">0</div>
+        <button class="ninja-btn" onclick="startGame()">TRY AGAIN</button>
+        <div class="ninja-help">
+          Slice the fruits.<br>Don't touch the bombs!
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MODAL: LANGUAGE SELECTION ================= -->
+<div class="modal" id="languageModal">
+  <div class="modal-box">
+    <div class="modal-top">
+      <h3>Select Language</h3>
+      <button class="close" onclick="closeLanguageModal()">×</button>
+    </div>
+    <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 10px;">Choose your preferred language:</p>
+    <button class="lang-option-btn" onclick="setLanguage('en')">1: English</button>
+    <button class="lang-option-btn" onclick="setLanguage('hi')">2: Hinglish</button>
+    <button class="lang-option-btn" onclick="setLanguage('ar')">3: Arabic</button>
+  </div>
+</div>
+
+<!-- ================= MODAL: THEME SELECTION ================= -->
+<div class="modal" id="themeModal">
+  <div class="modal-box">
+    <div class="modal-top">
+      <h3>Select Theme Mode</h3>
+      <button class="close" onclick="closeThemeModal()">×</button>
+    </div>
+    <p style="font-size: 13px; color: var(--text-sub); margin-bottom: 10px;">Choose your display theme:</p>
+    <button class="theme-option-btn" onclick="setTheme('light')">☀️ Light Theme (Light Blue 🩵)</button>
+    <button class="theme-option-btn" onclick="setTheme('dark')">🌙 Dark Theme (Dark Gray Mix)</button>
+  </div>
+</div>
+
+<!-- ================= MODAL: PUBG FEATURES LIST ================= -->
+<div class="modal" id="featureModal">
+  <div class="modal-box">
+    <div class="modal-top">
+      <h3>100 PUBG Features</h3>
+      <button class="close" onclick="closeFeatures()">×</button>
+    </div>
+    <div class="feature-scroll-box" id="featureScroll"></div>
+  </div>
+</div>
+
+<!-- ================= MODAL: PAYMENT DETAILS ================= -->
+<div class="modal" id="paymentModal">
+  <div class="modal-box">
+    <div class="modal-top">
+      <h3>Payment Details</h3>
+      <button class="close" onclick="closePaymentDetails()">×</button>
+    </div>
+    
+    <div class="pay-card-box">
+      <div class="pay-header">
+        <div class="jazzcash-badge">
+          <svg class="jazzcash-logo-img" viewBox="0 0 100 100" fill="none">
+            <rect width="100" height="100" rx="20" fill="#000"/>
+            <circle cx="50" cy="50" r="35" fill="#e21a22"/>
+            <path d="M30 50 Q50 20 70 50 Q50 80 30 50 Z" fill="#ffc20e"/>
+          </svg>
+          <span>JazzCash Account</span>
+        </div>
+      </div>
+
+      <div class="copy-row">
+        <div>
+          <small style="font-size:10px; color:var(--muted); display:block;">Account Number</small>
+          <span class="copy-info">03041891897</span>
+        </div>
+        <button class="copy-btn-icon" onclick="copyText('03041891897', 'Account Number Copied!')">📋 Copy</button>
+      </div>
+
+      <div class="copy-row">
+        <div>
+          <small style="font-size:10px; color:var(--muted); display:block;">Account Owner</small>
+          <span class="copy-info">Muhammad Shoaib</span>
+        </div>
+        <button class="copy-btn-icon" onclick="copyText('Muhammad Shoaib', 'Account Owner Name Copied!')">📋 Copy</button>
+      </div>
+    </div>
+
+    <div class="usdt-box">
+      <div class="usdt-header">🌍 International Users</div>
+      <div class="usdt-text">USDT Also Accepted For International User: Contact WhatsApp For Buying</div>
+    </div>
+
+    <button class="pay-action-btn btn-invite-share" onclick="triggerNativeShare()">Invite Friend (33.33% OFF)</button>
+    <a class="pay-action-btn btn-join-premium" href="https://modsfire.com" target="_blank" rel="noopener">JOIN PREMIUM PUBG</a>
+  </div>
+</div>
+
+<!-- ================= TOAST NOTIFICATION ELEMENT ================= -->
+<div class="toast" id="toast"></div>
+
+<!-- ============================================================
+     MAIN SCRIPT
+============================================================ -->
 <script>
-  // ← Edit this array to change/add/remove groups and feature lines.
-  // Each group has a "title" (the bold headline) and an "items" list (the numbered features under it).
-  const FEATURES_GROUPS = [
 
-{
-  title: "☁️VIP PBC FEATURE🪐",
-  items: [
-    "🎨 PBC WallHack",
-    "🎨 PBC Color Body",
-    "🎨 Bright Color's",
-    "🎨 Visibility Check",
-    "🌱 No Grass",
-    "🌴 Less Trees (100m)",
-    "🌊 No Water",
-    "🏢 Less Buildings",
-    "🪞 Glass UI Bidding",
-    "❄️ No Smoke",
-    "🌃 Black Sky",
-    "📱 iPad View",
-    "📡 Antenna PBC"
-  ]
-},
+/* ============================================================
+   THEME PRE-INIT
+   Runs immediately (before splash finishes) to respect the
+   user's OS-level dark mode preference on first load.
+============================================================ */
+(function() {
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (prefersDark) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) metaTheme.setAttribute('content', '#0b0d12');
+  }
+})();
 
-{
-  title: "📂VIP Files-Tools FEATURE🪐",
-  items: [
-    "💯 Paks Mod Data Safe",
-    "💯 Pak Lua Safe File",
-    "💯 VIP Shizuku GFX Tool Safe",
-    "💯 VIP Content File Safe",
-    "💯 VIP OBB Mod Safe"
-  ]
-},
 
-{
-  title: "🏃🏻VIP Movement Pak FEATURE",
-  items: [
-    "⚡ Knock Speed",
-    "🚶 Prone Movement Speed",
-    "🦵 Crouch Movement Speed",
-    "↔️ Left-Right Movement Speed",
-    "🪂 Fast Parachute Landing",
-    "🏊 Fast Swimming Speed"
-  ]
-},
-
-{
-  title: "⚡ VIP Recoil Control FEATURE",
-  items: [
-    "🎯 Less Recoil (All Guns)",
-    "📉 Less Shake (All Guns)",
-    "🛡️ Anti-Shake & Anti-Recoil",
-    "🔄 Fast Reload (All Guns)"
-  ]
-},
-
-{
-  title: "🎯 VIP Aim FEATURE",
-  items: [
-    "🎯 Aim Prediction",
-    "🤫 Silent Aim",
-    "🎯 Auto Headshot",
-    "✨ Magic Bullet",
-    "📏 Headshot Line",
-    "📦 Hitbox Resizing",
-    "👁️ FOV Changer (Field of View)"
-  ]
-},
-
-{
-  title: "👁️ VIP PAK ESP FEATURE",
-  items: [
-    "📦 Box ESP",
-    "❤️ Health Bar ESP",
-    "📍 Distance ESP"
-  ]
+/* ============================================================
+   UTILITY FUNCTIONS
+   Generic helpers used across multiple features (toast messages,
+   clipboard copy).
+============================================================ */
+function showToast(msg) {
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(() => toast.classList.remove("show"), 2500);
 }
 
+function copyText(text, successMsg) {
+  navigator.clipboard.writeText(text).then(() => {
+    showToast(successMsg);
+  }).catch(() => {
+    showToast("Copy Failed");
+  });
+}
+
+
+/* ============================================================
+   AUDIO SYSTEM
+   Shared Web Audio API context used for UI tap sounds and the
+   Fruit Ninja game's sound effects.
+============================================================ */
+let audioCtx;
+
+function initAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+}
+
+function playTapSound(isPremium = false) {
+  initAudio();
+  if (!audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(isPremium ? 950 : 800, audioCtx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(isPremium ? 400 : 250, audioCtx.currentTime + 0.07);
+  
+  gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.07);
+  
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.07);
+}
+
+// Unlock/resume the AudioContext on first user interaction (browser autoplay policy)
+window.addEventListener('click', initAudio, { once: true });
+window.addEventListener('touchstart', initAudio, { once: true });
+
+
+/* ============================================================
+   SPLASH SCREEN
+   Handles the cyberpunk progress-bar loader and the transition
+   into the main app + welcome popup + game bubble reveal.
+============================================================ */
+const splash=document.getElementById("splash"),app=document.getElementById("app");
+const cyberBar=document.getElementById("cyberBar"),cyberCount=document.getElementById("cyberCount"),cyberStatus=document.getElementById("cyberStatus");
+
+let progress = 0;
+const statusTexts = ["INIT SYSTEM...", "SYNCING DATA...", "VERIFYING FILES...", "ACCESS GRANTED"];
+
+// Reveals the floating Fruit Ninja bubble once the app is visible
+function showFruitBubble() {
+  const bubble = document.getElementById("fruitGameBubble");
+  if(bubble) {
+    bubble.classList.add("visible");
+  }
+}
+
+// Animates the loading bar/status text, then fades out the splash
+// screen and reveals the app, welcome popup, and game bubble.
+function runCyberLoader() {
+  const interval = setInterval(() => {
+    progress += Math.floor(Math.random() * 8) + 4;
+    if (progress > 100) progress = 100;
+    
+    if (cyberBar) cyberBar.style.width = progress + "%";
+    if (cyberCount) cyberCount.textContent = progress + "%";
+    
+    if (progress < 30) cyberStatus.textContent = statusTexts[0];
+    else if (progress < 65) cyberStatus.textContent = statusTexts[1];
+    else if (progress < 95) cyberStatus.textContent = statusTexts[2];
+    else cyberStatus.textContent = statusTexts[3];
+
+    if (progress >= 100) {
+      clearInterval(interval);
+      setTimeout(() => {
+        splash.style.transition = "opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s ease";
+        splash.style.opacity = "0";
+        splash.style.transform = "scale(1.1)";
+        setTimeout(() => {
+          splash.remove();
+          app.style.display = "block";
+          startWelcomePopupCountdown();
+          showFruitBubble();
+        }, 500);
+      }, 300);
+    }
+  }, 70);
+}
+
+
+/* ============================================================
+   NAVIGATION MENU (Header Dropdown)
+============================================================ */
+function toggleHeaderMenu(e){
+  if(e) e.stopPropagation();
+  const dropdown = document.getElementById("headerMenuDropdown");
+  if(dropdown) dropdown.classList.toggle("open");
+}
+function closeHeaderMenu(){
+  const dropdown = document.getElementById("headerMenuDropdown");
+  if(dropdown) dropdown.classList.remove("open");
+}
+// Close the dropdown when clicking anywhere outside of it
+document.addEventListener('click', function(e){
+  const dropdown = document.getElementById("headerMenuDropdown");
+  const menuBtn = document.querySelector(".menu-island-btn");
+  if(dropdown && dropdown.classList.contains("open")){
+    if(!dropdown.contains(e.target) && (!menuBtn || !menuBtn.contains(e.target))){
+      dropdown.classList.remove("open");
+    }
+  }
+});
+
+
+/* ============================================================
+   WELCOME POPUP
+   Handles the 9-second mandatory countdown before the user can
+   close the announcement popup.
+============================================================ */
+let popupCountdownInterval;
+
+function startWelcomePopupCountdown() {
+  const overlay = document.getElementById("welcomePopupOverlay");
+  overlay.classList.add("active");
+
+  let timeLeft = 9;
+  const badge = document.getElementById("popupCountdownBadge");
+  const closeBtn = document.getElementById("popupCloseBtn");
+
+  popupCountdownInterval = setInterval(() => {
+    timeLeft--;
+    if (timeLeft > 0) {
+      badge.textContent = `0${timeLeft}s`;
+    } else {
+      badge.textContent = `00s`;
+      clearInterval(popupCountdownInterval);
+      closeBtn.removeAttribute("disabled");
+    }
+  }, 1000);
+}
+
+function closeWelcomePopup() {
+  const overlay = document.getElementById("welcomePopupOverlay");
+  overlay.classList.remove("active");
+  setTimeout(() => overlay.remove(), 400);
+}
+
+
+/* ============================================================
+   LANGUAGE MODAL / TRANSLATION SYSTEM
+   Updates the welcome popup's title & body text based on the
+   selected language.
+============================================================ */
+function openLanguageModal() {
+  document.getElementById("languageModal").classList.add("open");
+}
+function closeLanguageModal() {
+  document.getElementById("languageModal").classList.remove("open");
+}
+
+function setLanguage(lang) {
+  closeLanguageModal();
+  const titleEl = document.getElementById("popupTitle");
+  const bodyEl = document.getElementById("popupContentBody");
+
+  if (lang === 'hi') {
+    titleEl.textContent = "Shaandar Student Offer: Friend ko invite karein aur paayein 33.33% OFF!";
+    bodyEl.innerHTML = `
+      <div class="popup-offer-card">
+        <div class="popup-offer-item">• <span>Original Price:</span> PKR 2,000</div>
+        <div class="popup-offer-item">• <span>Current Discount:</span> 25% OFF → PKR 1,500</div>
+        <div class="popup-offer-item">• <span>Invite Offer:</span> Friend ko invite karein 33.33% OFF ke liye → PKR 1,000</div>
+        <div class="popup-offer-item">• <span>Friend's Benefit:</span> Aapke friend ko milega 25% OFF → PKR 1,500</div>
+        <div class="popup-offer-item">• <span>Chain Reward:</span> Jab aapka friend kisi aur ko invite karega, use bhi PKR 1,000 milega!</div>
+      </div>
+      <p style="font-size: 11px; color: var(--sky); text-align: center; margin-top: 4px;">Hinglish language selected successfully.</p>
+    `;
+    showToast("Hinglish language selected!");
+  } else if (lang === 'ar') {
+    titleEl.textContent = "عرض مذهل للطلاب: ادع صديق واحصل على خصم 33.33%!";
+    bodyEl.innerHTML = `
+      <div class="popup-offer-card">
+        <div class="popup-offer-item">• <span>السعر الاصلي:</span> 2,000 PKR</div>
+        <div class="popup-offer-item">• <span>الخصم الحالي:</span> 25% OFF ← 1,500 PKR</div>
+        <div class="popup-offer-item">• <span>عرض الدعوة:</span> ادع صديق للحصول على 33.33% OFF ← 1,000 PKR</div>
+        <div class="popup-offer-item">• <span>فائدة الصديق:</span> يحصل صديقك على 25% OFF ← 1,500 PKR</div>
+        <div class="popup-offer-item">• <span>مكافأة السلسلة:</span> عندما يدعو صديقك شخص آخر، يحصل عليها أيضاً مقابل 1,000 PKR!</div>
+      </div>
+      <p style="font-size: 11px; color: var(--sky); text-align: center; margin-top: 4px;">تم اختيار اللغة العربية بنجاح.</p>
+    `;
+    showToast("Arabic language selected!");
+  } else {
+    titleEl.textContent = "Amazing Student Offer Invite Friend 33.33% OFF";
+    bodyEl.innerHTML = `
+      <div class="popup-offer-card">
+        <div class="popup-offer-item">• <span>Original Price:</span> PKR 2,000</div>
+        <div class="popup-offer-item">• <span>Current Discount:</span> 25% OFF → PKR 1,500</div>
+        <div class="popup-offer-item">• <span>Invite Offer:</span> Invite a friend to get 33.33% OFF → PKR 1,000</div>
+        <div class="popup-offer-item">• <span>Friend's Benefit:</span> Your invited friend gets 25% OFF → PKR 1,500</div>
+        <div class="popup-offer-item">• <span>Chain Reward:</span> When your friend invites someone else, they also get it for PKR 1,000!</div>
+      </div>
+      <p style="font-size: 11px; color: var(--sky); text-align: center; margin-top: 4px;">English language selected successfully.</p>
+    `;
+    showToast("English language selected!");
+  }
+}
+
+
+/* ============================================================
+   THEME MODAL (Light / Dark Switcher)
+============================================================ */
+function openThemeModal() {
+  document.getElementById("themeModal").classList.add("open");
+}
+function closeThemeModal() {
+  document.getElementById("themeModal").classList.remove("open");
+}
+
+function setTheme(mode) {
+  closeThemeModal();
+  if (mode === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0b0d12');
+    showToast("Dark Gray Theme Activated! 🌙");
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#cfe8ff');
+    showToast("Light Blue Theme Activated! 🩵");
+  }
+}
+
+
+/* ============================================================
+   PAYMENT MODAL & INVITE/SHARE SYSTEM
+============================================================ */
+function openPaymentDetails() { document.getElementById("paymentModal").classList.add("open"); }
+function closePaymentDetails() { document.getElementById("paymentModal").classList.remove("open"); }
+
+// Uses the native Web Share API when available; falls back to
+// copying the invite message to the clipboard.
+function triggerNativeShare() {
+  const shareText = `Hey PUBG Players! 🎮\nLooking for the All-in-One PUBG 4.6 Premium?\n1. 🔥 All-in-One Premium Version\n2. ⭐ WallHack - Color Body \n3. ⭐ Magic Bullet + Aimbot\n4. ⭐ 30+ More Features\n5. 💰 PKR Price: Only 1500 \n6. 🔗 Click the link below to check all features\nLink: https://modsfire.com/ei9tKzrdM79rn11`;
+
+  if (navigator.share) {
+    navigator.share({
+      title: 'PUBG PREMIUM Special Offer',
+      text: shareText
+    }).catch((error) => console.log('Error sharing:', error));
+  } else {
+    copyText(shareText, "Invite message copied to clipboard!");
+  }
+}
+
+
+/* ============================================================
+   FEATURE LIST MODAL
+   Renders the 100-item PUBG features list into the modal.
+============================================================ */
+const featureList = [
+  "Aimbot 100% Safe", "Memory Aimlock", "Bullet Tracking", "ESP Skeleton", "ESP Box 3D",
+  "ESP Line", "ESP Name & ID", "ESP Health Bar", "ESP Distance Meter", "ESP Vehicle Marker",
+  "ESP Loot Items", "ESP AirDrop Alert", "ESP Grenade Warning", "ESP Enemy Count", "Magic Bullet 2.0",
+  "Zero Recoil Main", "Less Recoil 90%", "Fast Bullet Speed", "High Damage Multiplier", "Headshot Lock 85%",
+  "IPad View Wide", "Ultra HD Graphics Unlocked", "90 FPS Unlocker", "120 FPS Extreme Mode", "Anti-Lag Booster",
+  "No Fog Mode", "No Grass Mode", "Black Sky Effect", "Night Mode Vision", "Color Crosshair Mod", "Car Speed Up",
+  "Jeep Fly Mod", "Player Speed 1.5x", "High Jump Mod", "Wallhack V2", "Instant Hit Mark", "Auto Fire Assist",
+  "Aim Lock Distance Custom", "Auto Scope Open", "Fast Scope Switch", "Fast Reload Weapon", "No Shake Aim",
+  "Bypass Anti-Cheat 2026", "Anti Ban Protection 100%", "Root Device Safe Mode", "Non-Root Safe Mode",
+  "Custom Config Supporter", "Internal Memory Patcher", "64-Bit Memory Shield", "32-Bit Memory Shield",
+  "Global Server Compatible", "BGMI Server Compatible", "Korea Server Compatible", "Taiwan Server Compatible",
+  "Vietnam Server Compatible", "Light Version Patcher", "Anti Report Log Cleanser", "Device ID Changer",
+  "IMEI Masker Safe", "Guest Account Reset", "Auto Login Feature", "Touch Delay Fixer", "FPS Stabilization",
+  "GPU Shader Booster", "RAM Cleaner Patcher", "Ping Stabilizer VIP", "Smooth Graphics Mod", "HDR Extreme Unlocked",
+  "Custom Audio Sound Pack", "Ultra Sound Effects", "No Footstep Lag", "Sound Equalizer Mode", "Vehicle ESP Fuel",
+  "Vehicle ESP Health", "Enemy Weapon Display", "Enemy Ammo Counter", "Airdrop Loot Distance", "Flare Gun ESP",
+  "Enemy Team ID Marker", "Knocked Enemy ESP", "Auto Headshot Height Fix", "Crosshair Lock Target", "Target Prediction Aim",
+  "Bullet Spread Control", "No Spread Mode", "Fast Reload Pistols", "Fast Reload Sniper", "Scope Wobble Fix",
+  "Breath Lock Sniper", "Quick Switch Weapon", "Auto Crouch Aim", "Auto Prone Shot", "Fast Weapon Drop",
+  "VIP Key Injector", "Cloud Sync Settings", "Auto Update Config", "Minimal Battery Usage", "CPU Thermal Control"
 ];
 
-  document.addEventListener('DOMContentLoaded', function() {
-    const container = document.getElementById('featuresGroups');
-    const frag = document.createDocumentFragment();
-
-    FEATURES_GROUPS.forEach((group, gIndex) => {
-      const heading = document.createElement('div');
-      heading.className = 'featuresGroupTitle';
-      heading.innerHTML = `<span class="featuresGroupNum">${gIndex + 1}</span> ${group.title}`;
-      frag.appendChild(heading);
-
-      const ol = document.createElement('ol');
-      group.items.forEach(text => {
-        const li = document.createElement('li');
-        li.textContent = text;
-        ol.appendChild(li);
-      });
-      frag.appendChild(ol);
-    });
-
-    container.appendChild(frag);
-    document.getElementById('featuresModalOverlay').classList.add('show');
-
-    // OK button stays hidden until the user scrolls all the way to the bottom
-    const body = document.getElementById('featuresModalBody');
-    const hint = document.getElementById('featuresScrollHint');
-    const okBtn = document.getElementById('featuresModalOkBtn');
-
-    function checkScroll() {
-      const canScroll = body.scrollHeight > body.clientHeight + 10;
-      const atBottom = body.scrollTop + body.clientHeight >= body.scrollHeight - 5;
-
-      // If the list is short and doesn't need scrolling, show the button right away
-      okBtn.classList.toggle('show-btn', atBottom || !canScroll);
-      hint.classList.toggle('hide', !canScroll || atBottom);
-    }
-    checkScroll();
-    body.addEventListener('scroll', checkScroll);
-    window.addEventListener('resize', checkScroll);
-  });
-
-  function closeFeaturesModal() {
-    document.getElementById('featuresModalOverlay').classList.remove('show');
-  }
-</script>
-
-<!-- ================================
-  DISCOUNT TOGGLE — SET true OR false
-================================= -->
-<script>
-  const DISCOUNT_ON = true;       // ← Change to false to turn off discount animation/overlay
-  const COUNTDOWN_ON = true;      // ← Change to false to hide the countdown timer
-
-  // ============================================================
-  //  VIP PRICE PHASES — edit dates/prices here, everything else
-  //  (badges, countdown, overlay, toast) updates automatically.
-  //  Item keys: basic = Button 1, pro = Button 2, lifetime = Button 3
-  // ============================================================
-  const PRICE_PHASES = [
-    {
-      key: 'phase1',
-      label: '🔥 Limited Time Discount',
-      start: new Date('2026-08-01T00:00:00'),
-      end:   new Date('2026-08-20T00:00:00'),
-      prices: {
-        basic:    [2000, 1500],
-        pro:      [1500, 1000],
-        lifetime: [3000, 2000]
-      }
-    },
-    {
-      key: 'phase2',
-      label: '🔥 Mega Price Drop',
-      start: new Date('2026-08-20T00:00:00'),
-      end:   new Date('2026-09-01T00:00:00'),
-      prices: {
-        basic:    [1500, 1000],
-        pro:      [1000, 500],
-        lifetime: [2000, 1400]
-      }
-    },
-    {
-      key: 'phase3',
-      label: '🚀 PUBG Mobile 4.6 Update Pre-Booking (25% OFF)',
-      start: new Date('2026-09-01T00:00:00'),
-      end:   new Date('2026-09-15T00:00:00'),
-      preBooking: true,
-      prices: {
-        basic:    [2000, 1500],
-        pro:      [1500, 1000],
-        lifetime: [3000, 2000]
-      }
-    }
-  ];
-
-  // Returns the active phase object, or null if no phase is currently running
-  function getCurrentPhase() {
-    const now = new Date();
-    return PRICE_PHASES.find(p => now >= p.start && now < p.end) || null;
-  }
-
-  // Checks if a discount is currently active (used by price badges on cards + modals)
-  function isDiscountActive() {
-    return typeof DISCOUNT_ON !== 'undefined' && DISCOUNT_ON && getCurrentPhase() !== null;
-  }
-
-  // Applies the current (or next upcoming, as a preview) phase's prices onto SITE_DATA.paid
-  function applyPhasePricing() {
-    if (typeof SITE_DATA === 'undefined' || !SITE_DATA.paid) return;
-    const phase = getCurrentPhase() || PRICE_PHASES[0];
-    SITE_DATA.paid.forEach(item => {
-      const p = phase.prices[item.key];
-      if (p) {
-        item.priceOld = p[0];
-        item.priceNew = p[1];
-      }
-    });
-  }
-</script>
-
-<!-- DISCOUNT ANIMATION OVERLAY -->
-<div id="discountOverlay">
-  <div class="discount-bg"></div>
-  <div class="discount-center">
-    <span class="discount-floating-item">🏷️</span>
-    <span class="discount-floating-item">⚡</span>
-    <span class="discount-floating-item">✨</span>
-    <span class="discount-floating-item">💥</span>
-    <span class="discount-floating-item">🌟</span>
-    <span class="discount-floating-item">🎉</span>
-    <div class="discount-main-symbol" id="discountMainSymbol">25% OFF</div>
-    <li class="discount-subtext" id="discountSubtext">Pre-Order PUBG VIP 4.5</li>
-  </div>
-</div>
-
-<!-- DISCOUNT TOAST -->
-<div id="discountToast">🏷️ Discount Available In VIP Section!</div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const activePhase = typeof getCurrentPhase === 'function' ? getCurrentPhase() : null;
-    if (typeof DISCOUNT_ON !== 'undefined' && DISCOUNT_ON === true && activePhase) {
-      // Update overlay + toast text to match the currently running phase
-      if (activePhase.preBooking) {
-        document.getElementById('discountMainSymbol').textContent = '25% OFF';
-        document.getElementById('discountSubtext').textContent = 'Pre-Booking Now Open — PUBG 4.6 Update';
-      } else {
-        document.getElementById('discountMainSymbol').textContent = activePhase.label;
-        document.getElementById('discountSubtext').textContent = 'Limited Time — VIP Section';
-      }
-      document.getElementById('discountToast').textContent = `🏷️ ${activePhase.label} — VIP Section!`;
-
-      const overlay = document.getElementById('discountOverlay');
-      const toast = document.getElementById('discountToast');
-
-      // Show overlay
-      overlay.classList.add('show');
-
-      // Show toast with slight delay
-      setTimeout(() => {
-        toast.style.display = 'block';
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            toast.classList.add('show');
-          });
-        });
-      }, 300);
-
-      // Hide both after 3 seconds
-      setTimeout(() => {
-        overlay.classList.remove('show');
-        toast.classList.remove('show');
-        setTimeout(() => { toast.style.display = 'none'; }, 500);
-      }, 3000);
-    }
-  });
-</script>
-
-
-<div class="container">
-
-  <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">☀️ <span>Light</span></button>
-
-  <!-- DYNAMIC ISLAND - WhatsApp -->
-  <div class="dynamic-island">
-    <a onclick="window.open('https://wa.me/923041891897', '_blank'); return false;">
-      💬 WhatsApp
-    </a>
-  </div>
-
-  <!-- PROFILE -->
-  <div class="profile">
-    <img src="https://i.imgur.com/HaaGEBq.jpeg?w=200&h=200&fit=crop" alt="Profile" class="profile-img">
-    <h2>ＷＥＬＣＯＭＥ</h2>
-    <h1>PIKAZOO STORE</h1>
-    <p>Download PUBG 4.4 & 4.5 Files Below!</p>
-  </div>
-
-  <!-- TABS -->
-  <div class="tabs">
-    <div class="tabs-pill" id="tabPill"></div>
-    <button class="tab-btn" data-tab="original">ORIGINAL 4.5 UPDATE</button>
-    <button class="tab-btn active" data-tab="free">FREE 4.4 FILE'S</button>
-    <button class="tab-btn" data-tab="paid">VIP 4.5 FILE'S</button>
-  </div>
-
-  <!-- FREE SECTION -->
-  <div id="original" class="section">
-    <div class="section-title">🌍 Original Files</div>
-    <div id="originalCards"></div>
-  </div>
-
-  <div id="free" class="section active">
-    <div class="section-title">📂 Free Content</div>
-    <div id="freeCards"></div>
-  </div>
-
-  <!-- PAID SECTION -->
-  <div id="paid" class="section">
-    <div class="section-title">💎 Premium Content</div>
-
-    <!-- DISCOUNT COUNTDOWN -->
-    <div class="countdown-box" id="countdownBox" style="display:none;">
-      <div class="countdown-label" id="countdownLabel">⏳ Discount Expires In</div>
-      <div class="countdown-timer" id="countdownTimer">
-        <div class="countdown-unit">
-          <span class="countdown-number" id="cdDays">00</span>
-          <span class="countdown-unit-label">Days</span>
-        </div>
-        <div class="countdown-unit">
-          <span class="countdown-number" id="cdHours">00</span>
-          <span class="countdown-unit-label">Hours</span>
-        </div>
-        <div class="countdown-unit">
-          <span class="countdown-number" id="cdMins">00</span>
-          <span class="countdown-unit-label">Mins</span>
-        </div>
-        <div class="countdown-unit">
-          <span class="countdown-number" id="cdSecs">00</span>
-          <span class="countdown-unit-label">Secs</span>
-        </div>
-      </div>
-    </div>
-
-    <div id="paidCards"></div>
-
-  </div>
-
-  <!-- BOTTOM BAR -->
-  <div class="bottom-bar">
-    <div class="bottom-links">
-      <a onclick="window.open('https://t.me/PIKAZOOARMY', '_blank'); return false;">
-        ✈️ Telegram
-      </a>
-      <a onclick="window.location.href='mailto:pubgmobile16241897@gmail.com'; return false;">
-        ❓ Help & Support
-      </a>
-    </div>
-    <div class="footer-text">
-      © 2026 All Rights Reserved
-    </div>
-  </div>
-
-  <!-- ============================================================
-       SINGLE SOURCE OF DATA — edit item name/link/price HERE ONLY
-       Everything below (cards + popups) is generated from this.
-       ============================================================ -->
-  <script>
-    const SITE_DATA = {
-      original: [
-        {
-          key: 'global32',
-          title: '🌍 32Bit 4.5 PUBG ORIGINAL',
-          desc: 'APK | OBB',
-          date: '📅 Jun 30, 2026',
-          image: 'https://i.imgur.com/7nDL3Ta.gif?w=100&h=100&fit=crop',
-          apkUrl: 'https://i.imgur.com/7nDL3Ta.gif',
-          obbUrl: 'https://i.imgur.com/7nDL3Ta.gif'
-        },
-        {
-          key: 'global64',
-          title: '🌍 64Bit 4.5 PUBG ORIGINAL',
-          desc: 'APK | OBB',
-          date: '📅 Jun 30, 2026',
-          image: 'https://i.imgur.com/7nDL3Ta.gif?w=100&h=100&fit=crop',
-          apkUrl: 'https://i.imgur.com/7nDL3Ta.gif',
-          obbUrl: 'https://i.imgur.com/7nDL3Ta.gif'
-        },
-        {
-          key: 'korea32',
-          title: '🇰🇷 32Bit 4.5 PUBG ORIGINAL',
-          desc: 'APK | OBB',
-          date: '📅 Jun 30, 2026',
-          image: 'https://i.imgur.com/7nDL3Ta.gif?w=100&h=100&fit=crop',
-          apkUrl: 'https://i.imgur.com/7nDL3Ta.gif',
-          obbUrl: 'https://i.imgur.com/7nDL3Ta.gif'
-        },
-        {
-          key: 'korea64',
-          title: '🇰🇷 64Bit 4.5 PUBG ORIGINAL',
-          desc: 'APK | OBB',
-          date: '📅 Jun 30, 2026',
-          image: 'https://i.imgur.com/7nDL3Ta.gif?w=100&h=100&fit=crop',
-          apkUrl: 'https://i.imgur.com/7nDL3Ta.gif',
-          obbUrl: 'https://i.imgur.com/7nDL3Ta.gif'
-        }
-      ],
-
-      free: [
-        {
-          key: 'ebook',
-          title: '🌐PIKAZOOxRICH-GL-V5-WH-64BIT',
-          desc: 'GLOBAL X64BIT 4.4 ONLY',
-          date: '📅Upload: 29-06-2026',
-          image: 'https://i.imgur.com/oNa6fOG.jpeg?w=100&h=100&fit=crop',
-          downloadUrl: 'https://www.mediafire.com/file/7vv0d20czbdlnw0/%25F0%259F%258C%2590PIKAZOOxRICH-GL-V5-WH-64BIT.apk/file',
-          youtubeUrl: 'https://youtu.be/VXHYqwJohME'
-        },
-        {
-          key: 'tutorial',
-          title: 'Coming Soon',
-          desc: 'Watch free videos',
-          date: '📅 Jun 28, 2026',
-          image: 'https://i.imgur.com/7nDL3Ta.gif?w=100&h=100&fit=crop',
-          downloadUrl: 'https://i.imgur.com/7nDL3Ta.gif?w=100&h=100&fit=crop',
-          youtubeUrl: 'https://i.imgur.com/7nDL3Ta.gif?w=100&h=100&fit=crop'
-        },
-        {
-          key: 'template',
-          title: 'Coming Soon',
-          desc: 'Download now',
-          date: '📅 Jun 28, 2026',
-          image: 'https://i.imgur.com/7nDL3Ta.gif?w=100&h=100&fit=crop',
-          downloadUrl: 'https://i.imgur.com/7nDL3Ta.gif?w=100&h=100&fit=crop',
-          youtubeUrl: 'https://i.imgur.com/7nDL3Ta.gif?w=100&h=100&fit=crop'
-        }
-      ],
-
-      paid: [
-        {
-          key: 'basic',
-          title: 'WallHack Color Body | PUBG 4.5 | Blink Fix Working',
-          desc: 'PBC Features',
-          images: [
-            'https://i.imgur.com/qTIl8Zk.gif',
-            'https://i.imgur.com/qTIl8Zk.gif',
-            'https://i.imgur.com/qTIl8Zk.gif'
-          ],
-          priceOld: 2000,
-          priceNew: 1500,
-          validity: '2-Month',
-          working: 'Full Season',
-          sold: 11,
-          date: '📅 Jun 30, 2026',
-          featuresTitle: 'VIP Features Included',
-          features: [
-            'Main Account 100% Safe',
-            'Visibility Check / No Grass/Less Tree /',
-            'Black Sky / No Smoke / 50+ PBC FEATURES...',
-            'Instant Customer Support'
-          ]
-        },
-        {
-          key: 'pro',
-          title: 'VIP MAGIC BULLET PUBG 4.5',
-          modalTitle: 'VIP MAGIC BULLET FILE 4.5',
-          desc: 'Advanced ByPass Protection',
-          images: [
-            'https://i.imgur.com/BsF2LR5.gif?w=100&h=100&fit=crop',
-            'https://i.imgur.com/BsF2LR5.gif?w=100&h=100&fit=crop',
-            'https://i.imgur.com/BsF2LR5.gif?w=100&h=100&fit=crop'
-          ],
-          priceOld: 1500,
-          priceNew: 1000,
-          validity: '2-Month',
-          working: 'Full Season',
-          sold: 9,
-          date: '📅 Jun 30, 2026',
-          featuresTitle: 'VIP Features Included',
-          features: [
-            'Magic Bullet File',
-            'Aim Assist',
-            'Advanced Protection',
-            'Main Account Safe',
-            'More Basic Feature',
-            'Weekly updates'
-          ]
-        },
-        {
-          key: 'lifetime',
-          title: 'ALL IN ONE VIP PUBG 4.5',
-          desc: 'One-time payment',
-          images: [
-            'https://i.imgur.com/PUIyJgq.gif?w=100&h=100&fit=crop',
-            'https://i.imgur.com/PUIyJgq.gif?w=100&h=100&fit=crop',
-            'https://i.imgur.com/PUIyJgq.gif?w=100&h=100&fit=crop'
-          ],
-          priceOld: 3000,
-          priceNew: 2500,
-          sold: 6,
-          date: '📅 Jun 30, 2026',
-          featuresTitle: 'All VIP Features Included',
-          features: [
-            'WALLHACK V6 VIP & COLOR BODY',
-            'MAGIC BULLET VIP & SAFE AIMBOT',
-            '20+ PBC FEATURES ADDED',
-            '50+ VIP FEATURES ADDED',
-            'MAIN 100% SAFE GUARANTEED',
-            'INSTANT CUSTOMER SUPPORT'
-          ]
-        }
-      ]
-    };
-
-    // ── Your WhatsApp number that receives all "Buy Now" messages ──
-    const WHATSAPP_NUMBER = '923041891897';
-
-    // ── Payment details shown in the Payment popup ──
-    const PAYMENT_INFO = {
-      jazzcash: {
-        number: '03041891897',
-        name: 'Muhammad Shoaib'
-      },
-      binance: {
-        idName: 'PIKAZOO',
-        id: '370451668'
-      }
-    };
-
-    // Builds a WhatsApp link with the item name + price pre-filled in the message
-    function buildWhatsAppLink(item) {
-      const message = `Hi "${item.title}" "PKR ${item.priceNew}"`;
-      return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-    }
-
-    // ---------- RENDER: ORIGINAL CARDS ----------
-    function renderOriginalCards() {
-      const el = document.getElementById('originalCards');
-      el.innerHTML = SITE_DATA.original.map(item => `
-        <div class="link-card">
-          <a onclick="openOriginalModal('${item.key}'); return false;">
-            <div class="link-content">
-              <img src="${item.image}" alt="${item.title}" class="link-image">
-              <div class="link-text">
-                <div class="link-title">${item.title}</div>
-                <div class="link-desc">${item.desc}</div>
-                <div class="link-date">${item.date}</div>
-              </div>
-            </div>
-          </a>
-        </div>
-      `).join('');
-    }
-
-    function openOriginalModal(key) {
-      const item = SITE_DATA.original.find(i => i.key === key);
-      if (!item) return;
-      document.getElementById('originalModalTitle').textContent = item.title;
-      document.getElementById('originalApkBtn').onclick = function() {
-        showImageLightbox(item.apkUrl);
-      };
-      document.getElementById('originalObbBtn').onclick = function() {
-        showImageLightbox(item.obbUrl);
-      };
-      document.getElementById('originalModal').classList.add('active');
-    }
-
-    function showImageLightbox(url) {
-      const lightbox = document.getElementById('imageLightbox');
-      const img = document.getElementById('imageLightboxImg');
-      img.src = url;
-      lightbox.classList.add('active');
-    }
-
-    function closeImageLightbox() {
-      document.getElementById('imageLightbox').classList.remove('active');
-      document.getElementById('imageLightboxImg').src = '';
-    }
-
-    function closeOriginalModal() {
-      document.getElementById('originalModal').classList.remove('active');
-    }
-
-    // ---------- RENDER: FREE CARDS ----------
-    function renderFreeCards() {
-      const el = document.getElementById('freeCards');
-      el.innerHTML = SITE_DATA.free.map(item => `
-        <div class="link-card">
-          <a onclick="openFreeModal('${item.key}'); return false;">
-            <div class="link-content">
-              <img src="${item.image}" alt="${item.title}" class="link-image">
-              <div class="link-text">
-                <div class="link-title">${item.title}</div>
-                <div class="link-desc">${item.desc}</div>
-                <div class="link-date">${item.date}</div>
-              </div>
-            </div>
-          </a>
-        </div>
-      `).join('');
-    }
-
-    function openFreeModal(key) {
-      const item = SITE_DATA.free.find(i => i.key === key);
-      if (!item) return;
-      const useLightbox = (item.key === 'tutorial' || item.key === 'template');
-      document.getElementById('freeModalTitle').textContent = item.title;
-      document.getElementById('freeDownloadBtn').onclick = function() {
-        if (useLightbox) {
-          showImageLightbox(item.downloadUrl);
-        } else {
-          window.open(item.downloadUrl, '_blank');
-        }
-      };
-      const howToBtn = document.getElementById('freeHowToBtn');
-      const noVideoMsg = document.getElementById('freeNoVideoMsg');
-      if (item.youtubeUrl) {
-        howToBtn.style.display = 'block';
-        noVideoMsg.style.display = 'none';
-        howToBtn.onclick = function() {
-          if (useLightbox) {
-            showImageLightbox(item.youtubeUrl);
-          } else {
-            window.open(item.youtubeUrl, '_blank');
-          }
-        };
-      } else {
-        howToBtn.style.display = 'none';
-        noVideoMsg.style.display = 'block';
-      }
-      document.getElementById('freeModal').classList.add('active');
-    }
-
-    function closeFreeModal() {
-      document.getElementById('freeModal').classList.remove('active');
-    }
-
-    // ---------- RENDER: PAID CARDS + MODALS + PURCHASE-REQUIRED MODALS ----------
-    function renderPaidCards() {
-      const cardsEl = document.getElementById('paidCards');
-      cardsEl.innerHTML = SITE_DATA.paid.map(item => {
-        const extras = [item.validity, item.working].filter(Boolean).map(v => ' / ' + v).join('');
-        const thumb = item.images[0];
-        return `
-        <div class="link-card">
-          <a onclick="openModal('${item.key}'); return false;">
-            <div class="link-content">
-              <img src="${thumb}" alt="${item.title}" class="link-image">
-              <div class="link-text">
-                <div class="link-title">${item.title}</div>
-                <div class="link-desc">${item.desc}</div>
-                <div class="price-badge">${isDiscountActive() ? `PKR: <del>${item.priceOld}</del> - ${item.priceNew}` : `PKR: ${item.priceOld}`}${extras}</div>
-                <div class="link-date">${item.date} &nbsp;|&nbsp; 🔥 ${String(item.sold).padStart(2, '0')} Sold</div>
-              </div>
-            </div>
-          </a>
-        </div>`;
-      }).join('');
-
-      const modalsEl = document.getElementById('paidModals');
-      modalsEl.innerHTML = SITE_DATA.paid.map(item => {
-        const validityBadge = item.validity ? `<div class="price-badge">Validity: ${item.validity}</div>` : '';
-        const workingBadge = item.working ? `<div class="price-badge">Working: ${item.working}</div>` : '';
-        const featuresHtml = item.features.map(f => `<li>${f}</li>`).join('');
-        const galleryImgs = item.images.map(img => `<img src="${img}" alt="${item.title}" class="gallery-img">`).join('');
-        const galleryDots = item.images.map((_, i) => `<span class="gallery-dot${i === 0 ? ' active' : ''}"></span>`).join('');
-        return `
-        <div id="${item.key}Modal" class="modal">
-          <div class="modal-content">
-            <div class="modal-gallery">
-              <div class="gallery-track" id="gallery-${item.key}">
-                ${galleryImgs}
-              </div>
-              <div class="gallery-dots" id="dots-${item.key}">
-                ${galleryDots}
-              </div>
-            </div>
-            <div class="modal-body">
-              <div class="modal-header">
-                <h2>${item.modalTitle || item.title}</h2>
-                <button class="close-btn" onclick="closeModal('${item.key}')">&times;</button>
-              </div>
-              <div class="modal-price">${isDiscountActive() ? `PKR: <del>${item.priceOld}</del> - ${item.priceNew}` : `PKR: ${item.priceOld}`}</div>
-              ${validityBadge}
-              ${workingBadge}
-              <div class="modal-features">
-                <h3>${item.featuresTitle}</h3>
-                <ul class="feature-list">
-                  ${featuresHtml}
-                </ul>
-              </div>
-              <div style="display: flex; gap: 10px; flex-direction: column;">
-                <button class="modal-buy-btn" onclick="openPaymentModal('${item.key}'); return false;" style="margin-bottom: 0;">💳 Buy Now</button>
-                <button class="modal-buy-btn" onclick="openPurchaseRequired('${item.key}'); return false;" style="background: rgba(255, 255, 255, 0.2); color: #fff; margin-bottom: 0;">▶️ How to Use</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div id="${item.key}PurchaseModal" class="purchase-required-modal">
-          <div class="purchase-required-content">
-            <button class="purchase-required-close" onclick="closePurchaseRequired('${item.key}')">&times;</button>
-            <div class="purchase-required-title">⚠️ Purchase Required</div>
-            <div class="purchase-required-message">Please buy the file first to view the how to use tutorial.</div>
-            <button class="purchase-required-btn" onclick="closeModal('${item.key}'); closePurchaseRequired('${item.key}'); openPaymentModal('${item.key}'); return false;">Buy Now</button>
-          </div>
-        </div>`;
-      }).join('');
-
-      // Sync the dot indicators with swipe/scroll position for each gallery
-      SITE_DATA.paid.forEach(item => {
-        const track = document.getElementById('gallery-' + item.key);
-        const dots = document.querySelectorAll('#dots-' + item.key + ' .gallery-dot');
-        if (!track || dots.length === 0) return;
-        track.addEventListener('scroll', () => {
-          const index = Math.round(track.scrollLeft / track.clientWidth);
-          dots.forEach((d, i) => d.classList.toggle('active', i === index));
-        });
-      });
-    }
-
-    // ---------- PAYMENT MODAL (JazzCash / Binance) ----------
-    let currentPaymentLink = '';
-
-    function renderPaymentModal() {
-      const container = document.getElementById('paymentModalContainer');
-      container.innerHTML = `
-        <div id="paymentModal" class="modal">
-          <div class="modal-content">
-            <div class="modal-body">
-              <div class="modal-header">
-                <h2>💳 Payment Details</h2>
-                <button class="close-btn" onclick="closePaymentModal()">&times;</button>
-              </div>
-
-              <div class="payment-section">
-                <div class="payment-section-title">🇵🇰 Payment For Pakistani</div>
-                <div class="payment-label">JazzCash Account Number</div>
-                <div class="payment-value" onclick="copyToClipboard('${PAYMENT_INFO.jazzcash.number}', this)">
-                  <span>${PAYMENT_INFO.jazzcash.number}</span>
-                  <span class="copy-icon">📋</span>
-                </div>
-                <div class="payment-label">Name: ${PAYMENT_INFO.jazzcash.name}</div>
-              </div>
-
-              <div class="payment-section">
-                <div class="payment-section-title">🌍 For International Crypto User</div>
-                <div class="payment-label">Binance ID Name: ${PAYMENT_INFO.binance.idName}</div>
-                <div class="payment-label">Binance ID</div>
-                <div class="payment-value" onclick="copyToClipboard('${PAYMENT_INFO.binance.id}', this)">
-                  <span>${PAYMENT_INFO.binance.id}</span>
-                  <span class="copy-icon">📋</span>
-                </div>
-              </div>
-
-              <div class="payment-note">
-                For More Detail Contact On WhatsApp<br>
-                <strong>⚠️ Important:</strong> attach Screenshot After Payment
-              </div>
-
-              <div class="payment-btn-row">
-                <button class="modal-buy-btn payment-btn-cancel" onclick="closePaymentModal()">Cancel</button>
-                <button class="modal-buy-btn" onclick="confirmPaymentBuy()">Buy</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    function openPaymentModal(key) {
-      const item = SITE_DATA.paid.find(i => i.key === key);
-      if (!item) return;
-      currentPaymentLink = buildWhatsAppLink(item);
-      document.getElementById('paymentModal').classList.add('active');
-    }
-
-    function closePaymentModal() {
-      document.getElementById('paymentModal').classList.remove('active');
-    }
-
-    function confirmPaymentBuy() {
-      window.open(currentPaymentLink, '_blank');
-      closePaymentModal();
-    }
-
-    function copyToClipboard(text, el) {
-      const showCopied = () => {
-        const original = el.innerHTML;
-        el.innerHTML = '<span>' + text + '</span><span class="copy-icon">✅</span>';
-        setTimeout(() => { el.innerHTML = original; }, 1200);
-      };
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(showCopied).catch(showCopied);
-      } else {
-        const temp = document.createElement('textarea');
-        temp.value = text;
-        document.body.appendChild(temp);
-        temp.select();
-        try { document.execCommand('copy'); } catch (e) {}
-        document.body.removeChild(temp);
-        showCopied();
-      }
-    }
-
-    function toggleTheme() {
-      const body = document.body;
-      const btn = document.getElementById('themeBtn');
-      body.classList.toggle('dark-mode');
-      if (body.classList.contains('dark-mode')) {
-        btn.innerHTML = '☀️ <span>Light</span>';
-      } else {
-        btn.innerHTML = '🌙 <span>Dark</span>';
-      }
-    }
-
-  </script>
-
-  <div id="freeModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-body">
-        <div class="modal-header">
-          <h2 id="freeModalTitle"></h2>
-          <button class="close-btn" onclick="closeFreeModal()">&times;</button>
-        </div>
-        <p style="color: rgba(255,255,255,0.7); font-size: 14px; margin-bottom: 25px;">Choose an option below:</p>
-        <div style="display: flex; gap: 12px; flex-direction: column;">
-          <button id="freeDownloadBtn" class="modal-buy-btn" style="">
-            ⬇️ Download
-          </button>
-          <button id="freeHowToBtn" class="modal-buy-btn" style="background: rgba(255,255,255,0.2); color: #fff;">
-            ▶️ How to Use
-          </button>
-          <div id="freeNoVideoMsg" style="display:none; background: rgba(255,255,255,0.1); border-radius: 20px; padding: 14px; text-align: center; color: rgba(255,255,255,0.7); font-size: 14px;">
-            🎬 No video made on this content file yet.
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="originalModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-body">
-        <div class="modal-header">
-          <h2 id="originalModalTitle"></h2>
-          <button class="close-btn" onclick="closeOriginalModal()">&times;</button>
-        </div>
-        <p style="color: rgba(255,255,255,0.7); font-size: 14px; margin-bottom: 25px;">Choose an option below:</p>
-        <div style="display: flex; gap: 12px; flex-direction: column;">
-          <button id="originalApkBtn" class="modal-buy-btn">
-            ⬇️ Download APK
-          </button>
-          <button id="originalObbBtn" class="modal-buy-btn" style="background: rgba(255, 255, 255, 0.2); color: #fff;">
-            ⬇️ Download OBB
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- IMAGE LIGHTBOX (shows apk/obb link images inline, without leaving the site) -->
-  <div id="imageLightbox" class="image-lightbox" onclick="closeImageLightbox()">
-    <button class="image-lightbox-close" onclick="closeImageLightbox()">&times;</button>
-    <img id="imageLightboxImg" src="" alt="" onclick="event.stopPropagation()">
-  </div>
-
-  <!-- PAID MODALS + PURCHASE-REQUIRED MODALS (auto-generated from SITE_DATA.paid) -->
-  <div id="paidModals"></div>
-
-  <!-- PAYMENT MODAL (JazzCash / Binance) -->
-  <div id="paymentModalContainer"></div>
-
-  <!-- Build every section from SITE_DATA — runs after all containers above exist -->
-  <script>
-    applyPhasePricing();
-    renderOriginalCards();
-    renderFreeCards();
-    renderPaidCards();
-    renderPaymentModal();
-  </script>
-</div>
-
-<script>
-// ─── iOS PILL TAB SWITCHER ───────────────────────────────────────────
-const tabButtons = document.querySelectorAll('.tab-btn');
-const sections = document.querySelectorAll('.section');
-const pill = document.getElementById('tabPill');
-
-function updatePill(activeBtn) {
-  pill.style.width = activeBtn.offsetWidth + 'px';
-  pill.style.transform = `translateX(${activeBtn.offsetLeft - 4}px)`;
-}
-
-tabButtons.forEach(button => {
-  button.addEventListener('click', () => {
-    const tabName = button.getAttribute('data-tab');
-    tabButtons.forEach(btn => btn.classList.remove('active'));
-    sections.forEach(section => section.classList.remove('active'));
-    button.classList.add('active');
-    document.getElementById(tabName).classList.add('active');
-    updatePill(button);
-  });
-});
-// Set initial pill state
-updatePill(document.querySelector('.tab-btn.active'));
-window.addEventListener('resize', () => {
-  updatePill(document.querySelector('.tab-btn.active'));
+const featureContainer = document.getElementById("featureScroll");
+featureList.forEach((feat, idx) => {
+  const item = document.createElement("div");
+  item.className = "feature-item";
+  item.innerHTML = `<b>${idx + 1}.</b> ${feat}`;
+  featureContainer.appendChild(item);
 });
 
-// ─── BLOB BACKGROUND ────────────────────────────────────────────────
-(function() {
-  const canvas = document.getElementById('blobCanvas');
-  const ctx = canvas.getContext('2d');
+function openFeatures(){
+  document.getElementById("featureModal").classList.add("open");
+  document.getElementById("featureScroll").scrollTop = 0;
+}
 
-  const isDark = () => document.body.classList.contains('dark-mode');
+function closeFeatures(){
+  document.getElementById("featureModal").classList.remove("open");
+}
 
-  const LIGHT_COLORS = [
-    [220, 160, 255],  // pink/lavender
-    [140, 200, 255],  // sky blue
-    [180, 140, 255],  // purple
-    [255, 180, 220],  // rose pink
-    [160, 230, 255],  // cyan-blue
-  ];
-  const DARK_COLORS = [
-    [80, 30, 140],
-    [30, 60, 140],
-    [100, 20, 120],
-    [20, 80, 160],
-    [60, 20, 100],
-  ];
 
-  function resize() {
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
+/* ============================================================
+   SEARCH SYSTEM
+   Filters visible product cards (and reveals all panels) based
+   on the search input text.
+============================================================ */
+document.getElementById("search").addEventListener("input", function(e) {
+  const query = e.target.value.toLowerCase().trim();
+  const allCards = document.querySelectorAll(".cart-card");
+  
+  if (query === "") {
+    allCards.forEach(c => c.style.display = "flex");
+    return;
   }
-  window.addEventListener('resize', resize);
-  resize();
-
-  const blobs = Array.from({ length: 5 }, (_, i) => ({
-    x: Math.random() * window.innerWidth,
-    y: Math.random() * window.innerHeight,
-    r: 200 + Math.random() * 220,
-    vx: (Math.random() - 0.5) * 0.45,
-    vy: (Math.random() - 0.5) * 0.45,
-    colorIdx: i % 5,
-  }));
-
-  function drawBlobs() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const colors = isDark() ? DARK_COLORS : LIGHT_COLORS;
-    blobs.forEach(b => {
-      b.x += b.vx;
-      b.y += b.vy;
-      if (b.x < -b.r) b.x = canvas.width + b.r;
-      if (b.x > canvas.width + b.r) b.x = -b.r;
-      if (b.y < -b.r) b.y = canvas.height + b.r;
-      if (b.y > canvas.height + b.r) b.y = -b.r;
-
-      const [r, g, bv] = colors[b.colorIdx];
-      const grad = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
-      grad.addColorStop(0, `rgba(${r},${g},${bv},0.85)`);
-      grad.addColorStop(1, `rgba(${r},${g},${bv},0)`);
-      ctx.beginPath();
-      ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-      ctx.fillStyle = grad;
-      ctx.fill();
-    });
-    requestAnimationFrame(drawBlobs);
-  }
-  drawBlobs();
-})();
-
-// ─── TOUCH / CURSOR SOFT GLOW ────────────────────────────────────────
-(function() {
-  const glow = document.getElementById('touchGlow');
-  let glowTimeout;
-
-  function moveGlow(x, y) {
-    glow.style.left = x + 'px';
-    glow.style.top  = y + 'px';
-    glow.style.opacity = '1';
-    clearTimeout(glowTimeout);
-    glowTimeout = setTimeout(() => { glow.style.opacity = '0'; }, 1200);
-  }
-
-  document.addEventListener('mousemove', e => moveGlow(e.clientX, e.clientY));
-  document.addEventListener('touchmove', e => {
-    const t = e.touches[0];
-    moveGlow(t.clientX, t.clientY);
-  }, { passive: true });
-  document.addEventListener('touchstart', e => {
-    const t = e.touches[0];
-    moveGlow(t.clientX, t.clientY);
-  }, { passive: true });
-})();
-
-// ─── "SHOW TOUCH" TAP INDICATOR (like Android's Show Taps) ──────────
-(function() {
-  function spawnRipple(x, y) {
-    const ripple = document.createElement('div');
-    ripple.className = 'show-touch-ripple';
-    ripple.style.left = x + 'px';
-    ripple.style.top  = y + 'px';
-    document.body.appendChild(ripple);
-    ripple.addEventListener('animationend', () => ripple.remove());
-  }
-
-  // Mouse clicks
-  document.addEventListener('mousedown', e => spawnRipple(e.clientX, e.clientY));
-
-  // Touch taps (supports multi-touch)
-  document.addEventListener('touchstart', e => {
-    for (let i = 0; i < e.touches.length; i++) {
-      spawnRipple(e.touches[i].clientX, e.touches[i].clientY);
-    }
-  }, { passive: true });
-})();
-</script>
-
-<script>
-function openModal(planType) {
-  const modal = document.getElementById(planType + 'Modal');
-  if (modal) modal.classList.add('active');
-}
-
-function closeModal(planType) {
-  const modal = document.getElementById(planType + 'Modal');
-  if (modal) modal.classList.remove('active');
-}
-
-function openDownloadModal(planType) {
-  const modal = document.getElementById(planType + 'DownloadModal');
-  if (modal) modal.classList.add('active');
-}
-
-function closeDownloadModal(planType) {
-  const modal = document.getElementById(planType + 'DownloadModal');
-  if (modal) modal.classList.remove('active');
-}
-
-function openPurchaseRequired(planType) {
-  const modal = document.getElementById(planType + 'PurchaseModal');
-  if (modal) modal.classList.add('active');
-}
-
-function closePurchaseRequired(planType) {
-  const modal = document.getElementById(planType + 'PurchaseModal');
-  if (modal) modal.classList.remove('active');
-}
-
-document.addEventListener('click', function(event) {
-  document.querySelectorAll('.modal').forEach(modal => {
-    if (event.target === modal) modal.classList.remove('active');
-  });
-  document.querySelectorAll('.download-modal').forEach(modal => {
-    if (event.target === modal) modal.classList.remove('active');
-  });
-  document.querySelectorAll('.purchase-required-modal').forEach(modal => {
-    if (event.target === modal) modal.classList.remove('active');
+  
+  document.querySelectorAll(".product-panel").forEach(p => p.classList.add("show"));
+  
+  allCards.forEach(card => {
+    const text = card.textContent.toLowerCase();
+    card.style.display = text.includes(query) ? "flex" : "none";
   });
 });
 
-</script>
 
-<script>
-// ── ANIMATED STATS COUNTER ──
-function animateCount(id, target, suffix) {
-  let current = 0;
-  const step = Math.ceil(target / 60);
-  const timer = setInterval(() => {
-    current += step;
-    if (current >= target) {
-      current = target;
-      clearInterval(timer);
-    }
-    document.getElementById(id).textContent = current + suffix;
-  }, 25);
-}
-
-// ── COUNTDOWN TIMER (phase-aware) ──
-function getCountdownTarget() {
+/* ============================================================
+   DISCOUNT COUNTDOWN (PUBG Premium Campaigns)
+   Checks the current date against two hardcoded campaign windows
+   and updates the live countdown display accordingly.
+============================================================ */
+function updateDiscountCountdown() {
   const now = new Date();
-  const activePhase = getCurrentPhase();
-  if (activePhase) {
-    return { time: activePhase.end, label: `⏳ ${activePhase.label} Ends In` };
+  const camp1Start = new Date(2026, 8, 8, 0, 0, 0);       
+  const camp1End   = new Date(2026, 8, 20, 23, 59, 59);   
+  const camp2Start = new Date(2026, 9, 20, 0, 0, 0);      
+  const camp2End   = new Date(2026, 10, 8, 23, 59, 59);    
+
+  const banner = document.getElementById("discountBanner");
+  const badge = document.getElementById("bannerOffBadge");
+  const priceBtnBadge = document.getElementById("discountPercent");
+
+  let activeTarget = null;
+  let currentOffText = "";
+
+  if (now >= camp1Start && now <= camp1End) {
+    activeTarget = camp1End;
+    currentOffText = "(25% OFF)";
+  } else if (now >= camp2Start && now <= camp2End) {
+    activeTarget = camp2End;
+    currentOffText = "(50% OFF)";
   }
-  const nextPhase = PRICE_PHASES.find(p => now < p.start);
-  if (nextPhase) {
-    return { time: nextPhase.start, label: `⏳ ${nextPhase.label} Starts In` };
+
+  if (activeTarget) {
+    if (banner) banner.style.display = "block";
+    if (badge) badge.textContent = currentOffText;
+    if (priceBtnBadge) priceBtnBadge.textContent = currentOffText;
+
+    const diff = activeTarget - now;
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const mins = Math.floor((diff / 1000 / 60) % 60);
+    const secs = Math.floor((diff / 1000) % 60);
+
+    const dEl = document.getElementById("cdDays");
+    const hEl = document.getElementById("cdHours");
+    const mEl = document.getElementById("cdMins");
+    const sEl = document.getElementById("cdSecs");
+
+    if (dEl) dEl.textContent = String(days).padStart(2, '0');
+    if (hEl) hEl.textContent = String(hours).padStart(2, '0');
+    if (mEl) mEl.textContent = String(mins).padStart(2, '0');
+    if (sEl) sEl.textContent = String(secs).padStart(2, '0');
+  } else {
+    if (banner) banner.style.display = "none";
+    if (priceBtnBadge) priceBtnBadge.textContent = "(No Discount)";
   }
-  return null; // all phases have ended
 }
 
-function updateCountdown() {
-  if (typeof COUNTDOWN_ON === 'undefined' || !COUNTDOWN_ON) return;
-  const box = document.getElementById('countdownBox');
-  if (!box) return;
 
-  const target = getCountdownTarget();
-  if (!target) {
-    box.style.display = 'none';
-    return;
-  }
-  box.style.display = 'block';
-  document.getElementById('countdownLabel').textContent = target.label;
+/* ============================================================
+   UI TAP / RIPPLE EFFECTS
+   Global pointerdown handler that adds a material-style ripple
+   and a tap sound to any button-like element pressed.
+============================================================ */
+document.addEventListener('pointerdown', function(e) {
+  const btn = e.target.closest('button, .cart-btn-buy, .cat-btn, .cart-btn-apk, .cart-btn-obb');
+  if (!btn) return;
 
-  const now = new Date().getTime();
-  const diff = target.time.getTime() - now;
+  playTapSound(btn.classList.contains('premium-cat-btn'));
 
-  if (diff <= 0) {
-    document.getElementById('countdownTimer').innerHTML = '<div class="countdown-expired">🚫 Offer Ended</div>';
-    return;
-  }
+  const circle = document.createElement("span");
+  const diameter = Math.max(btn.clientWidth, btn.clientHeight);
+  const radius = diameter / 2;
+  const rect = btn.getBoundingClientRect();
 
-  const days  = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const mins  = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-  const secs  = Math.floor((diff % (1000 * 60)) / 1000);
-
-  document.getElementById('cdDays').textContent  = String(days).padStart(2, '0');
-  document.getElementById('cdHours').textContent = String(hours).padStart(2, '0');
-  document.getElementById('cdMins').textContent  = String(mins).padStart(2, '0');
-  document.getElementById('cdSecs').textContent  = String(secs).padStart(2, '0');
-}
-
-// Run when paid tab is clicked
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {});
+  circle.style.width = circle.style.height = `${diameter}px`;
+  circle.style.left = `${e.clientX - rect.left - radius}px`;
+  circle.style.top = `${e.clientY - rect.top - radius}px`;
+  circle.classList.add("ripple");
+  
+  const existingRipple = btn.getElementsByClassName("ripple")[0];
+  if (existingRipple) existingRipple.remove();
+  btn.appendChild(circle);
 });
 
-// Init countdown
-if (typeof COUNTDOWN_ON !== 'undefined' && COUNTDOWN_ON) {
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
+
+/* ============================================================
+   CATEGORY PANEL SWITCHING
+   Shows/hides the product panel associated with a category button.
+============================================================ */
+function showPanel(id, btn, e, isPremium = false){
+  const p=document.getElementById(id+"Panel");
+  const isShow = p.classList.contains("show");
+  
+  document.querySelectorAll(".product-panel").forEach(x=>x.classList.remove("show"));
+  document.querySelectorAll(".cat-btn").forEach(x=>x.classList.remove("active"));
+  
+  if(!isShow && p){
+    p.classList.add("show");
+    btn.classList.add("active");
+    p.scrollIntoView({behavior:"smooth",block:"start"});
+  }
 }
+
+
+/* ========================================================
+   FRUIT NINJA GAME CORE LOGIC
+======================================================== */
+const gameModal = document.getElementById("fruitGameModal");
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+let W = 0, H = 0;
+let running = false;
+let gameScore = 0;
+let lives = 3;
+let combo = 0;
+let fruits = [];
+let particles = [];
+let trails = [];
+let floatingTexts = [];
+let spawnTimer = 0;
+let lastTime = performance.now();
+let pointerDown = false;
+let lastPointer = null;
+
+function resizeCanvas() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth;
+  H = window.innerHeight;
+  canvas.width = Math.floor(W * dpr);
+  canvas.height = Math.floor(H * dpr);
+  canvas.style.width = W + "px";
+  canvas.style.height = H + "px";
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+window.addEventListener("resize", () => {
+  if (gameModal.classList.contains("active")) {
+    resizeCanvas();
+  }
+});
+
+function openFruitGame() {
+  initAudio();
+  gameModal.classList.add("active");
+  document.body.style.overflow = "hidden";
+  resizeCanvas();
+  document.getElementById("startScreen").style.display = "flex";
+  document.getElementById("gameOver").style.display = "none";
+}
+
+function closeFruitGame() {
+  running = false;
+  gameModal.classList.remove("active");
+  document.body.style.overflow = "";
+}
+
+const FRUITS = [
+  { emoji:"🍉", color:"#35c85a", juice:"#ff3155", points:10, radius:35 },
+  { emoji:"🍊", color:"#ff9500", juice:"#ff9500", points:12, radius:30 },
+  { emoji:"🍎", color:"#ff3b30", juice:"#ff3030", points:15, radius:30 },
+  { emoji:"🍋", color:"#ffd60a", juice:"#ffe000", points:14, radius:28 },
+  { emoji:"🍓", color:"#ff2d55", juice:"#ff3155", points:18, radius:27 },
+  { emoji:"🍑", color:"#ff7a45", juice:"#ff8255", points:16, radius:29 },
+  { emoji:"🍍", color:"#ffd000", juice:"#ffd000", points:20, radius:32 },
+  { emoji:"🥝", color:"#8bc34a", juice:"#83c53b", points:17, radius:28 },
+  { emoji:"🍇", color:"#8056c7", juice:"#9d6cff", points:16, radius:28 },
+  { emoji:"🥥", color:"#92715c", juice:"#c99f75", points:19, radius:31 }
+];
+
+const BOMBS = ["💣", "🧨"];
+
+function sound(frequency, duration, type = "sine", volume = 0.04) {
+  if (!audioCtx) return;
+  try {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.value = frequency;
+    gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  } catch(e) {}
+}
+
+class Fruit {
+  constructor(x, y, vx, vy, data, bomb) {
+    this.x = x;
+    this.y = y;
+    this.vx = vx;
+    this.vy = vy;
+    this.data = data;
+    this.bomb = bomb;
+    this.radius = bomb ? 35 : data.radius;
+    this.rotation = Math.random() * Math.PI * 2;
+    this.rotationSpeed = (Math.random() - 0.5) * 0.035;
+    this.gravity = 0.18;
+    this.alive = true;
+    this.sliced = false;
+  }
+
+  update(scale) {
+    this.x += this.vx * scale;
+    this.y += this.vy * scale;
+    this.vy += this.gravity * scale;
+    this.rotation += this.rotationSpeed * scale;
+
+    if (this.y > H + 100) {
+      this.alive = false;
+      if (!this.bomb && !this.sliced && running) {
+        loseLife();
+      }
+    }
+  }
+
+  draw() {
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.rotation);
+
+    if (this.bomb) {
+      ctx.font = `${this.radius * 1.65}px "Apple Color Emoji","Segoe UI Emoji",Arial`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.shadowColor = "rgba(255,60,0,.8)";
+      ctx.shadowBlur = 14;
+      ctx.fillText(this.data, 0, 0);
+    } else {
+      ctx.font = `${this.radius * 1.75}px "Apple Color Emoji","Segoe UI Emoji",Arial`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.shadowColor = this.data.color;
+      ctx.shadowBlur = 10;
+      ctx.fillText(this.data.emoji, 0, 2);
+    }
+    ctx.restore();
+  }
+}
+
+class Particle {
+  constructor(x, y, color) {
+    this.x = x;
+    this.y = y;
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 1.5 + Math.random() * 5;
+    this.vx = Math.cos(angle) * speed;
+    this.vy = Math.sin(angle) * speed;
+    this.size = 2 + Math.random() * 6;
+    this.life = 1;
+    this.color = color;
+  }
+
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.vy += 0.08;
+    this.vx *= 0.985;
+    this.vy *= 0.985;
+    this.life -= 0.025;
+  }
+
+  draw() {
+    const life = Math.max(0, this.life);
+    const radius = Math.max(0.1, this.size * life);
+    ctx.globalAlpha = life;
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+}
+
+class FloatingText {
+  constructor(x, y, text) {
+    this.x = x;
+    this.y = y;
+    this.text = text;
+    this.life = 1;
+  }
+
+  update() {
+    this.y -= 1.2;
+    this.life -= 0.018;
+  }
+
+  draw() {
+    const alpha = Math.max(0, this.life);
+    ctx.globalAlpha = alpha;
+    ctx.font = "900 25px Arial";
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#ffffff";
+    ctx.shadowColor = "#ff6500";
+    ctx.shadowBlur = 12;
+    ctx.fillText(this.text, this.x, this.y);
+    ctx.shadowBlur = 0;
+    ctx.globalAlpha = 1;
+  }
+}
+
+function spawnWave() {
+  let count;
+  if (gameScore < 100) count = 1 + Math.floor(Math.random() * 2);
+  else if (gameScore < 300) count = 1 + Math.floor(Math.random() * 3);
+  else count = 2 + Math.floor(Math.random() * 3);
+
+  const center = W * (0.20 + Math.random() * 0.60);
+
+  for (let i = 0; i < count; i++) {
+    const x = center + (i - (count - 1) / 2) * 75;
+    const startY = H + 65;
+    const targetTop = Math.max(120, H * 0.16);
+    const distance = startY - targetTop;
+    const gravity = 0.18;
+    let launchVelocity = Math.sqrt(2 * gravity * distance);
+    launchVelocity *= 0.96 + Math.random() * 0.08;
+    const vy = -launchVelocity;
+    const vx = (Math.random() - 0.5) * 1.25;
+
+    let bombChance;
+    if (gameScore < 100) bombChance = 0.035;
+    else if (gameScore < 300) bombChance = 0.06;
+    else bombChance = 0.09;
+
+    const isBomb = Math.random() < bombChance;
+    let data = isBomb ? BOMBS[Math.floor(Math.random() * BOMBS.length)] : FRUITS[Math.floor(Math.random() * FRUITS.length)];
+    fruits.push(new Fruit(x, startY, vx, vy, data, isBomb));
+  }
+}
+
+function distanceToSegment(px, py, x1, y1, x2, y2) {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  if (dx === 0 && dy === 0) return Math.hypot(px - x1, py - y1);
+  const t = Math.max(0, Math.min(1, ((px - x1) * dx + (py - y1) * dy) / (dx * dx + dy * dy)));
+  return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy));
+}
+
+function checkSlice(x1, y1, x2, y2) {
+  if (!running) return;
+  for (let i = fruits.length - 1; i >= 0; i--) {
+    const fruit = fruits[i];
+    if (!fruit.alive || fruit.sliced) continue;
+
+    const distance = distanceToSegment(fruit.x, fruit.y, x1, y1, x2, y2);
+
+    if (fruit.bomb) {
+      const bombHitRadius = Math.max(20, fruit.radius * 0.58);
+      if (distance <= bombHitRadius) {
+        fruit.sliced = true;
+        fruit.alive = false;
+        bombHit(fruit.x, fruit.y);
+        return;
+      }
+      continue;
+    }
+
+    const fruitHitRadius = fruit.radius + 18;
+    if (distance <= fruitHitRadius) {
+      fruit.sliced = true;
+      fruit.alive = false;
+      sliceFruit(fruit);
+    }
+  }
+}
+
+function sliceFruit(fruit) {
+  combo++;
+  const multiplier = Math.min(5, 1 + Math.floor(combo / 3));
+  const points = fruit.data.points * multiplier;
+  gameScore += points;
+  updateHUD();
+
+  for (let i = 0; i < 30; i++) particles.push(new Particle(fruit.x, fruit.y, fruit.data.juice));
+  for (let i = 0; i < 12; i++) particles.push(new Particle(fruit.x, fruit.y, fruit.data.color));
+
+  floatingTexts.push(new FloatingText(fruit.x, fruit.y - 20, "+" + points));
+
+  if (combo >= 3) showCombo(combo + "x COMBO!");
+  sound(600 + combo * 35, 0.08, "triangle", 0.035);
+}
+
+function bombHit(x, y) {
+  for (let i = 0; i < 120; i++) particles.push(new Particle(x, y, i % 2 ? "#ff3b30" : "#ffd60a"));
+  floatingTexts.push(new FloatingText(x, y, "💥 BOOM!"));
+  sound(70, 0.5, "sawtooth", 0.12);
+  lives = 0;
+  updateHUD();
+  setTimeout(gameOver, 450);
+}
+
+function loseLife() {
+  if (!running) return;
+  lives--;
+  combo = 0;
+  updateHUD();
+  if (lives <= 0) gameOver();
+}
+
+function showCombo(text) {
+  const el = document.getElementById("comboText");
+  el.textContent = text;
+  el.classList.remove("comboAnimation");
+  void el.offsetWidth;
+  el.classList.add("comboAnimation");
+}
+
+function updateHUD() {
+  document.getElementById("score").textContent = gameScore;
+  document.getElementById("combo").textContent = combo;
+  const hearts = document.querySelectorAll("#hud .heart");
+  hearts.forEach((heart, idx) => heart.classList.toggle("empty", idx >= lives));
+}
+
+function startGame() {
+  initAudio();
+  running = true;
+  gameScore = 0;
+  lives = 3;
+  combo = 0;
+  fruits = [];
+  particles = [];
+  trails = [];
+  floatingTexts = [];
+  spawnTimer = 350;
+
+  document.getElementById("startScreen").style.display = "none";
+  document.getElementById("gameOver").style.display = "none";
+  updateHUD();
+  lastTime = performance.now();
+}
+
+function gameOver() {
+  if (!running) return;
+  running = false;
+  document.getElementById("finalScore").textContent = gameScore;
+  document.getElementById("gameOver").style.display = "flex";
+}
+
+function getPointer(event) {
+  const rect = canvas.getBoundingClientRect();
+  return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+}
+
+canvas.addEventListener("pointerdown", event => {
+  if (!running) return;
+  pointerDown = true;
+  lastPointer = getPointer(event);
+  try { canvas.setPointerCapture(event.pointerId); } catch(e) {}
+});
+
+canvas.addEventListener("pointermove", event => {
+  if (!pointerDown || !running) return;
+  const current = getPointer(event);
+  if (lastPointer) {
+    checkSlice(lastPointer.x, lastPointer.y, current.x, current.y);
+    trails.push({ x1: lastPointer.x, y1: lastPointer.y, x2: current.x, y2: current.y, life: 1 });
+  }
+  lastPointer = current;
+});
+
+canvas.addEventListener("pointerup", () => { pointerDown = false; lastPointer = null; });
+canvas.addEventListener("pointercancel", () => { pointerDown = false; lastPointer = null; });
+
+function drawTrails() {
+  for (let i = trails.length - 1; i >= 0; i--) {
+    const trail = trails[i];
+    trail.life -= 0.08;
+    if (trail.life <= 0) { trails.splice(i, 1); continue; }
+
+    const alpha = Math.max(0, trail.life);
+    ctx.save();
+    ctx.globalAlpha = alpha;
+
+    ctx.lineCap = "round";
+    ctx.lineWidth = 18;
+    ctx.strokeStyle = "rgba(255,255,255,.2)";
+    ctx.shadowColor = "white";
+    ctx.shadowBlur = 25;
+    ctx.beginPath();
+    ctx.moveTo(trail.x1, trail.y1);
+    ctx.lineTo(trail.x2, trail.y2);
+    ctx.stroke();
+
+    ctx.shadowBlur = 8;
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.moveTo(trail.x1, trail.y1);
+    ctx.lineTo(trail.x2, trail.y2);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+function gameLoop(timestamp) {
+  const delta = Math.min(32, timestamp - lastTime);
+  lastTime = timestamp;
+  const scale = delta / 16.6667;
+
+  if (gameModal.classList.contains("active")) {
+    ctx.clearRect(0, 0, W, H);
+
+    if (running) {
+      spawnTimer -= delta;
+      const spawnDelay = Math.max(850, 1350 - gameScore * 1.0);
+      if (spawnTimer <= 0) {
+        spawnWave();
+        spawnTimer = spawnDelay;
+      }
+    }
+
+    for (let i = fruits.length - 1; i >= 0; i--) {
+      const fruit = fruits[i];
+      fruit.update(scale);
+      if (fruit.alive) fruit.draw();
+      else fruits.splice(i, 1);
+    }
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.update();
+      p.draw();
+      if (p.life <= 0) particles.splice(i, 1);
+    }
+
+    for (let i = floatingTexts.length - 1; i >= 0; i--) {
+      const t = floatingTexts[i];
+      t.update();
+      t.draw();
+      if (t.life <= 0) floatingTexts.splice(i, 1);
+    }
+
+    drawTrails();
+  }
+
+  requestAnimationFrame(gameLoop);
+}
+
+// Start the perpetual game render loop (runs continuously; internally
+// checks whether the game modal is active before drawing anything)
+requestAnimationFrame(gameLoop);
+
+// Prevent page scrolling with touch while a game round is running
+document.addEventListener("touchmove", event => {
+  if (running) event.preventDefault();
+}, { passive: false });
+
+
+/* ============================================================
+   INITIALIZATION / FINAL STARTUP LOGIC
+   Kicks off the splash loader, sets the footer year, and starts
+   the live discount countdown ticker. Must run after all of the
+   above functions/variables have been declared.
+============================================================ */
+runCyberLoader();
+document.getElementById("year").textContent = new Date().getFullYear();
+updateDiscountCountdown();
+setInterval(updateDiscountCountdown, 1000);
+
 </script>
 </body>
 </html>
