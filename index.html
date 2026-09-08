@@ -2035,29 +2035,19 @@ document.addEventListener('click', function(e){
 
 /* ============================================================
    WELCOME POPUP
-   Handles the 9-second mandatory countdown before the user can
-   close the announcement popup.
+   Handles showing the welcome popup immediately without any 
+   mandatory countdown, allowing the user to close it whenever desired.
 ============================================================ */
-let popupCountdownInterval;
-
 function startWelcomePopupCountdown() {
   const overlay = document.getElementById("welcomePopupOverlay");
   overlay.classList.add("active");
 
-  let timeLeft = 9;
   const badge = document.getElementById("popupCountdownBadge");
   const closeBtn = document.getElementById("popupCloseBtn");
 
-  popupCountdownInterval = setInterval(() => {
-    timeLeft--;
-    if (timeLeft > 0) {
-      badge.textContent = `0${timeLeft}s`;
-    } else {
-      badge.textContent = `00s`;
-      clearInterval(popupCountdownInterval);
-      closeBtn.removeAttribute("disabled");
-    }
-  }, 1000);
+  // Timer aur badge ko hata diya gaya hai, close button shuru se active hai
+  if (badge) badge.style.display = "none";
+  if (closeBtn) closeBtn.removeAttribute("disabled");
 }
 
 function closeWelcomePopup() {
