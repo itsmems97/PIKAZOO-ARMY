@@ -34,6 +34,17 @@
 <style>
 
 /* ============================================================
+   CUSTOM FONT — VIP.ttf (hosted in same GitHub repository)
+============================================================ */
+@font-face {
+  font-family: "VIP";
+  src: url("VIP.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ============================================================
    GLOBAL CSS VARIABLES (Light & Dark Theme Tokens)
 ============================================================ */
 :root {
@@ -73,7 +84,7 @@
 ============================================================ */
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text-main);min-height:100vh;overflow-x:hidden;transition:background 0.3s ease, color 0.3s ease;}
+body{font-family:"VIP",Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text-main);min-height:100vh;overflow-x:hidden;transition:background 0.3s ease, color 0.3s ease;}
 button,input{font:inherit}button{cursor:pointer;border:0}a{text-decoration:none;color:inherit}
 
 /* ================= CYBERPUNK HOLOGRAM SPLASH SCREEN ================= */
