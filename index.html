@@ -9,8 +9,9 @@
     • Light / Dark theme switcher
     • Live discount countdown banner
     • Payment details modal (JazzCash / USDT) + native "Invite Friend" share
-  NOTE: This file has been reorganized for readability & maintainability only.
-  No functionality, markup behavior, styling, or logic has been changed.
+    • Custom site-wide font: VIP.ttf
+    • App-like behavior locks: no zoom, no text-select/callout, no
+      pull-to-refresh / swipe navigation (body fixed, #app scrolls)
 ============================================================================
 -->
 <!DOCTYPE html>
@@ -21,24 +22,24 @@
      META TAGS
 ============================================================ -->
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#cfe8ff">
 <meta name="description" content="PIKAZOO Store — PUBG Mobile updates, APK, OBB, premium apps and mobile customization files.">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>PIKAZOO STORE</title>
 
-<!-- ============================================================
-     EXTERNAL LIBRARIES
-     (None used — pure vanilla HTML / CSS / JavaScript)
-============================================================ -->
+<!-- Preload custom font for faster rendering -->
+<link rel="preload" href="VIP.ttf" as="font" type="font/ttf" crossorigin>
 
 <style>
 
 /* ============================================================
-   CUSTOM FONT — VIP.ttf (hosted in same GitHub repository)
+   CUSTOM FONT (VIP.ttf — hosted in same GitHub repo folder)
 ============================================================ */
 @font-face {
-  font-family: "VIP";
-  src: url("VIP.ttf") format("truetype");
+  font-family: 'VIP';
+  src: url('VIP.ttf') format('truetype');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -61,6 +62,7 @@
   --line: rgba(2, 90, 160, 0.2);
   --text-main: #0f172a;
   --text-sub: #1e293b;
+  --font-main: 'VIP', Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 [data-theme="dark"] {
@@ -80,12 +82,69 @@
 }
 
 /* ============================================================
+   BEHAVIOR LOCKS
+   1. No pinch / double-tap zoom  (touch-action + JS backup)
+   2. No text selection / long-press callout / tap highlight
+   3. No pull-to-refresh / swipe navigation (body fixed, #app scrolls)
+============================================================ */
+html, body {
+  height: 100%;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;            /* vertical scroll only — blocks pinch & horizontal swipe */
+}
+
+body {
+  position: fixed;                /* prevents page sliding / rubber-banding */
+  inset: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Global no-select / no-callout / no-highlight */
+* {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-drag: none;
+}
+
+/* Re-enable selection where users legitimately need it */
+input, textarea, [contenteditable="true"], .selectable, .selectable * {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+}
+
+/* Interactive elements: remove 300ms tap delay but still no pinch-zoom (ancestor pan-y intersects) */
+button, a, label, input, select, textarea, audio, summary {
+  touch-action: manipulation;
+}
+
+img { pointer-events: none; }
+img.cart-media { pointer-events: none; }
+
+/* Scrollable regions must explicitly allow vertical pan */
+#app,
+.popup-content-body,
+.feature-scroll-box,
+.modal-box {
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+}
+
+/* ============================================================
    BASE / RESET STYLES
 ============================================================ */
-*{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box;margin:0;padding:0;font-family:var(--font-main)}
 html{scroll-behavior:smooth}
-body{font-family:"VIP",Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text-main);min-height:100vh;overflow-x:hidden;transition:background 0.3s ease, color 0.3s ease;}
-button,input{font:inherit}button{cursor:pointer;border:0}a{text-decoration:none;color:inherit}
+body{font-family:var(--font-main);background:var(--bg);color:var(--text-main);transition:background 0.3s ease, color 0.3s ease;}
+button,input{font:inherit;font-family:var(--font-main)}button{cursor:pointer;border:0}a{text-decoration:none;color:inherit}
 
 /* ================= CYBERPUNK HOLOGRAM SPLASH SCREEN ================= */
 #splash {
@@ -211,7 +270,7 @@ button,input{font:inherit}button{cursor:pointer;border:0}a{text-decoration:none;
   color: #38bdf8;
   letter-spacing: 1px;
   margin-bottom: 8px;
-  font-family: monospace;
+  font-family: var(--font-main);
 }
 
 .cyber-bar-bg {
@@ -326,7 +385,7 @@ html:not([data-theme="dark"]) #welcomePopupOverlay {
 }
 
 .popup-countdown-badge {
-  font-family: monospace;
+  font-family: var(--font-main);
   background: rgba(255, 105, 0, 0.2);
   border: 1px solid rgba(255, 105, 0, 0.4);
   color: var(--orange2);
@@ -420,7 +479,17 @@ html:not([data-theme="dark"]) #welcomePopupOverlay {
 }
 
 /* ================= STORE MAIN CONTENT ================= */
-#app{display:none;min-height:100vh;position:relative}
+/* #app is now the ONLY scroll container (body is fixed) */
+#app{
+  display:none;
+  position:relative;
+  height:100%;
+  width:100%;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:none;
+}
 
 /* ===== LIGHT MODE BACKGROUND ===== */
 .live{
@@ -780,7 +849,7 @@ header{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1p
 .countdown-row { display: flex; justify-content: center; align-items: center; gap: 6px; background: rgba(255, 255, 255, 0.5); padding: 10px; border-radius: 14px; border: 1px solid var(--line); }
 [data-theme="dark"] .countdown-row { background: rgba(0, 0, 0, 0.2); }
 .time-box { display: flex; flex-direction: column; align-items: center; min-width: 45px; }
-.time-box span { font-size: 18px; font-weight: 900; color: var(--sky); font-family: monospace; }
+.time-box span { font-size: 18px; font-weight: 900; color: var(--sky); font-family: var(--font-main); }
 .time-box small { font-size: 9px; color: var(--muted); text-transform: uppercase; font-weight: 700; }
 .time-colon { font-size: 16px; font-weight: 900; color: var(--orange2); margin-bottom: 10px; }
 .banner-footer-text { font-size: 11px; color: var(--sky); text-align: center; margin-top: 8px; font-weight: 700; }
@@ -1025,7 +1094,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
   <div class="holo-container">
     <div class="holo-ring"></div>
     <div class="holo-ring-2"></div>
-    <img class="splash-logo" src="PIKAZOO.png" alt="PIKAZOO Logo" onerror="this.classList.add('missing-logo')">
+    <img class="splash-logo" src="PIKAZOO.png" alt="PIKAZOO Logo" draggable="false" onerror="this.classList.add('missing-logo')">
   </div>
   
   <h1 class="splash-title">PIKAZOO STORE</h1>
@@ -1081,7 +1150,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
 </div>
 
 <!-- ============================================================
-     MAIN APP CONTAINER
+     MAIN APP CONTAINER (scroll container)
 ============================================================ -->
 <div id="app">
 <div class="live"><div class="blob a"></div><div class="blob b"></div><div class="blob c"></div></div>
@@ -1090,7 +1159,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
 <header>
   <div class="container nav">
     <a class="brand" href="#store">
-      <img src="PIKAZOO.png" alt="PIKAZOO STORE Logo" onerror="this.classList.add('missing-logo')">
+      <img src="PIKAZOO.png" alt="PIKAZOO STORE Logo" draggable="false" onerror="this.classList.add('missing-logo')">
       <span class="brand-name">PIKAZOO STORE</span>
     </a>
     
@@ -1147,7 +1216,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
   <button class="cat-btn" onclick="showPanel('freePubgTools', this, event)">4: FREE 4.6<br>PUBG TOOLS</button>
 </div>
 
-<!-- ================= PRODUCT PANEL: PUBG 4.6 APK + OBB (DOWNLOAD SYSTEM) ================= -->
+<!-- ================= PRODUCT PANEL: PUBG 4.6 APK + OBB ================= -->
 <div class="product-panel" id="pubgApkObbPanel">
   <div class="section-head" style="margin:0 0 12px"><h3>PUBG 4.6 APK + OBB</h3><small>4 Carts</small></div>
   <div class="cart-grid">
@@ -1194,7 +1263,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
   <div class="section-head" style="margin:0 0 12px"><h3>PUBG PREMIUM</h3><small>1 VIP Cart</small></div>
   <div class="cart-grid">
     <div class="cart-card">
-      <img src="Premium.gif" alt="PUBG PREMIUM Animation" class="cart-media" onerror="this.src='https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&auto=format&fit=crop&q=80'">
+      <img src="Premium.gif" alt="PUBG PREMIUM Animation" class="cart-media" draggable="false" onerror="this.src='https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800&auto=format&fit=crop&q=80'">
       
       <div class="cart-title-row">
         <span class="cart-title" style="font-size:22px;">PUBG PREMIUM</span>
@@ -1219,7 +1288,6 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
         <span class="island-tag">(64Bit)</span>
       </div>
 
-      <!-- Discount Countdown Banner (populated/controlled by updateDiscountCountdown()) -->
       <div id="discountBanner" class="discount-banner" style="display: none;">
         <div class="banner-top-row">
           <span class="banner-title">⚡ Discount Expiration</span>
@@ -1450,10 +1518,11 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
         </div>
       </div>
 
+      <!-- .selectable keeps these copyable via long-press too -->
       <div class="copy-row">
         <div>
           <small style="font-size:10px; color:var(--muted); display:block;">Account Number</small>
-          <span class="copy-info">03041891897</span>
+          <span class="copy-info selectable">03041891897</span>
         </div>
         <button class="copy-btn-icon" onclick="copyText('03041891897', 'Account Number Copied!')">📋 Copy</button>
       </div>
@@ -1461,7 +1530,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
       <div class="copy-row">
         <div>
           <small style="font-size:10px; color:var(--muted); display:block;">Account Owner</small>
-          <span class="copy-info">Muhammad Shoaib</span>
+          <span class="copy-info selectable">Muhammad Shoaib</span>
         </div>
         <button class="copy-btn-icon" onclick="copyText('Muhammad Shoaib', 'Account Owner Name Copied!')">📋 Copy</button>
       </div>
@@ -1486,9 +1555,58 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
 <script>
 
 /* ============================================================
+   BEHAVIOR LOCKS (JS backup for zoom / callout / gestures)
+============================================================ */
+(function () {
+  const isEditable = (el) => !!(el && el.closest &&
+    el.closest('input, textarea, [contenteditable="true"], .selectable'));
+
+  // 1a. iOS Safari pinch gestures
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(evt =>
+    document.addEventListener(evt, e => e.preventDefault(), { passive: false })
+  );
+
+  // 1b. Multi-finger touch (pinch on Android / iOS fallback)
+  document.addEventListener('touchmove', e => {
+    if (e.touches.length > 1) e.preventDefault();
+  }, { passive: false });
+
+  // 1c. Double-tap zoom backup — second tap within 300ms is swallowed,
+  //     but never on interactive elements so buttons keep working.
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', e => {
+    const now = Date.now();
+    const interactive = e.target.closest && e.target.closest('button, a, input, select, textarea, audio, label');
+    if (now - lastTouchEnd <= 300 && !interactive) e.preventDefault();
+    lastTouchEnd = now;
+  }, { passive: false });
+
+  // 1d. Ctrl/Cmd + wheel & keyboard zoom on desktop
+  document.addEventListener('wheel', e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && ['+', '-', '=', '0'].includes(e.key)) e.preventDefault();
+  });
+
+  // 2. Long-press context menu / copy popup (except editable & selectable areas)
+  document.addEventListener('contextmenu', e => { if (!isEditable(e.target)) e.preventDefault(); });
+  document.addEventListener('selectstart', e => { if (!isEditable(e.target)) e.preventDefault(); });
+  document.addEventListener('dragstart',   e => { if (!isEditable(e.target)) e.preventDefault(); });
+
+  // 3. Pull-to-refresh / overscroll safety net inside the #app scroller:
+  //    nudge scrollTop off 0 / max so the browser never sees an edge overscroll.
+  const app = document.getElementById('app');
+  if (app) {
+    app.addEventListener('touchstart', () => {
+      if (app.scrollTop <= 0) app.scrollTop = 1;
+      else if (app.scrollTop + app.clientHeight >= app.scrollHeight)
+        app.scrollTop = app.scrollHeight - app.clientHeight - 1;
+    }, { passive: true });
+  }
+})();
+
+
+/* ============================================================
    THEME PRE-INIT
-   Runs immediately (before splash finishes) to respect the
-   user's OS-level dark mode preference on first load.
 ============================================================ */
 (function() {
   const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -1502,8 +1620,6 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
 
 /* ============================================================
    UTILITY FUNCTIONS
-   Generic helpers used across multiple features (toast messages,
-   clipboard copy).
 ============================================================ */
 function showToast(msg) {
   const toast = document.getElementById("toast");
@@ -1523,7 +1639,6 @@ function copyText(text, successMsg) {
 
 /* ============================================================
    AUDIO SYSTEM
-   Shared Web Audio API context used for UI tap sounds
 ============================================================ */
 let audioCtx;
 
@@ -1556,15 +1671,12 @@ function playTapSound(isPremium = false) {
   osc.stop(audioCtx.currentTime + 0.07);
 }
 
-// Unlock/resume the AudioContext on first user interaction (browser autoplay policy)
 window.addEventListener('click', initAudio, { once: true });
 window.addEventListener('touchstart', initAudio, { once: true });
 
 
 /* ============================================================
    SPLASH SCREEN
-   Handles the cyberpunk progress-bar loader and the transition
-   into the main app + welcome popup reveal.
 ============================================================ */
 const splash=document.getElementById("splash"),app=document.getElementById("app");
 const cyberBar=document.getElementById("cyberBar"),cyberCount=document.getElementById("cyberCount"),cyberStatus=document.getElementById("cyberStatus");
@@ -1572,8 +1684,6 @@ const cyberBar=document.getElementById("cyberBar"),cyberCount=document.getElemen
 let progress = 0;
 const statusTexts = ["INIT SYSTEM...", "SYNCING DATA...", "VERIFYING FILES...", "ACCESS GRANTED"];
 
-// Animates the loading bar/status text, then fades out the splash
-// screen and reveals the app and welcome popup.
 function runCyberLoader() {
   const interval = setInterval(() => {
     progress += Math.floor(Math.random() * 8) + 4;
@@ -1616,7 +1726,6 @@ function closeHeaderMenu(){
   const dropdown = document.getElementById("headerMenuDropdown");
   if(dropdown) dropdown.classList.remove("open");
 }
-// Close the dropdown when clicking anywhere outside of it
 document.addEventListener('click', function(e){
   const dropdown = document.getElementById("headerMenuDropdown");
   const menuBtn = document.querySelector(".menu-island-btn");
@@ -1630,8 +1739,6 @@ document.addEventListener('click', function(e){
 
 /* ============================================================
    WELCOME POPUP
-   Handles showing the welcome popup immediately without any 
-   mandatory countdown, allowing the user to close it whenever desired.
 ============================================================ */
 function startWelcomePopupCountdown() {
   const overlay = document.getElementById("welcomePopupOverlay");
@@ -1653,8 +1760,6 @@ function closeWelcomePopup() {
 
 /* ============================================================
    LANGUAGE MODAL / TRANSLATION SYSTEM
-   Updates the welcome popup's title & body text based on the
-   selected language.
 ============================================================ */
 function openLanguageModal() {
   document.getElementById("languageModal").classList.add("open");
@@ -1741,8 +1846,6 @@ function setTheme(mode) {
 function openPaymentDetails() { document.getElementById("paymentModal").classList.add("open"); }
 function closePaymentDetails() { document.getElementById("paymentModal").classList.remove("open"); }
 
-// Uses the native Web Share API when available; falls back to
-// copying the invite message to the clipboard.
 function triggerNativeShare() {
   const shareText = `Hey PUBG Players! 🎮\nLooking for the All-in-One PUBG 4.6 Premium?\n1. 🔥 All-in-One Premium Version\n2. ⭐ WallHack - Color Body \n3. ⭐ Magic Bullet + Aimbot\n4. ⭐ 30+ More Features\n5. 💰 PKR Price: Only 1500 \n6. 🔗 Click the link below to check all features\nLink: https://itsmems97.github.io/PIKAZOO-ARMY/`;
 
@@ -1759,7 +1862,6 @@ function triggerNativeShare() {
 
 /* ============================================================
    FEATURE LIST MODAL
-   Renders the 100-item PUBG features list into the modal.
 ============================================================ */
 const featureList = [
   "Aimbot 100% Safe", "Memory Aimlock", "Bullet Tracking", "ESP Skeleton", "ESP Box 3D",
@@ -1804,8 +1906,6 @@ function closeFeatures(){
 
 /* ============================================================
    SEARCH SYSTEM
-   Filters visible product cards (and reveals all panels) based
-   on the search input text.
 ============================================================ */
 document.getElementById("search").addEventListener("input", function(e) {
   const query = e.target.value.toLowerCase().trim();
@@ -1827,8 +1927,6 @@ document.getElementById("search").addEventListener("input", function(e) {
 
 /* ============================================================
    DISCOUNT COUNTDOWN (PUBG Premium Campaigns)
-   Checks the current date against two hardcoded campaign windows
-   and updates the live countdown display accordingly.
 ============================================================ */
 function updateDiscountCountdown() {
   const now = new Date();
@@ -1881,8 +1979,6 @@ function updateDiscountCountdown() {
 
 /* ============================================================
    UI TAP / RIPPLE EFFECTS
-   Global pointerdown handler that adds a material-style ripple
-   and a tap sound to any button-like element pressed.
 ============================================================ */
 document.addEventListener('pointerdown', function(e) {
   const btn = e.target.closest('button, .cart-btn-buy, .cat-btn, .cart-btn-apk, .cart-btn-obb');
@@ -1908,7 +2004,6 @@ document.addEventListener('pointerdown', function(e) {
 
 /* ============================================================
    CATEGORY PANEL SWITCHING
-   Shows/hides the product panel associated with a category button.
 ============================================================ */
 function showPanel(id, btn, e, isPremium = false){
   const p=document.getElementById(id+"Panel");
@@ -1927,9 +2022,6 @@ function showPanel(id, btn, e, isPremium = false){
 
 /* ============================================================
    INITIALIZATION / FINAL STARTUP LOGIC
-   Kicks off the splash loader, sets the footer year, and starts
-   the live discount countdown ticker. Must run after all of the
-   above functions/variables have been declared.
 ============================================================ */
 runCyberLoader();
 document.getElementById("year").textContent = new Date().getFullYear();
