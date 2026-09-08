@@ -2,25 +2,22 @@
 ============================================================================
   PROJECT: PIKAZOO STORE
   ----------------------------------------------------------------------
-  A single-file HTML/CSS/JS web application featuring:
-    • Cyberpunk-style splash screen loader
-    • Portrait welcome/announcement popup (with language translation)
-    • Product store with category filters (PUBG APK/OBB, Premium, Mods, Tools)
-    • Light / Dark theme switcher
-    • Live discount countdown banner
-    • Payment details modal (JazzCash / USDT) + native "Invite Friend" share
-    • Custom site-wide font: VIP.ttf
-    • App-like behavior locks: no zoom, no text-select/callout, no
-      pull-to-refresh / swipe navigation (body fixed, #app scrolls)
+  • Cyberpunk-style splash screen loader
+  • Portrait welcome/announcement popup (with language translation)
+  • Product store with category filters (PUBG APK/OBB, Premium, Mods, Tools)
+  • Light / Dark theme switcher
+  • Live discount countdown banner
+  • Payment details modal (JazzCash / USDT) + native "Invite Friend" share
+  • Custom site-wide font: VIP.ttf
+  • App-like behavior locks (no zoom / select / pull-to-refresh)
+  • Unified tap system: no highlight, no outline, rounded-corner safe,
+    smooth scale(0.95) press feedback + contained ripple
 ============================================================================
 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
 
-<!-- ============================================================
-     META TAGS
-============================================================ -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#cfe8ff">
@@ -29,13 +26,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>PIKAZOO STORE</title>
 
-<!-- Preload custom font for faster rendering -->
 <link rel="preload" href="VIP.ttf" as="font" type="font/ttf" crossorigin>
 
 <style>
 
 /* ============================================================
-   CUSTOM FONT (VIP.ttf — hosted in same GitHub repo folder)
+   CUSTOM FONT
 ============================================================ */
 @font-face {
   font-family: 'VIP';
@@ -46,7 +42,7 @@
 }
 
 /* ============================================================
-   GLOBAL CSS VARIABLES (Light & Dark Theme Tokens)
+   GLOBAL CSS VARIABLES
 ============================================================ */
 :root {
   --bg: #cfe8ff;
@@ -83,25 +79,21 @@
 
 /* ============================================================
    BEHAVIOR LOCKS
-   1. No pinch / double-tap zoom  (touch-action + JS backup)
-   2. No text selection / long-press callout / tap highlight
-   3. No pull-to-refresh / swipe navigation (body fixed, #app scrolls)
 ============================================================ */
 html, body {
   height: 100%;
   overscroll-behavior: none;
   -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;            /* vertical scroll only — blocks pinch & horizontal swipe */
+  touch-action: pan-y;
 }
 
 body {
-  position: fixed;                /* prevents page sliding / rubber-banding */
+  position: fixed;
   inset: 0;
   width: 100%;
   overflow: hidden;
 }
 
-/* Global no-select / no-callout / no-highlight */
 * {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -112,7 +104,6 @@ body {
   -webkit-user-drag: none;
 }
 
-/* Re-enable selection where users legitimately need it */
 input, textarea, [contenteditable="true"], .selectable, .selectable * {
   -webkit-user-select: text;
   -moz-user-select: text;
@@ -121,15 +112,12 @@ input, textarea, [contenteditable="true"], .selectable, .selectable * {
   -webkit-touch-callout: default;
 }
 
-/* Interactive elements: remove 300ms tap delay but still no pinch-zoom (ancestor pan-y intersects) */
 button, a, label, input, select, textarea, audio, summary {
   touch-action: manipulation;
 }
 
 img { pointer-events: none; }
-img.cart-media { pointer-events: none; }
 
-/* Scrollable regions must explicitly allow vertical pan */
 #app,
 .popup-content-body,
 .feature-scroll-box,
@@ -139,14 +127,14 @@ img.cart-media { pointer-events: none; }
 }
 
 /* ============================================================
-   BASE / RESET STYLES
+   BASE / RESET
 ============================================================ */
 *{box-sizing:border-box;margin:0;padding:0;font-family:var(--font-main)}
 html{scroll-behavior:smooth}
 body{font-family:var(--font-main);background:var(--bg);color:var(--text-main);transition:background 0.3s ease, color 0.3s ease;}
-button,input{font:inherit;font-family:var(--font-main)}button{cursor:pointer;border:0}a{text-decoration:none;color:inherit}
+button,input{font:inherit;font-family:var(--font-main)}button{cursor:pointer;border:0;background:none}a{text-decoration:none;color:inherit}
 
-/* ================= CYBERPUNK HOLOGRAM SPLASH SCREEN ================= */
+/* ================= SPLASH SCREEN ================= */
 #splash {
   position: fixed;
   inset: 0;
@@ -292,7 +280,7 @@ button,input{font:inherit;font-family:var(--font-main)}button{cursor:pointer;bor
   transition: width 0.1s linear;
 }
 
-/* ================= PORTRAIT WELCOME ANNOUNCEMENT POPUP ================= */
+/* ================= WELCOME POPUP ================= */
 #welcomePopupOverlay {
   position: fixed;
   inset: 0;
@@ -364,10 +352,7 @@ html:not([data-theme="dark"]) #welcomePopupOverlay {
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: background 0.2s, transform 0.2s;
 }
-
-.popup-btn:active { transform: scale(0.95); }
 .popup-btn:hover { background: rgba(150, 150, 150, 0.25); }
 
 .popup-close-btn {
@@ -479,7 +464,6 @@ html:not([data-theme="dark"]) #welcomePopupOverlay {
 }
 
 /* ================= STORE MAIN CONTENT ================= */
-/* #app is now the ONLY scroll container (body is fixed) */
 #app{
   display:none;
   position:relative;
@@ -491,7 +475,6 @@ html:not([data-theme="dark"]) #welcomePopupOverlay {
   overscroll-behavior:none;
 }
 
-/* ===== LIGHT MODE BACKGROUND ===== */
 .live{
   position:fixed;
   inset:0;
@@ -510,7 +493,6 @@ html:not([data-theme="dark"]) #welcomePopupOverlay {
 .blob.c{width:280px;height:280px;background:#bae6fd;opacity:.5;left:40%;bottom:-90px;animation-delay:-9s}
 @keyframes drift{50%{transform:translate(70px,-55px) scale(1.15)}}
 
-/* ===== DARK MODE BACKGROUND ===== */
 [data-theme="dark"] .live{
   background:
     radial-gradient(circle at 15% 20%, rgba(75, 85, 99, 0.25), transparent 45%),
@@ -522,7 +504,7 @@ html:not([data-theme="dark"]) #welcomePopupOverlay {
 [data-theme="dark"] .blob.b{background:#4b5563;opacity:.20}
 [data-theme="dark"] .blob.c{background:#374151;opacity:.16}
 
-/* ================= NAVIGATION / HEADER MENU ================= */
+/* ================= HEADER ================= */
 header{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1px solid var(--line);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
 .container{width:min(1180px,calc(100% - 28px));margin:auto;position:relative;z-index:2}
 .nav{height:75px;display:flex;align-items:center;justify-content:space-between;gap:8px}
@@ -572,10 +554,8 @@ header{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1p
   gap: 5px;
   white-space: nowrap;
   backdrop-filter: blur(8px);
-  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
-.island-nav-btn:active { transform: scale(0.92); }
 .island-nav-btn:hover { border-color: var(--orange); background: rgba(255,105,0,0.1); }
 .island-nav-btn span { font-size: 13px; }
 
@@ -630,20 +610,18 @@ header{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1p
   gap: 10px;
   text-align: left;
   width: 100%;
-  transition: background 0.2s, border-color 0.2s, transform 0.15s;
 }
-.header-menu-item:active { transform: scale(0.96); }
 .header-menu-item:hover { background: rgba(255,105,0,0.15); border-color: var(--orange); }
 .header-menu-item span { font-size: 16px; }
 
 /* ================= SEARCH BAR ================= */
 .searchbar{display:flex;gap:9px;margin:24px 0}
-.search{width:100%;background:var(--card2);color:var(--text-main);border:1px solid var(--line);border-radius:15px;padding:14px 16px;outline:0}
+.search{width:100%;background:var(--card2);color:var(--text-main);border:1px solid var(--line);border-radius:15px;padding:14px 16px;outline:0;-webkit-appearance:none;appearance:none}
 .search::placeholder{color:var(--muted)}
-.search:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,105,0,0.15)}.search-icon{width:50px;border-radius:15px;background:var(--orange);color:#fff}
+.search:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,105,0,0.15)}.search-icon{width:50px;flex-shrink:0;border-radius:15px;background:var(--orange);color:#fff}
 .section-head{display:flex;justify-content:space-between;align-items:end;margin:27px 0 14px}.section-head h3{font-size:24px;color:var(--text-main)}.section-head small{color:var(--muted)}
 
-/* ================= CATEGORY BUTTONS / FILTERS ================= */
+/* ================= CATEGORY BUTTONS ================= */
 .categories-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:25px}
 
 .cat-btn{
@@ -656,7 +634,6 @@ header{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1p
   font-weight: 900;
   text-align: center;
   backdrop-filter: blur(8px);
-  transition: transform 0.15s ease, background-color 0.25s, box-shadow 0.25s;
   overflow: hidden;
   user-select: none;
   display: flex;
@@ -669,7 +646,6 @@ header{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1p
   background: rgba(56, 189, 248, 0.15);
   border-color: rgba(56, 189, 248, 0.4);
 }
-.cat-btn:active{ transform: scale(0.95); }
 .cat-btn.active, .cat-btn:hover{ background: var(--sky); color: #ffffff; border-color: var(--sky); box-shadow: 0 0 15px rgba(56, 189, 248, 0.5); }
 
 .premium-cat-btn {
@@ -680,7 +656,7 @@ header{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1p
   border: 1px solid rgba(234, 88, 12, 0.5);
   box-shadow: 0 4px 20px rgba(255, 105, 0, 0.3);
   color: var(--text-main);
-  overflow: visible !important;
+  overflow: visible !important; /* emojis must float outside */
 }
 [data-theme="dark"] .premium-cat-btn{
   background: linear-gradient(135deg, rgba(255, 105, 0, 0.3), rgba(164, 92, 255, 0.3), rgba(255, 105, 0, 0.3));
@@ -689,6 +665,17 @@ header{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1p
 }
 .premium-cat-btn .btn-text { position: relative; z-index: 5; }
 .premium-cat-btn:hover, .premium-cat-btn.active { transform: translateY(-2px) scale(1.02); }
+
+/* Dedicated rounded clip layer so the premium ripple never escapes */
+.premium-ripple-layer {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+}
 
 .button-emoji-animation { position: absolute; inset: -15px; pointer-events: none; z-index: 3; }
 .button-emoji-animation .emoji { position: absolute; display: block; line-height: 1; user-select: none; }
@@ -714,7 +701,7 @@ header{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1p
 @keyframes loveRight { 0%, 30% { opacity: 0; transform: scale(.1); } 42% { opacity: 0.95; transform: scale(1); } 58% { opacity: 0.95; transform: scale(1.05) translateY(-2px); } 72%, 100% { opacity: 0; transform: scale(.1); } }
 @keyframes confettiScene { 0%, 24% { opacity: 0; } 32%, 60% { opacity: 1; } 72%, 100% { opacity: 0; } }
 
-.ripple { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.6); transform: scale(0); animation: tapRipple 0.5s linear; pointer-events: none; }
+.ripple { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.6); transform: scale(0); animation: tapRipple 0.5s linear; pointer-events: none; z-index: 1; }
 @keyframes tapRipple { to { transform: scale(4); opacity: 0; } }
 @keyframes liveGradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
@@ -767,7 +754,7 @@ header{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1p
 .cart-title { font-size: 18px; font-weight: 900; color: var(--text-main); }
 .cart-price { font-size: 14px; font-weight: 900; color: var(--orange2); background: rgba(255,105,0,0.15); padding: 6px 12px; border-radius: 10px; border: 1px solid rgba(255,105,0,0.3); }
 
-/* ================= DOWNLOAD BUTTONS (APK / OBB) ================= */
+/* ================= DOWNLOAD BUTTONS ================= */
 .apk-obb-btns {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -776,8 +763,6 @@ header{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1p
 }
 
 .cart-btn-apk {
-  position: relative;
-  overflow: hidden;
   background: linear-gradient(135deg, #0284c7, #38bdf8);
   color: #fff;
   padding: 12px 8px;
@@ -788,11 +773,8 @@ header{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1p
   box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
   display: block;
 }
-.cart-btn-apk:active { transform: scale(0.96); }
 
 .cart-btn-obb {
-  position: relative;
-  overflow: hidden;
   background: linear-gradient(135deg, #7c3aed, #a855f7);
   color: #fff;
   padding: 12px 8px;
@@ -803,7 +785,6 @@ header{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1p
   box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
   display: block;
 }
-.cart-btn-obb:active { transform: scale(0.96); }
 
 /* ================= TAG BADGES ================= */
 .island-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 10px; }
@@ -817,7 +798,7 @@ header{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1p
   color: var(--sky);
 }
 
-/* ================= AUDIO PREVIEW BOX ================= */
+/* ================= AUDIO BOX ================= */
 .audio-box {
   width: 100%;
   margin: 6px 0 10px;
@@ -833,7 +814,7 @@ header{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1p
   border-radius: 10px;
 }
 
-/* ================= DISCOUNT COUNTDOWN BANNER ================= */
+/* ================= DISCOUNT BANNER ================= */
 .discount-banner {
   background: linear-gradient(135deg, rgba(255, 105, 0, 0.2), rgba(164, 92, 255, 0.2));
   border: 1px solid rgba(255, 105, 0, 0.5);
@@ -854,7 +835,7 @@ header{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1p
 .time-colon { font-size: 16px; font-weight: 900; color: var(--orange2); margin-bottom: 10px; }
 .banner-footer-text { font-size: 11px; color: var(--sky); text-align: center; margin-top: 8px; font-weight: 700; }
 
-/* ================= PUBG ACTION BUTTON GRID ================= */
+/* ================= PUBG ACTION GRID ================= */
 .pubg-action-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -864,8 +845,6 @@ header{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1p
 }
 
 .pubg-grid-btn {
-  position: relative;
-  overflow: hidden;
   font-size: 13px;
   padding: 14px 10px;
   min-height: 65px;
@@ -876,10 +855,8 @@ header{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1p
   justify-content: center;
   align-items: center;
   gap: 4px;
-  transition: transform 0.15s ease, filter 0.2s ease;
   user-select: none;
 }
-.pubg-grid-btn:active { transform: scale(0.95); }
 
 .btn-features { background: linear-gradient(135deg, #0284c7, #38bdf8); color: #fff; border: 1px solid #38bdf8; }
 .btn-buynow { background: linear-gradient(135deg, #c2410c, #f97316); color: #fff; border: 1px solid #ff8b35; }
@@ -895,8 +872,6 @@ header{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1p
 
 /* ================= GENERIC BUY BUTTON ================= */
 .cart-btn-buy {
-  position: relative;
-  overflow: hidden;
   background: linear-gradient(135deg, var(--orange), var(--orange2));
   color: #fff;
   padding: 14px;
@@ -907,12 +882,11 @@ header{position:sticky;top:0;z-index:100;background:var(--card);border-bottom:1p
   box-shadow: 0 4px 15px rgba(255, 105, 0, 0.3);
   display: block;
 }
-.cart-btn-buy:active { transform: scale(0.96); }
 
 /* ================= FOOTER ================= */
 footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);font-size:11px;margin-top:40px;position:relative;z-index:2}.footer-flex{display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
 
-/* ================= MODALS (GENERIC) ================= */
+/* ================= MODALS ================= */
 .modal {
   position: fixed;
   inset: 0;
@@ -965,12 +939,9 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
 
 .modal-top { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 12px; }
 .modal-top h3 { font-size: 20px; font-weight: 900; color: var(--text-main); }
-.close { position: relative; overflow: hidden; width: 38px; height: 38px; border-radius: 12px; background: rgba(150,150,150,0.15); color: var(--text-main); font-size: 20px; }
-.close:active { transform: scale(0.9); }
+.close { width: 38px; height: 38px; flex-shrink: 0; border-radius: 12px; background: rgba(150,150,150,0.15); color: var(--text-main); font-size: 20px; }
 
 .modal-link, .lang-option-btn, .theme-option-btn {
-  position: relative;
-  overflow: hidden;
   display: block;
   width: 100%;
   background: rgba(150, 150, 150, 0.08);
@@ -981,11 +952,10 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
   margin: 8px 0;
   text-align: center;
   color: var(--text-main);
-  transition: background 0.2s, border-color 0.2s;
 }
 .modal-link:hover, .lang-option-btn:hover, .theme-option-btn:hover { background: rgba(255, 105, 0, 0.15); border-color: var(--orange); }
 
-/* ================= FEATURE LIST MODAL ================= */
+/* ================= FEATURE LIST ================= */
 .feature-scroll-box {
   overflow-y: auto;
   padding-right: 8px;
@@ -1022,12 +992,9 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
 .copy-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.6); border: 1px solid var(--line); padding: 10px 12px; border-radius: 12px; }
 [data-theme="dark"] .copy-row { background: rgba(0,0,0,0.15); }
 .copy-info { font-weight: 800; font-size: 14px; color: var(--text-main); }
-.copy-btn-icon { position: relative; overflow: hidden; background: rgba(255, 105, 0, 0.2); border: 1px solid rgba(255, 105, 0, 0.4); color: var(--orange2); border-radius: 8px; padding: 4px 8px; font-size: 11px; font-weight: 800; cursor: pointer; }
+.copy-btn-icon { background: rgba(255, 105, 0, 0.2); border: 1px solid rgba(255, 105, 0, 0.4); color: var(--orange2); border-radius: 8px; padding: 4px 8px; font-size: 11px; font-weight: 800; cursor: pointer; flex-shrink: 0; }
 
-/* ================= PAYMENT ACTION BUTTONS ================= */
 .pay-action-btn {
-  position: relative;
-  overflow: hidden;
   width: 100%;
   padding: 14px;
   border-radius: 16px;
@@ -1041,7 +1008,6 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
 .btn-invite-share { background: linear-gradient(135deg, #a45cff, #ff6900); color: #fff; }
 .btn-join-premium { background: linear-gradient(135deg, #38bdf8, #0284c7); color: #ffffff; }
 
-/* ================= USDT INTERNATIONAL PAYMENT BOX ================= */
 .usdt-box {
   background: linear-gradient(135deg, rgba(56,189,248,0.12), rgba(164,92,255,0.12));
   border: 1px solid rgba(56,189,248,0.4);
@@ -1053,24 +1019,126 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
   gap: 10px;
   text-align: center;
 }
-.usdt-header {
-  font-weight: 900;
-  font-size: 14px;
-  color: var(--sky);
-  letter-spacing: 0.3px;
-}
-.usdt-text {
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--text-sub);
-  line-height: 1.5;
-}
+.usdt-header { font-weight: 900; font-size: 14px; color: var(--sky); letter-spacing: 0.3px; }
+.usdt-text { font-size: 12.5px; font-weight: 700; color: var(--text-sub); line-height: 1.5; }
 
-/* ================= TOAST NOTIFICATIONS ================= */
+/* ================= TOAST ================= */
 .toast{position:fixed;z-index:9999999;bottom:22px;left:50%;transform:translate(-50%,20px);opacity:0;background:var(--text-main);color:var(--bg);padding:12px 17px;border-radius:13px;font-size:12px;font-weight:900;transition:.25s;pointer-events:none}
 .toast.show{opacity:1;transform:translate(-50%,0)}
 
-/* ================= RESPONSIVE / MOBILE STYLES ================= */
+/* ============================================================
+   UNIFIED TAP SYSTEM  (placed last so it wins the cascade)
+   • No tap highlight / no focus outline / no default appearance
+   • overflow:hidden + isolation + mask keep corners rounded even
+     mid-transform (fixes WebKit "square corner flash")
+   • Smooth :active scale(0.95) on every interactive element
+   • Ripple stays clipped inside the rounded shape
+============================================================ */
+.tap,
+button,
+.cat-btn,
+.island-nav-btn,
+.header-menu-item,
+.popup-btn,
+.close,
+.search-icon,
+.copy-btn-icon,
+.pubg-grid-btn,
+.cart-btn-apk,
+.cart-btn-obb,
+.cart-btn-buy,
+.pay-action-btn,
+.modal-link,
+.lang-option-btn,
+.theme-option-btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  outline: none !important;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  -webkit-touch-callout: none;
+  user-select: none;
+  cursor: pointer;
+  /* WebKit rounded-clip stabilizer during transforms */
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
+  transition:
+    transform .12s cubic-bezier(.2,.7,.3,1),
+    background .2s ease,
+    background-color .2s ease,
+    border-color .2s ease,
+    box-shadow .25s ease,
+    color .2s ease,
+    filter .2s ease,
+    opacity .2s ease;
+}
+
+/* Premium button keeps its floating emojis — no clipping on the button itself */
+.cat-btn.premium-cat-btn {
+  overflow: visible !important;
+  -webkit-mask-image: none;
+  isolation: auto;
+}
+
+/* Kill focus rings on every state */
+.tap:focus, .tap:focus-visible,
+button:focus, button:focus-visible,
+a:focus, a:focus-visible,
+.cat-btn:focus, .cat-btn:focus-visible,
+.cart-btn-apk:focus, .cart-btn-obb:focus, .cart-btn-buy:focus,
+.pay-action-btn:focus, .modal-link:focus,
+.lang-option-btn:focus, .theme-option-btn:focus,
+.search-icon:focus, .copy-btn-icon:focus, .close:focus {
+  outline: none !important;
+  box-shadow: none;
+}
+/* keep the buttons that rely on a glow */
+.cat-btn.active:focus { box-shadow: 0 0 15px rgba(56, 189, 248, 0.5); }
+.premium-cat-btn:focus  { box-shadow: 0 4px 20px rgba(255, 105, 0, 0.3); }
+.cart-btn-apk:focus  { box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3); }
+.cart-btn-obb:focus  { box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3); }
+.cart-btn-buy:focus  { box-shadow: 0 4px 15px rgba(255, 105, 0, 0.3); }
+.island-nav-btn:focus{ box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+button::-moz-focus-inner { border: 0; padding: 0; }
+
+/* Tactile press — highest priority */
+.tap:active,
+button:active,
+.cat-btn:active,
+.cat-btn.premium-cat-btn:active,
+.island-nav-btn:active,
+.header-menu-item:active,
+.popup-btn:active,
+.close:active,
+.search-icon:active,
+.copy-btn-icon:active,
+.pubg-grid-btn:active,
+.cart-btn-apk:active,
+.cart-btn-obb:active,
+.cart-btn-buy:active,
+.pay-action-btn:active,
+.modal-link:active,
+.lang-option-btn:active,
+.theme-option-btn:active {
+  transform: scale(0.95) translateZ(0);
+}
+
+button:disabled, button:disabled:active {
+  transform: translateZ(0);
+  cursor: not-allowed;
+}
+
+/* Brand logo link – subtle press but no clipping (needs its glow) */
+.brand { -webkit-tap-highlight-color: transparent; outline: none; transition: transform .12s ease; }
+.brand:active { transform: scale(0.96); }
+
+/* ================= RESPONSIVE ================= */
 @media(max-width:600px){
   .container{width:calc(100% - 20px);}
   .brand-name{font-size:16px;}
@@ -1084,22 +1152,17 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
 
 <body>
 
-<!-- ============================================================
-     SPLASH SCREEN (Cyberpunk Hologram Loader)
-============================================================ -->
+<!-- ================= SPLASH ================= -->
 <div id="splash">
   <div class="cyber-bg"></div>
   <div class="scanlines"></div>
-  
   <div class="holo-container">
     <div class="holo-ring"></div>
     <div class="holo-ring-2"></div>
     <img class="splash-logo" src="PIKAZOO.png" alt="PIKAZOO Logo" draggable="false" onerror="this.classList.add('missing-logo')">
   </div>
-  
   <h1 class="splash-title">PIKAZOO STORE</h1>
   <p class="splash-tag">Gaming • Premium • Customization</p>
-  
   <div class="cyber-loader-box">
     <div class="cyber-info">
       <span id="cyberStatus">SYSTEM LOADING...</span>
@@ -1111,9 +1174,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
   </div>
 </div>
 
-<!-- ============================================================
-     WELCOME / ANNOUNCEMENT POPUP
-============================================================ -->
+<!-- ================= WELCOME POPUP ================= -->
 <div id="welcomePopupOverlay">
   <div class="welcome-popup-box">
     <div class="popup-top-bar">
@@ -1149,20 +1210,16 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
   </div>
 </div>
 
-<!-- ============================================================
-     MAIN APP CONTAINER (scroll container)
-============================================================ -->
+<!-- ================= MAIN APP ================= -->
 <div id="app">
 <div class="live"><div class="blob a"></div><div class="blob b"></div><div class="blob c"></div></div>
 
-<!-- ================= HEADER / NAVIGATION ================= -->
 <header>
   <div class="container nav">
     <a class="brand" href="#store">
       <img src="PIKAZOO.png" alt="PIKAZOO STORE Logo" draggable="false" onerror="this.classList.add('missing-logo')">
       <span class="brand-name">PIKAZOO STORE</span>
     </a>
-    
     <div class="nav-right-islands">
       <button class="island-nav-btn menu-island-btn" onclick="toggleHeaderMenu(event)">
         <span>☰</span> Menu
@@ -1185,16 +1242,15 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
 <main class="container">
 <section id="store">
 
-<!-- ================= SEARCH BAR ================= -->
 <div class="searchbar"><input id="search" class="search" placeholder="Search categories or resources..."><button class="search-icon">⌕</button></div>
 
 <div class="section-head"><h3>Categories</h3><small>4 Categories</small></div>
 
-<!-- ================= CATEGORY FILTER BUTTONS ================= -->
 <div class="categories-grid">
   <button class="cat-btn" onclick="showPanel('pubgApkObb', this, event)">1: PUBG 4.6<br>APK + OBB</button>
 
   <button class="cat-btn premium-cat-btn" onclick="showPanel('premiumPubg', this, event, true)">
+    <div class="premium-ripple-layer"></div>
     <span class="btn-text">2: PUBG<br>PREMIUM</span>
     <div class="button-emoji-animation">
       <span class="emoji kiss-big">😘</span>
@@ -1216,7 +1272,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
   <button class="cat-btn" onclick="showPanel('freePubgTools', this, event)">4: FREE 4.6<br>PUBG TOOLS</button>
 </div>
 
-<!-- ================= PRODUCT PANEL: PUBG 4.6 APK + OBB ================= -->
+<!-- PUBG 4.6 APK + OBB -->
 <div class="product-panel" id="pubgApkObbPanel">
   <div class="section-head" style="margin:0 0 12px"><h3>PUBG 4.6 APK + OBB</h3><small>4 Carts</small></div>
   <div class="cart-grid">
@@ -1258,7 +1314,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
   </div>
 </div>
 
-<!-- ================= PRODUCT PANEL: PUBG PREMIUM (VIP CART) ================= -->
+<!-- PUBG PREMIUM -->
 <div class="product-panel" id="premiumPubgPanel">
   <div class="section-head" style="margin:0 0 12px"><h3>PUBG PREMIUM</h3><small>1 VIP Cart</small></div>
   <div class="cart-grid">
@@ -1302,9 +1358,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
           <div class="time-colon">:</div>
           <div class="time-box"><span id="cdSecs">00</span><small>Secs</small></div>
         </div>
-        <div class="banner-footer-text">
-          Live Countdown — Offer Ends Soon!
-        </div>
+        <div class="banner-footer-text">Live Countdown — Offer Ends Soon!</div>
       </div>
 
       <div class="pubg-action-grid">
@@ -1312,28 +1366,24 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
           <span>1: View Features</span>
           <span class="pubg-btn-badge">(Tap Here)</span>
         </button>
-
         <button class="pubg-grid-btn btn-buynow" onclick="openPaymentDetails()">
           <span>2: BUY NOW</span>
           <span class="pubg-btn-badge" id="discountPercent">(25% OFF)</span>
         </button>
-
         <button class="pubg-grid-btn btn-feedback" onclick="window.open('https://wa.me/923041891897?text=Feedback%2520Why%2520Not%2520Buying:', '_blank')">
           <span>3: Not BUY Reason</span>
           <span class="pubg-btn-badge">(FeedBack)</span>
         </button>
-
         <button class="pubg-grid-btn btn-invite" onclick="triggerNativeShare()">
           <span>4: Invite Friend</span>
           <span class="pubg-btn-badge">(33.33% OFF)</span>
         </button>
       </div>
-
     </div>
   </div>
 </div>
 
-<!-- ================= PRODUCT PANEL: APPS MOD UNLOCK ================= -->
+<!-- APPS MOD UNLOCK -->
 <div class="product-panel" id="appsModUnlockPanel">
   <div class="section-head" style="margin:0 0 12px"><h3>APPS MOD UNLOCK</h3><small>10 Apps</small></div>
   <div class="cart-grid">
@@ -1429,7 +1479,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
   </div>
 </div>
   
-<!-- ================= PRODUCT PANEL: FREE PUBG TOOLS ================= -->
+<!-- FREE PUBG TOOLS -->
 <div class="product-panel" id="freePubgToolsPanel">
   <div class="section-head" style="margin:0 0 12px"><h3>FREE PUBG TOOLS</h3><small>Tools</small></div>
   <div class="cart-grid">
@@ -1456,11 +1506,10 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
 </section>
 </main>
 
-<!-- ================= FOOTER ================= -->
 <footer><div class="container footer-flex"><span>© <span id="year"></span> PIKAZOO STORE</span><span>Developer: @Owner_Pikazoo</span><span><a href="https://t.me/pikazooarmy" target="_blank">Telegram @pikazooarmy</a> · WhatsApp +923041891897</span></div></footer>
 </div>
 
-<!-- ================= MODAL: LANGUAGE SELECTION ================= -->
+<!-- LANGUAGE MODAL -->
 <div class="modal" id="languageModal">
   <div class="modal-box">
     <div class="modal-top">
@@ -1474,7 +1523,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
   </div>
 </div>
 
-<!-- ================= MODAL: THEME SELECTION ================= -->
+<!-- THEME MODAL -->
 <div class="modal" id="themeModal">
   <div class="modal-box">
     <div class="modal-top">
@@ -1487,7 +1536,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
   </div>
 </div>
 
-<!-- ================= MODAL: PUBG FEATURES LIST ================= -->
+<!-- FEATURES MODAL -->
 <div class="modal" id="featureModal">
   <div class="modal-box">
     <div class="modal-top">
@@ -1498,7 +1547,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
   </div>
 </div>
 
-<!-- ================= MODAL: PAYMENT DETAILS ================= -->
+<!-- PAYMENT MODAL -->
 <div class="modal" id="paymentModal">
   <div class="modal-box">
     <div class="modal-top">
@@ -1518,7 +1567,6 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
         </div>
       </div>
 
-      <!-- .selectable keeps these copyable via long-press too -->
       <div class="copy-row">
         <div>
           <small style="font-size:10px; color:var(--muted); display:block;">Account Number</small>
@@ -1546,33 +1594,25 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
   </div>
 </div>
 
-<!-- ================= TOAST NOTIFICATION ELEMENT ================= -->
 <div class="toast" id="toast"></div>
 
-<!-- ============================================================
-     MAIN SCRIPT
-============================================================ -->
 <script>
 
 /* ============================================================
-   BEHAVIOR LOCKS (JS backup for zoom / callout / gestures)
+   BEHAVIOR LOCKS
 ============================================================ */
 (function () {
   const isEditable = (el) => !!(el && el.closest &&
     el.closest('input, textarea, [contenteditable="true"], .selectable'));
 
-  // 1a. iOS Safari pinch gestures
   ['gesturestart', 'gesturechange', 'gestureend'].forEach(evt =>
     document.addEventListener(evt, e => e.preventDefault(), { passive: false })
   );
 
-  // 1b. Multi-finger touch (pinch on Android / iOS fallback)
   document.addEventListener('touchmove', e => {
     if (e.touches.length > 1) e.preventDefault();
   }, { passive: false });
 
-  // 1c. Double-tap zoom backup — second tap within 300ms is swallowed,
-  //     but never on interactive elements so buttons keep working.
   let lastTouchEnd = 0;
   document.addEventListener('touchend', e => {
     const now = Date.now();
@@ -1581,19 +1621,15 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
     lastTouchEnd = now;
   }, { passive: false });
 
-  // 1d. Ctrl/Cmd + wheel & keyboard zoom on desktop
   document.addEventListener('wheel', e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
   document.addEventListener('keydown', e => {
     if ((e.ctrlKey || e.metaKey) && ['+', '-', '=', '0'].includes(e.key)) e.preventDefault();
   });
 
-  // 2. Long-press context menu / copy popup (except editable & selectable areas)
   document.addEventListener('contextmenu', e => { if (!isEditable(e.target)) e.preventDefault(); });
   document.addEventListener('selectstart', e => { if (!isEditable(e.target)) e.preventDefault(); });
   document.addEventListener('dragstart',   e => { if (!isEditable(e.target)) e.preventDefault(); });
 
-  // 3. Pull-to-refresh / overscroll safety net inside the #app scroller:
-  //    nudge scrollTop off 0 / max so the browser never sees an edge overscroll.
   const app = document.getElementById('app');
   if (app) {
     app.addEventListener('touchstart', () => {
@@ -1619,7 +1655,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 45px;color:var(--muted);f
 
 
 /* ============================================================
-   UTILITY FUNCTIONS
+   UTILITIES
 ============================================================ */
 function showToast(msg) {
   const toast = document.getElementById("toast");
@@ -1638,7 +1674,7 @@ function copyText(text, successMsg) {
 
 
 /* ============================================================
-   AUDIO SYSTEM
+   AUDIO
 ============================================================ */
 let audioCtx;
 
@@ -1656,17 +1692,13 @@ function playTapSound(isPremium = false) {
   if (!audioCtx) return;
   const osc = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
-  
   osc.type = 'sine';
   osc.frequency.setValueAtTime(isPremium ? 950 : 800, audioCtx.currentTime);
   osc.frequency.exponentialRampToValueAtTime(isPremium ? 400 : 250, audioCtx.currentTime + 0.07);
-  
   gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
   gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.07);
-  
   osc.connect(gain);
   gain.connect(audioCtx.destination);
-  
   osc.start();
   osc.stop(audioCtx.currentTime + 0.07);
 }
@@ -1676,7 +1708,7 @@ window.addEventListener('touchstart', initAudio, { once: true });
 
 
 /* ============================================================
-   SPLASH SCREEN
+   SPLASH
 ============================================================ */
 const splash=document.getElementById("splash"),app=document.getElementById("app");
 const cyberBar=document.getElementById("cyberBar"),cyberCount=document.getElementById("cyberCount"),cyberStatus=document.getElementById("cyberStatus");
@@ -1688,10 +1720,8 @@ function runCyberLoader() {
   const interval = setInterval(() => {
     progress += Math.floor(Math.random() * 8) + 4;
     if (progress > 100) progress = 100;
-    
     if (cyberBar) cyberBar.style.width = progress + "%";
     if (cyberCount) cyberCount.textContent = progress + "%";
-    
     if (progress < 30) cyberStatus.textContent = statusTexts[0];
     else if (progress < 65) cyberStatus.textContent = statusTexts[1];
     else if (progress < 95) cyberStatus.textContent = statusTexts[2];
@@ -1715,7 +1745,7 @@ function runCyberLoader() {
 
 
 /* ============================================================
-   NAVIGATION MENU (Header Dropdown)
+   HEADER MENU
 ============================================================ */
 function toggleHeaderMenu(e){
   if(e) e.stopPropagation();
@@ -1743,10 +1773,8 @@ document.addEventListener('click', function(e){
 function startWelcomePopupCountdown() {
   const overlay = document.getElementById("welcomePopupOverlay");
   overlay.classList.add("active");
-
   const badge = document.getElementById("popupCountdownBadge");
   const closeBtn = document.getElementById("popupCloseBtn");
-
   if (badge) badge.style.display = "none";
   if (closeBtn) closeBtn.removeAttribute("disabled");
 }
@@ -1759,14 +1787,10 @@ function closeWelcomePopup() {
 
 
 /* ============================================================
-   LANGUAGE MODAL / TRANSLATION SYSTEM
+   LANGUAGE
 ============================================================ */
-function openLanguageModal() {
-  document.getElementById("languageModal").classList.add("open");
-}
-function closeLanguageModal() {
-  document.getElementById("languageModal").classList.remove("open");
-}
+function openLanguageModal() { document.getElementById("languageModal").classList.add("open"); }
+function closeLanguageModal() { document.getElementById("languageModal").classList.remove("open"); }
 
 function setLanguage(lang) {
   closeLanguageModal();
@@ -1817,14 +1841,10 @@ function setLanguage(lang) {
 
 
 /* ============================================================
-   THEME MODAL (Light / Dark Switcher)
+   THEME
 ============================================================ */
-function openThemeModal() {
-  document.getElementById("themeModal").classList.add("open");
-}
-function closeThemeModal() {
-  document.getElementById("themeModal").classList.remove("open");
-}
+function openThemeModal() { document.getElementById("themeModal").classList.add("open"); }
+function closeThemeModal() { document.getElementById("themeModal").classList.remove("open"); }
 
 function setTheme(mode) {
   closeThemeModal();
@@ -1841,19 +1861,16 @@ function setTheme(mode) {
 
 
 /* ============================================================
-   PAYMENT MODAL & INVITE/SHARE SYSTEM
+   PAYMENT & SHARE
 ============================================================ */
 function openPaymentDetails() { document.getElementById("paymentModal").classList.add("open"); }
 function closePaymentDetails() { document.getElementById("paymentModal").classList.remove("open"); }
 
 function triggerNativeShare() {
   const shareText = `Hey PUBG Players! 🎮\nLooking for the All-in-One PUBG 4.6 Premium?\n1. 🔥 All-in-One Premium Version\n2. ⭐ WallHack - Color Body \n3. ⭐ Magic Bullet + Aimbot\n4. ⭐ 30+ More Features\n5. 💰 PKR Price: Only 1500 \n6. 🔗 Click the link below to check all features\nLink: https://itsmems97.github.io/PIKAZOO-ARMY/`;
-
   if (navigator.share) {
-    navigator.share({
-      title: 'PUBG PREMIUM Special Offer',
-      text: shareText
-    }).catch((error) => console.log('Error sharing:', error));
+    navigator.share({ title: 'PUBG PREMIUM Special Offer', text: shareText })
+      .catch((error) => console.log('Error sharing:', error));
   } else {
     copyText(shareText, "Invite message copied to clipboard!");
   }
@@ -1861,7 +1878,7 @@ function triggerNativeShare() {
 
 
 /* ============================================================
-   FEATURE LIST MODAL
+   FEATURE LIST
 ============================================================ */
 const featureList = [
   "Aimbot 100% Safe", "Memory Aimlock", "Bullet Tracking", "ESP Skeleton", "ESP Box 3D",
@@ -1898,26 +1915,22 @@ function openFeatures(){
   document.getElementById("featureModal").classList.add("open");
   document.getElementById("featureScroll").scrollTop = 0;
 }
-
 function closeFeatures(){
   document.getElementById("featureModal").classList.remove("open");
 }
 
 
 /* ============================================================
-   SEARCH SYSTEM
+   SEARCH
 ============================================================ */
 document.getElementById("search").addEventListener("input", function(e) {
   const query = e.target.value.toLowerCase().trim();
   const allCards = document.querySelectorAll(".cart-card");
-  
   if (query === "") {
     allCards.forEach(c => c.style.display = "flex");
     return;
   }
-  
   document.querySelectorAll(".product-panel").forEach(p => p.classList.add("show"));
-  
   allCards.forEach(card => {
     const text = card.textContent.toLowerCase();
     card.style.display = text.includes(query) ? "flex" : "none";
@@ -1926,14 +1939,14 @@ document.getElementById("search").addEventListener("input", function(e) {
 
 
 /* ============================================================
-   DISCOUNT COUNTDOWN (PUBG Premium Campaigns)
+   DISCOUNT COUNTDOWN
 ============================================================ */
 function updateDiscountCountdown() {
   const now = new Date();
-  const camp1Start = new Date(2026, 8, 8, 0, 0, 0);       
-  const camp1End   = new Date(2026, 8, 20, 23, 59, 59);   
-  const camp2Start = new Date(2026, 9, 20, 0, 0, 0);      
-  const camp2End   = new Date(2026, 10, 8, 23, 59, 59);    
+  const camp1Start = new Date(2026, 8, 8, 0, 0, 0);
+  const camp1End   = new Date(2026, 8, 20, 23, 59, 59);
+  const camp2Start = new Date(2026, 9, 20, 0, 0, 0);
+  const camp2End   = new Date(2026, 10, 8, 23, 59, 59);
 
   const banner = document.getElementById("discountBanner");
   const badge = document.getElementById("bannerOffBadge");
@@ -1942,13 +1955,8 @@ function updateDiscountCountdown() {
   let activeTarget = null;
   let currentOffText = "";
 
-  if (now >= camp1Start && now <= camp1End) {
-    activeTarget = camp1End;
-    currentOffText = "(25% OFF)";
-  } else if (now >= camp2Start && now <= camp2End) {
-    activeTarget = camp2End;
-    currentOffText = "(50% OFF)";
-  }
+  if (now >= camp1Start && now <= camp1End) { activeTarget = camp1End; currentOffText = "(25% OFF)"; }
+  else if (now >= camp2Start && now <= camp2End) { activeTarget = camp2End; currentOffText = "(50% OFF)"; }
 
   if (activeTarget) {
     if (banner) banner.style.display = "block";
@@ -1965,7 +1973,6 @@ function updateDiscountCountdown() {
     const hEl = document.getElementById("cdHours");
     const mEl = document.getElementById("cdMins");
     const sEl = document.getElementById("cdSecs");
-
     if (dEl) dEl.textContent = String(days).padStart(2, '0');
     if (hEl) hEl.textContent = String(hours).padStart(2, '0');
     if (mEl) mEl.textContent = String(mins).padStart(2, '0');
@@ -1978,27 +1985,41 @@ function updateDiscountCountdown() {
 
 
 /* ============================================================
-   UI TAP / RIPPLE EFFECTS
+   TAP SOUND + CONTAINED RIPPLE
+   Ripple is inserted into a rounded, overflow-hidden host so it
+   can never draw outside the corners. Premium button uses its
+   dedicated .premium-ripple-layer.
 ============================================================ */
+const TAP_SELECTOR = [
+  'button', '.tap', '.cat-btn', '.island-nav-btn', '.header-menu-item',
+  '.popup-btn', '.close', '.search-icon', '.copy-btn-icon', '.pubg-grid-btn',
+  '.cart-btn-apk', '.cart-btn-obb', '.cart-btn-buy', '.pay-action-btn',
+  '.modal-link', '.lang-option-btn', '.theme-option-btn'
+].join(',');
+
 document.addEventListener('pointerdown', function(e) {
-  const btn = e.target.closest('button, .cart-btn-buy, .cat-btn, .cart-btn-apk, .cart-btn-obb');
-  if (!btn) return;
+  const btn = e.target.closest(TAP_SELECTOR);
+  if (!btn || btn.disabled) return;
 
   playTapSound(btn.classList.contains('premium-cat-btn'));
 
-  const circle = document.createElement("span");
-  const diameter = Math.max(btn.clientWidth, btn.clientHeight);
-  const radius = diameter / 2;
-  const rect = btn.getBoundingClientRect();
+  // Host that clips the ripple
+  const host = btn.querySelector('.premium-ripple-layer') || btn;
 
+  const rect = btn.getBoundingClientRect();
+  const diameter = Math.max(rect.width, rect.height);
+  const radius = diameter / 2;
+
+  const circle = document.createElement("span");
+  circle.className = "ripple";
   circle.style.width = circle.style.height = `${diameter}px`;
   circle.style.left = `${e.clientX - rect.left - radius}px`;
-  circle.style.top = `${e.clientY - rect.top - radius}px`;
-  circle.classList.add("ripple");
-  
-  const existingRipple = btn.getElementsByClassName("ripple")[0];
-  if (existingRipple) existingRipple.remove();
-  btn.appendChild(circle);
+  circle.style.top  = `${e.clientY - rect.top  - radius}px`;
+
+  const existing = host.querySelector(".ripple");
+  if (existing) existing.remove();
+  host.appendChild(circle);
+  circle.addEventListener('animationend', () => circle.remove(), { once: true });
 });
 
 
@@ -2008,20 +2029,19 @@ document.addEventListener('pointerdown', function(e) {
 function showPanel(id, btn, e, isPremium = false){
   const p=document.getElementById(id+"Panel");
   const isShow = p.classList.contains("show");
-  
   document.querySelectorAll(".product-panel").forEach(x=>x.classList.remove("show"));
   document.querySelectorAll(".cat-btn").forEach(x=>x.classList.remove("active"));
-  
   if(!isShow && p){
     p.classList.add("show");
     btn.classList.add("active");
     p.scrollIntoView({behavior:"smooth",block:"start"});
   }
+  if (btn && btn.blur) btn.blur(); // drop lingering focus/hover state on touch
 }
 
 
 /* ============================================================
-   INITIALIZATION / FINAL STARTUP LOGIC
+   INIT
 ============================================================ */
 runCyberLoader();
 document.getElementById("year").textContent = new Date().getFullYear();
