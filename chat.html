@@ -201,33 +201,11 @@
     border: none; font-size: 15px; margin-bottom: 10px; outline: none;
   }
   .login-hint { font-size: 11.5px; opacity: 0.8; margin: -4px 0 12px 0; max-width: 300px; }
-  #login-btn, #create-account-btn, #gate-confirm-btn {
+  #welcome-btn {
     width: 100%; max-width: 300px; padding: 13px; border: none; border-radius: 10px;
-    font-weight: 700; font-size: 15px; cursor: pointer;
+    font-weight: 700; font-size: 15px; cursor: pointer; background: #fff; color: #4548c9; margin-top: 4px;
   }
-  #login-btn { background: #fff; color: #4548c9; margin-top: 4px; }
-  #create-account-btn {
-    background: rgba(255,255,255,0.16); color: #fff; margin-top: 10px;
-  }
-  #login-error { color: #ffd7d7; font-size: 12.5px; margin-top: 10px; min-height: 16px; }
-
-  .pw-field-wrap { position: relative; width: 100%; max-width: 300px; margin-bottom: 10px; }
-  .pw-field-wrap input { width: 100%; margin-bottom: 0; padding-right: 40px; box-sizing: border-box; }
-  .pw-toggle-btn {
-    position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
-    background: none; border: none; cursor: pointer; font-size: 17px;
-    line-height: 1; padding: 6px 8px; opacity: 0.65; color: #333;
-  }
-  #login-screen .pw-toggle-btn { color: #333; }
-  .pw-toggle-btn:active { opacity: 1; }
-  .modal-box .pw-field-wrap { max-width: none; margin-bottom: 12px; }
-
-  .field-hint { font-size: 11px; text-align: left; margin: -8px 0 10px 2px; color: var(--text-muted, #999); }
-  #login-screen .field-hint { color: rgba(255,255,255,0.75); }
-  .field-hint.ok { color: #2ecc71; }
-  .field-hint.bad { color: #ff6b6b; }
-  .modal-box .field-hint.ok { color: #1f9d55; }
-  .modal-box .field-hint.bad { color: #e23d3d; }
+  #welcome-btn:hover { background: #eae8ff; }
 
   .avatar-picker-label { font-size: 12.5px; opacity: 0.9; margin-bottom: 8px; }
   .avatar-grid {
@@ -286,28 +264,6 @@
     font-size: 11px; color: var(--text-muted); font-weight: 700;
     letter-spacing: 0.5px; padding: 10px 12px 6px;
   }
-  .home-menu-wrap { position: relative; }
-  #home-menu {
-    display: none; position: absolute; right: 0; top: 38px;
-    background: var(--app-bg); color: var(--bubble-theirs-text);
-    border-radius: 12px; min-width: 160px; overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.25); z-index: 20;
-  }
-  #home-menu.open { display: block; }
-  #home-menu button {
-    width: 100%; text-align: left; background: none; border: none;
-    padding: 12px 14px; font-size: 14px; cursor: pointer; color: inherit;
-  }
-  #home-menu button:hover { background: rgba(0,0,0,0.06); }
-
-  #home-search-fab {
-    position: absolute; right: 16px; bottom: 18px;
-    width: 56px; height: 56px; border-radius: 50%;
-    background: var(--primary); color: #fff;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.28); z-index: 15;
-    display: none;
-  }
-  #home-view.open ~ #home-search-fab, #home-search-fab.show { display: inline-flex; }
 
   #chat-box, #channel-box {
     flex: 1; overflow-y: auto; padding: 16px 12px;
@@ -559,46 +515,21 @@
     white-space: nowrap; box-shadow: 0 8px 20px rgba(0,0,0,0.3);
   }
   #toast.show { display: block; }
-  #search-result { text-align: left; }
 </style>
 </head>
 <body>
 
 <div class="chat-app theme-light" id="chat-app">
 
+  <!-- Welcome / Name Entry (replaces login) -->
   <div id="login-screen" class="open">
     <div class="gate-icon-circle" style="width:62px;height:62px;border-radius:50%;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:30px;margin-bottom:10px;">💬</div>
     <h2>Welcome back</h2>
-    <p>No phone number. No email. Login with your username.</p>
-    <input id="login-username" class="login-field" placeholder="Username (4-10 letters)" maxlength="10" autocomplete="off">
-    <div class="pw-field-wrap">
-      <input id="login-password" class="login-field" placeholder="Password" type="password" autocomplete="off">
-      <button type="button" class="pw-toggle-btn" data-target="login-password">👁️</button>
-    </div>
-    <div class="login-hint">If you already have an account, enter the same username &amp; password.</div>
-    <button id="login-btn">Login</button>
-    <button id="create-account-btn">Create Account</button>
-    <div id="login-error"></div>
-  </div>
-
-  <div id="register-modal" class="app-modal">
-    <div class="modal-box">
-      <h3>Create Account</h3>
-      <input id="reg-name" placeholder="Your name" maxlength="20">
-      <input id="reg-username" placeholder="Username e.g. pikazoo7" maxlength="10">
-      <div class="field-hint" id="reg-username-hint">Username must be 4–10 letters or numbers.</div>
-      <div class="pw-field-wrap">
-        <input id="reg-password" placeholder="Password" type="password" maxlength="8">
-        <button type="button" class="pw-toggle-btn" data-target="reg-password">👁️</button>
-      </div>
-      <div class="field-hint" id="reg-password-hint">Password must be 6–8 characters.</div>
-      <div class="avatar-picker-label">Pick your avatar</div>
-      <div class="avatar-grid" id="reg-avatar-grid"></div>
-      <div class="modal-actions">
-        <button class="modal-cancel" id="reg-cancel-btn">Cancel</button>
-        <button class="modal-save" id="reg-save-btn">Save</button>
-      </div>
-    </div>
+    <p>Enter your name to join the chat.</p>
+    <input id="welcome-name" class="login-field" placeholder="Your name" maxlength="20" autocomplete="off">
+    <div class="avatar-picker-label">Pick your avatar</div>
+    <div class="avatar-grid" id="welcome-avatar-grid"></div>
+    <button id="welcome-btn">Continue</button>
   </div>
 
   <div id="home-view" class="screen-view">
@@ -617,13 +548,6 @@
       </div>
     </div>
     <div id="home-list">
-      <div class="home-row channel-pin" id="pin-channel">
-        <div class="avatar-circle">📢</div>
-        <div class="home-row-info">
-          <div class="home-row-title">VIP 4.6 CHANNEL <span class="channel-badge">CHANNEL</span> <span class="pin-mark">📌</span></div>
-          <div class="home-row-preview" id="preview-channel">Private VIP channel</div>
-        </div>
-      </div>
       <div class="home-row group-pin" id="pin-group">
         <div class="avatar-circle">👥</div>
         <div class="home-row-info">
@@ -631,20 +555,10 @@
           <div class="home-row-preview" id="preview-group">Everyone here sees the same messages</div>
         </div>
       </div>
-      <div class="home-row admin-pin" id="pin-admin">
-        <div class="avatar-circle" id="pin-admin-avatar">👑</div>
-        <div class="home-row-info">
-          <div class="home-row-title" id="pin-admin-title">ADMIN <span class="pin-mark">📌</span></div>
-          <div class="home-row-preview" id="preview-admin">Private chat with admin</div>
-        </div>
-      </div>
       <div class="section-label">CHATS</div>
       <div id="home-dm-list"></div>
     </div>
   </div>
-  <button id="home-search-fab" class="icon-btn" title="Search username">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-  </button>
 
   <div id="group-view" class="screen-view">
     <div class="chat-header">
@@ -736,14 +650,8 @@
     <div class="modal-box">
       <h3>Profile</h3>
       <div class="avatar-circle" id="profile-avatar" style="width:64px;height:64px;min-width:64px;font-size:32px;margin:0 auto 12px;"></div>
-      <div class="profile-row">Name<b id="profile-name"></b></div>
-      <div class="profile-row">Username<b id="profile-username"></b></div>
-      <div class="profile-row">Password<b id="profile-password"></b></div>
+      <div class="profile-row">Name <b id="profile-name"></b></div>
       <input id="profile-edit-name" placeholder="Edit name" maxlength="20">
-      <div class="pw-field-wrap">
-        <input id="profile-edit-password" placeholder="Edit password (6-8 chars)" type="password" maxlength="8">
-        <button type="button" class="pw-toggle-btn" data-target="profile-edit-password">👁️</button>
-      </div>
       <div class="avatar-picker-label">Pick your avatar</div>
       <div class="avatar-grid" id="profile-avatar-grid"></div>
       <div class="modal-actions">
@@ -797,16 +705,6 @@
         <button class="modal-cancel" id="channel-pass-cancel">Cancel</button>
         <button class="modal-save" id="channel-pass-ok">Unlock</button>
       </div>
-    </div>
-  </div>
-
-  <div id="search-modal" class="app-modal">
-    <div class="modal-box">
-      <h3>Search Username</h3>
-      <input id="search-username-input" placeholder="Enter username" maxlength="10">
-      <button class="modal-save" id="search-go-btn" style="width:100%;margin-bottom:12px;">Search</button>
-      <div id="search-result"></div>
-      <button class="modal-cancel" id="search-close-btn" style="width:100%;margin-top:10px;">Close</button>
     </div>
   </div>
 
@@ -892,7 +790,6 @@
   const ADMIN_USER_KEY = "PIKAZOO";
   const ADMIN_PASSWORD = "16241897";
 
-  // Seeded once into Firebase, then consume-by-delete. Remove this array from the file after first successful seed.
   const VIP_CODES = ["PIKAZOO5829","PIKAZOO7146","PIKAZOO3902","PIKAZOO8451","PIKAZOO2637","PIKAZOO9184","PIKAZOO4075","PIKAZOO6218","PIKAZOO1934","PIKAZOO5672","PIKAZOO3048","PIKAZOO8291","PIKAZOO7415","PIKAZOO1586","PIKAZOO6032","PIKAZOO9478","PIKAZOO2814","PIKAZOO4390","PIKAZOO8056","PIKAZOO1723","PIKAZOO6941","PIKAZOO3582","PIKAZOO7104","PIKAZOO4269","PIKAZOO9831","PIKAZOO2475","PIKAZOO6150","PIKAZOO8923","PIKAZOO1347","PIKAZOO5086","PIKAZOO7624","PIKAZOO3195","PIKAZOO8402","PIKAZOO2569","PIKAZOO6913","PIKAZOO1048","PIKAZOO7352","PIKAZOO4819","PIKAZOO9260","PIKAZOO1537","PIKAZOO6742","PIKAZOO3085","PIKAZOO8914","PIKAZOO2401","PIKAZOO7563","PIKAZOO4128","PIKAZOO9350","PIKAZOO1876","PIKAZOO6241","PIKAZOO8093","PIKAZOO3417","PIKAZOO7925","PIKAZOO1682","PIKAZOO5304","PIKAZOO8469","PIKAZOO2150","PIKAZOO6731","PIKAZOO9084","PIKAZOO4215","PIKAZOO7863","PIKAZOO1359","PIKAZOO6042","PIKAZOO9518","PIKAZOO2734","PIKAZOO8190","PIKAZOO3621","PIKAZOO7408","PIKAZOO1953","PIKAZOO6824","PIKAZOO4317","PIKAZOO9056","PIKAZOO2184","PIKAZOO7690","PIKAZOO3425","PIKAZOO8512","PIKAZOO1739","PIKAZOO6204","PIKAZOO9481","PIKAZOO3156","PIKAZOO7802","PIKAZOO2391","PIKAZOO6415","PIKAZOO9027","PIKAZOO4683","PIKAZOO1590","PIKAZOO7324","PIKAZOO2861","PIKAZOO6149","PIKAZOO9730","PIKAZOO3482","PIKAZOO8051","PIKAZOO1926","PIKAZOO6534","PIKAZOO4108","PIKAZOO9275","PIKAZOO2830","PIKAZOO7541","PIKAZOO1623","PIKAZOO8490","PIKAZOO5371"];
 
   const chatAppEl = document.getElementById("chat-app");
@@ -906,7 +803,6 @@
   const msgInput = document.getElementById("msg-input");
   const sendBtn = document.getElementById("send-btn");
   const toastEl = document.getElementById("toast");
-  const homeSearchFab = document.getElementById("home-search-fab");
 
   let myId = "";
   let realtimeStarted = false;
@@ -923,10 +819,10 @@
   function saveName(name) { localStorage.setItem("chatName", name); }
   function getSavedAvatar() { return localStorage.getItem("chatAvatar") || "😀"; }
   function saveAvatar(avatar) { localStorage.setItem("chatAvatar", avatar); }
-  function getUsername() { return localStorage.getItem("chatUsername") || ""; }
   function isAdmin() {
     return localStorage.getItem("isChatAdmin") === "true" || userKeyOf(getUsername()) === ADMIN_USER_KEY;
   }
+  function getUsername() { return localStorage.getItem("chatUsername") || ""; }
   function hasVipAccess() {
     return isAdmin() || localStorage.getItem("vipAccess") === "1";
   }
@@ -934,7 +830,7 @@
     return !!(data && (data.isAdmin || data.senderId === ADMIN_USER_KEY || data.fromAdmin));
   }
   function threadIdFor(a, b) {
-    return [userKeyOf(a), userKeyOf(b)].sort().join("__");
+    return [String(a || ""), String(b || "")].sort().join("__");
   }
   function otherFromThread(threadId, me) {
     return String(threadId || "").split("__").find(p => p !== me) || threadId;
@@ -959,7 +855,6 @@
     homeView.classList.toggle("open", name === "home");
     groupView.classList.toggle("open", name === "group");
     channelView.classList.toggle("open", name === "channel");
-    homeSearchFab.classList.toggle("show", name === "home");
     document.getElementById("home-menu").classList.remove("open");
   }
 
@@ -1075,7 +970,7 @@
   document.getElementById("emoji-toggle-btn").addEventListener("click", () => emojiPanel.classList.toggle("open"));
 
   const AVATARS = ["😀","😎","🥳","🤩","😇","🤠","🐱","🐶","🦊","🐻","🐼","🐸","🦁","🐯","🐵","🐰","🦄","🐧","🚀","⚡","🔥","🌟","💎","🎮","⚽","🏀","🎧","🎨","🛡️"];
-  const ADMIN_ONLY_AVATARS = ["👑", "👑‍", "🫅"];
+  const ADMIN_ONLY_AVATARS = ["👑"];
   function getAvailableAvatars() { return isAdmin() ? AVATARS.concat(ADMIN_ONLY_AVATARS) : AVATARS; }
   function buildAvatarGrid(container, selectedAvatar, onSelect) {
     container.innerHTML = "";
@@ -1127,7 +1022,6 @@
       await setDoc(presenceRef(), {
         online, typing, lastSeen: serverTimestamp(),
         name: getSavedName() || "Anonymous",
-        username: getUsername(),
         avatar: getSavedAvatar()
       }, { merge: true });
     } catch (e) {}
@@ -1191,7 +1085,7 @@
       snap.forEach((d) => {
         const p = d.data();
         if (d.id === myId) return;
-        if (p.typing && p.online) typingNames.push(p.username || p.name || "Someone");
+        if (p.typing && p.online) typingNames.push(p.name || "Someone");
       });
       if (typingNames.length > 0) {
         const who = typingNames.length === 1 ? typingNames[0]
@@ -1273,12 +1167,10 @@
     return div;
   }
 
-  function displayNameHTML(data, withUserTag = true) {
-    const name = data.name || data.senderName || data.username || data.senderUsername || "Anonymous";
-    const uname = data.username || data.senderUsername || "";
+  function displayNameHTML(data, withUserTag = false) {
+    const name = data.name || data.senderName || "Anonymous";
     const badge = isAdminSender(data) ? VERIFIED_BADGE_SVG : "";
-    const tag = withUserTag && uname ? `<span class="uname-tag">@${escapeHTML(uname)}</span>` : "";
-    return `${escapeHTML(name)}${tag}${badge}`;
+    return `${escapeHTML(name)}${badge}`;
   }
 
   async function markSeen(colName, msgId, data) {
@@ -1316,7 +1208,7 @@
     adminBadge.style.display = show ? "inline-flex" : "none";
     adminBadge.innerHTML = show ? VERIFIED_BADGE_SVG : "";
     setAvatarContent(currentUserAvatar, getSavedAvatar(), show);
-    setAvatarContent(document.getElementById("pin-admin-avatar"), "👑", true);
+    setAvatarContent(document.getElementById("pin-admin-avatar") || document.createElement("div"), "👑", show);
   }
 
   const bannedWords = ["badword1", "badword2", "badword3"];
@@ -1335,7 +1227,7 @@
     const snap = await getDoc(ref);
     if (!snap.exists()) {
       await setDoc(ref, {
-        name: "Pikazoo", username: "PIKAZOO", avatar: "👑",
+        name: "Pikazoo", avatar: "👑",
         isAdmin: true, vipAccess: true, createdAt: serverTimestamp()
       });
       await setDoc(doc(db, "userSecrets", ADMIN_USER_KEY), { password: ADMIN_PASSWORD });
@@ -1351,169 +1243,123 @@
     await batch.commit();
   }
 
-  function validUsername(u) { return /^[A-Za-z0-9]{4,10}$/.test(u); }
-
-  document.getElementById("login-username").addEventListener("input", (e) => {
-    e.target.value = e.target.value.replace(/[^A-Za-z0-9]/g, "").slice(0, 8);
-  });
-  document.getElementById("reg-username").addEventListener("input", (e) => {
-    e.target.value = e.target.value.replace(/[^A-Za-z0-9]/g, "").slice(0, 10);
-    const hint = document.getElementById("reg-username-hint");
-    const v = e.target.value;
-    if (!v) { hint.textContent = "Username must be 4–10 letters or numbers."; hint.className = "field-hint"; }
-    else if (validUsername(v)) { hint.textContent = "✓ Looks good."; hint.className = "field-hint ok"; }
-    else { hint.textContent = `Need at least 4 letters/numbers (up to 10). ${v.length}/10 so far.`; hint.className = "field-hint bad"; }
-  });
-  document.getElementById("reg-password").addEventListener("input", (e) => {
-    e.target.value = e.target.value.slice(0, 8);
-    const hint = document.getElementById("reg-password-hint");
-    const v = e.target.value;
-    if (!v) { hint.textContent = "Password must be 6–8 characters."; hint.className = "field-hint"; }
-    else if (v.length >= 6 && v.length <= 8) { hint.textContent = "✓ Looks good."; hint.className = "field-hint ok"; }
-    else { hint.textContent = v.length < 6 ? `Need ${6 - v.length} more character(s).` : "Max 8 characters."; hint.className = "field-hint bad"; }
-  });
-  document.getElementById("search-username-input").addEventListener("input", (e) => {
-    e.target.value = e.target.value.replace(/[^A-Za-z0-9]/g, "").slice(0, 10);
-  });
-  document.querySelectorAll(".pw-toggle-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const input = document.getElementById(btn.dataset.target);
-      if (!input) return;
-      const show = input.type === "password";
-      input.type = show ? "text" : "password";
-      btn.textContent = show ? "🙈" : "👁️";
-    });
-  });
-
-  let regSelectedAvatar = AVATARS[0];
-  document.getElementById("create-account-btn").addEventListener("click", () => {
-    regSelectedAvatar = AVATARS[0];
-    buildAvatarGrid(document.getElementById("reg-avatar-grid"), regSelectedAvatar, a => regSelectedAvatar = a);
-    document.getElementById("register-modal").classList.add("open");
-  });
-  document.getElementById("reg-cancel-btn").addEventListener("click", () => {
-    document.getElementById("register-modal").classList.remove("open");
-  });
-  document.getElementById("reg-save-btn").addEventListener("click", async () => {
-    const name = document.getElementById("reg-name").value.trim();
-    const username = document.getElementById("reg-username").value.trim();
-    const password = document.getElementById("reg-password").value;
-    if (!name || name.length < 2) return showAlert("Please enter a name.");
-    if (!validUsername(username)) return showAlert("Username must be 4–10 letters or numbers. Example: pikazoo7");
-    if (!password || password.length < 6 || password.length > 8) return showAlert("Password must be 6–8 characters.");
-    const key = userKeyOf(username);
-    if (key === ADMIN_USER_KEY) return showAlert("This username is reserved.");
-    const saveBtn = document.getElementById("reg-save-btn");
-    saveBtn.disabled = true;
-    try {
-      const existing = await getDoc(doc(db, "users", key));
-      if (existing.exists()) { saveBtn.disabled = false; return showAlert("Username already taken."); }
-      await setDoc(doc(db, "users", key), {
-        name, username, avatar: regSelectedAvatar,
-        isAdmin: false, vipAccess: false, createdAt: serverTimestamp()
-      });
-      await setDoc(doc(db, "userSecrets", key), { password });
-      document.getElementById("register-modal").classList.remove("open");
-      document.getElementById("login-username").value = username;
-      showToast("Account created! Please log in.");
-    } catch (err) {
-      const detail = (err && err.code) ? `${err.code}` : (err && err.message ? err.message : "unknown error");
-      await showAlert("Could not create account (" + detail + "). Check Firebase rules / internet connection.");
-      console.error(err);
-    } finally {
-      saveBtn.disabled = false;
-    }
-  });
-
-  document.getElementById("login-btn").addEventListener("click", doLogin);
-  document.getElementById("login-password").addEventListener("keydown", (e) => {
-    if (e.key === "Enter") doLogin();
-  });
-
-  async function doLogin() {
-    const err = document.getElementById("login-error");
-    err.textContent = "";
-    const username = document.getElementById("login-username").value.trim();
-    const password = document.getElementById("login-password").value;
-    if (!username || !password) { err.textContent = "Enter username and password."; return; }
-    const key = userKeyOf(username);
-    try {
-      const userSnap = await getDoc(doc(db, "users", key));
-      if (!userSnap.exists()) { err.textContent = "User Not Found"; return; }
-      const secretSnap = await getDoc(doc(db, "userSecrets", key));
-      const savedPass = secretSnap.exists() ? secretSnap.data().password : "";
-      if (savedPass !== password) { err.textContent = "UserName Confirmed Password Not Correct"; return; }
-      await startSession(userSnap.data(), key);
-    } catch (e) {
-      err.textContent = "Login failed. Check connection / Firebase rules.";
-      console.error(e);
-    }
-  }
-
-  async function startSession(profile, key) {
-    myId = key;
-    saveName(profile.name || profile.username || "User");
-    saveAvatar(profile.avatar || "😀");
-    localStorage.setItem("chatUsername", profile.username || key);
-    localStorage.setItem("chatUserKey", key);
-    if (key === ADMIN_USER_KEY || profile.isAdmin) localStorage.setItem("isChatAdmin", "true");
-    else localStorage.removeItem("isChatAdmin");
-    if (profile.vipAccess || key === ADMIN_USER_KEY) localStorage.setItem("vipAccess", "1");
-    else localStorage.removeItem("vipAccess");
-    currentUserName.textContent = profile.username || key;
+  let welcomeSelectedAvatar = AVATARS[0];
+  document.getElementById("welcome-btn").addEventListener("click", async () => {
+    const name = document.getElementById("welcome-name").value.trim();
+    if (!name) { await showAlert("Please enter your name to continue."); return; }
+    const id = localStorage.getItem("chatUserId") || (Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(2));
+    localStorage.setItem("chatUserId", id);
+    localStorage.setItem("chatName", name);
+    localStorage.setItem("chatAvatar", welcomeSelectedAvatar);
+    myId = id;
+    saveName(name);
+    saveAvatar(welcomeSelectedAvatar);
+    currentUserName.textContent = name;
     updateAdminBadge();
-    document.getElementById("pin-admin-title").innerHTML = isAdmin()
-      ? 'PRIVATE INBOX <span class="pin-mark">📌</span>'
-      : 'ADMIN @PIKAZOO <span class="pin-mark">📌</span>';
-    document.getElementById("preview-admin").textContent = isAdmin()
-      ? "All member private chats"
-      : "Private chat with admin";
-    showView("home");
-    setPresence(true);
-    startRealtime();
-  }
-
-  function clearSessionLocal() {
-    ["chatUsername","chatUserKey","chatName","chatAvatar","isChatAdmin","vipAccess"].forEach(k => localStorage.removeItem(k));
-    myId = "";
-  }
-
-  async function restoreSession() {
-    const key = localStorage.getItem("chatUserKey");
-    if (!key) { showView("login"); return; }
     try {
-      const snap = await getDoc(doc(db, "users", key));
-      if (!snap.exists()) { clearSessionLocal(); showView("login"); return; }
-      await startSession(snap.data(), key);
-    } catch (e) {
-      showView("login");
-    }
+      await setDoc(doc(db, "users", myId), {
+        name, avatar: welcomeSelectedAvatar,
+        isAdmin: false, vipAccess: false, createdAt: serverTimestamp()
+      }, { merge: true });
+    } catch (e) {}
+    showView("home");
+    startRealtime();
+    if (isAdmin()) subscribeAdminInbox();
+    subscribeOwnThreadBadge();
+  });
+
+  function generateUserId() {
+    return Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(2);
   }
 
-  document.getElementById("home-menu-btn").addEventListener("click", (e) => {
-    e.stopPropagation();
-    document.getElementById("home-menu").classList.toggle("open");
+  let profileSelectedAvatar = getSavedAvatar();
+  document.getElementById("menu-profile-btn").addEventListener("click", async () => {
+    document.getElementById("home-menu").classList.remove("open");
+    document.getElementById("profile-name").textContent = getSavedName();
+    document.getElementById("profile-edit-name").value = getSavedName();
+    profileSelectedAvatar = getSavedAvatar();
+    setAvatarContent(document.getElementById("profile-avatar"), profileSelectedAvatar, isAdmin());
+    buildAvatarGrid(document.getElementById("profile-avatar-grid"), profileSelectedAvatar, a => {
+      profileSelectedAvatar = a;
+      setAvatarContent(document.getElementById("profile-avatar"), a, isAdmin());
+    });
+    document.getElementById("profile-modal").classList.add("open");
   });
-  document.addEventListener("click", () => document.getElementById("home-menu").classList.remove("open"));
+  document.getElementById("profile-close-btn").addEventListener("click", () => {
+    document.getElementById("profile-modal").classList.remove("open");
+  });
+  document.getElementById("profile-save-btn").addEventListener("click", async () => {
+    const newName = document.getElementById("profile-edit-name").value.trim();
+    if (!newName) return;
+    saveName(newName); saveAvatar(profileSelectedAvatar);
+    currentUserName.textContent = newName;
+    updateAdminBadge();
+    try { await updateDoc(doc(db, "users", myId), { name: newName, avatar: profileSelectedAvatar }); } catch (e) {}
+    document.getElementById("profile-modal").classList.remove("open");
+  });
+  document.getElementById("logout-btn").addEventListener("click", async () => {
+    const ok = await showConfirm("If Logout Your Chat Still Saved There and You Login Information, You Can Login Anytime", "Logout");
+    if (!ok) return;
+    setPresence(false);
+    unsubscribers.forEach(fn => { try { fn(); } catch(e) {} });
+    unsubscribers = []; realtimeStarted = false;
+    document.getElementById("profile-modal").classList.remove("open");
+    localStorage.removeItem("chatUserId"); localStorage.removeItem("chatName"); localStorage.removeItem("chatAvatar"); localStorage.removeItem("isChatAdmin"); localStorage.removeItem("vipAccess");
+    showView("login");
+    document.getElementById("welcome-name").value = "";
+    welcomeSelectedAvatar = AVATARS[0];
+  });
+  document.getElementById("delete-account-btn").addEventListener("click", async () => {
+    const ok = await showConfirm("your message history completely delete. no can recover", "Delete");
+    if (!ok) return;
+    try {
+      const cols = ["messages", "channelMessages", "privateMessages"];
+      for (const colName of cols) {
+        const snaps = await getDocs(query(collection(db, colName), where("senderId", "==", myId)));
+        for (const d of snaps.docs) await deleteDoc(d.ref);
+      }
+      await deleteDoc(doc(db, "users", myId)).catch(() => {});
+      await deleteDoc(doc(db, "presence", myId)).catch(() => {});
+    } catch (e) { console.error(e); }
+    unsubscribers.forEach(fn => { try { fn(); } catch(e) {} });
+    unsubscribers = []; realtimeStarted = false;
+    document.getElementById("profile-modal").classList.remove("open");
+    localStorage.removeItem("chatUserId"); localStorage.removeItem("chatName"); localStorage.removeItem("chatAvatar"); localStorage.removeItem("isChatAdmin"); localStorage.removeItem("vipAccess");
+    showView("login");
+  });
+
+  const editModal = document.getElementById("edit-name-modal");
+  const editNameInput = document.getElementById("edit-name-input");
+  let editSelectedAvatar = getSavedAvatar();
+  document.getElementById("current-user-pill").addEventListener("click", () => {
+    editNameInput.value = getSavedName();
+    editSelectedAvatar = getSavedAvatar();
+    buildAvatarGrid(document.getElementById("edit-avatar-grid"), editSelectedAvatar, a => editSelectedAvatar = a);
+    editModal.classList.add("open");
+  });
+  document.getElementById("edit-cancel-btn").addEventListener("click", () => editModal.classList.remove("open"));
+  document.getElementById("edit-save-btn").addEventListener("click", async () => {
+    const newName = editNameInput.value.trim();
+    if (!newName) return;
+    saveName(newName); saveAvatar(editSelectedAvatar);
+    updateAdminBadge();
+    currentUserName.textContent = newName;
+    try { await updateDoc(doc(db, "users", myId), { name: newName, avatar: editSelectedAvatar }); } catch (e) {}
+    editModal.classList.remove("open");
+  });
 
   document.getElementById("group-back-btn").addEventListener("click", () => showView("home"));
-  document.getElementById("channel-back-btn").addEventListener("click", () => showView("home"));
   document.getElementById("pin-group").addEventListener("click", () => showView("group"));
 
-  document.getElementById("pin-admin").addEventListener("click", () => {
-    if (isAdmin()) adminInboxModal.classList.add("open");
-    else openPrivateChat(threadIdFor(myId, ADMIN_USER_KEY), "PIKAZOO");
-  });
-
-  document.getElementById("pin-channel").addEventListener("click", async () => {
+  document.getElementById("pin-channel")?.addEventListener("click", async () => {
     if (hasVipAccess()) { showView("channel"); return; }
     document.getElementById("channel-pass-input").value = "";
     document.getElementById("channel-pass-modal").classList.add("open");
   });
-  document.getElementById("channel-pass-cancel").addEventListener("click", () => {
+  document.getElementById("channel-pass-cancel")?.addEventListener("click", () => {
     document.getElementById("channel-pass-modal").classList.remove("open");
   });
-  document.getElementById("channel-pass-ok").addEventListener("click", async () => {
+  document.getElementById("channel-pass-ok")?.addEventListener("click", async () => {
     const code = document.getElementById("channel-pass-input").value.trim().toUpperCase();
     if (!code) return;
     try {
@@ -1533,126 +1379,8 @@
     }
   });
 
-  let profileSelectedAvatar = getSavedAvatar();
-  document.getElementById("menu-profile-btn").addEventListener("click", async () => {
-    document.getElementById("home-menu").classList.remove("open");
-    document.getElementById("profile-name").textContent = getSavedName();
-    document.getElementById("profile-username").textContent = getUsername();
-    document.getElementById("profile-edit-name").value = getSavedName();
-    profileSelectedAvatar = getSavedAvatar();
-    setAvatarContent(document.getElementById("profile-avatar"), profileSelectedAvatar, isAdmin());
-    buildAvatarGrid(document.getElementById("profile-avatar-grid"), profileSelectedAvatar, a => {
-      profileSelectedAvatar = a;
-      setAvatarContent(document.getElementById("profile-avatar"), a, isAdmin());
-    });
-    let pass = "";
-    try {
-      const s = await getDoc(doc(db, "userSecrets", myId));
-      pass = s.exists() ? (s.data().password || "") : "";
-    } catch (e) {}
-    document.getElementById("profile-password").textContent = pass;
-    document.getElementById("profile-edit-password").value = pass;
-    document.getElementById("profile-modal").classList.add("open");
-  });
-  document.getElementById("profile-close-btn").addEventListener("click", () => {
-    document.getElementById("profile-modal").classList.remove("open");
-  });
-  document.getElementById("profile-save-btn").addEventListener("click", async () => {
-    const newName = document.getElementById("profile-edit-name").value.trim();
-    const newPass = document.getElementById("profile-edit-password").value;
-    if (!newName) return;
-    if (newPass && (newPass.length < 6 || newPass.length > 8)) return showAlert("Password must be 6–8 characters.");
-    saveName(newName);
-    saveAvatar(profileSelectedAvatar);
-    currentUserName.textContent = getUsername();
-    updateAdminBadge();
-    try {
-      await updateDoc(doc(db, "users", myId), { name: newName, avatar: profileSelectedAvatar });
-      if (newPass) await setDoc(doc(db, "userSecrets", myId), { password: newPass }, { merge: true });
-    } catch (e) {}
-    document.getElementById("profile-modal").classList.remove("open");
-  });
-  document.getElementById("logout-btn").addEventListener("click", async () => {
-    const ok = await showConfirm("If Logout Your Chat Still Saved There and You Login Information, You Can Login Anytime", "Logout");
-    if (!ok) return;
-    setPresence(false);
-    unsubscribers.forEach(fn => { try { fn(); } catch(e) {} });
-    unsubscribers = []; realtimeStarted = false;
-    document.getElementById("profile-modal").classList.remove("open");
-    clearSessionLocal();
-    showView("login");
-  });
-  document.getElementById("delete-account-btn").addEventListener("click", async () => {
-    const ok = await showConfirm("you message history completely delete. no can recover", "Delete");
-    if (!ok) return;
-    try {
-      const cols = ["messages", "channelMessages", "privateMessages"];
-      for (const colName of cols) {
-        const snaps = await getDocs(query(collection(db, colName), where("senderId", "==", myId)));
-        for (const d of snaps.docs) await deleteDoc(d.ref);
-      }
-      await deleteDoc(doc(db, "users", myId)).catch(() => {});
-      await deleteDoc(doc(db, "userSecrets", myId)).catch(() => {});
-      await deleteDoc(doc(db, "presence", myId)).catch(() => {});
-    } catch (e) { console.error(e); }
-    unsubscribers.forEach(fn => { try { fn(); } catch(e) {} });
-    unsubscribers = []; realtimeStarted = false;
-    document.getElementById("profile-modal").classList.remove("open");
-    clearSessionLocal();
-    showView("login");
-  });
-
-  const editModal = document.getElementById("edit-name-modal");
-  const editNameInput = document.getElementById("edit-name-input");
-  let editSelectedAvatar = getSavedAvatar();
-  document.getElementById("current-user-pill").addEventListener("click", () => {
-    editNameInput.value = getSavedName();
-    editSelectedAvatar = getSavedAvatar();
-    buildAvatarGrid(document.getElementById("edit-avatar-grid"), editSelectedAvatar, a => editSelectedAvatar = a);
-    editModal.classList.add("open");
-  });
-  document.getElementById("edit-cancel-btn").addEventListener("click", () => editModal.classList.remove("open"));
-  document.getElementById("edit-save-btn").addEventListener("click", async () => {
-    const newName = editNameInput.value.trim();
-    if (!newName) return;
-    saveName(newName); saveAvatar(editSelectedAvatar);
-    updateAdminBadge();
-    try { await updateDoc(doc(db, "users", myId), { name: newName, avatar: editSelectedAvatar }); } catch (e) {}
-    editModal.classList.remove("open");
-  });
-
-  document.getElementById("home-search-fab").addEventListener("click", () => {
-    document.getElementById("search-result").innerHTML = "";
-    document.getElementById("search-username-input").value = "";
-    document.getElementById("search-modal").classList.add("open");
-  });
-  document.getElementById("search-close-btn").addEventListener("click", () => {
-    document.getElementById("search-modal").classList.remove("open");
-  });
-  document.getElementById("search-go-btn").addEventListener("click", async () => {
-    const qname = document.getElementById("search-username-input").value.trim();
-    const box = document.getElementById("search-result");
-    box.innerHTML = "";
-    if (!validUsername(qname) && qname.toUpperCase() !== ADMIN_USER_KEY) {
-      box.textContent = "Enter a valid username.";
-      return;
-    }
-    const key = userKeyOf(qname);
-    if (key === myId) { box.textContent = "That's you."; return; }
-    const snap = await getDoc(doc(db, "users", key));
-    if (!snap.exists()) { box.textContent = "User Not Found"; return; }
-    const u = snap.data();
-    const row = document.createElement("div");
-    row.className = "home-row";
-    row.innerHTML = `<div class="avatar-circle"></div><div class="home-row-info"><div class="home-row-title"></div><div class="home-row-preview">Tap to message</div></div>`;
-    setAvatarContent(row.querySelector(".avatar-circle"), u.avatar, key === ADMIN_USER_KEY || u.isAdmin);
-    row.querySelector(".home-row-title").textContent = (u.name || u.username) + " @" + (u.username || key);
-    row.addEventListener("click", () => {
-      document.getElementById("search-modal").classList.remove("open");
-      openPrivateChat(threadIdFor(myId, key), u.username || key);
-    });
-    box.appendChild(row);
-  });
+  let profileSelectedAvatarGrid = getSavedAvatar();
+  buildAvatarGrid(document.getElementById("welcome-avatar-grid"), AVATARS[0], a => welcomeSelectedAvatar = a);
 
   const privateMsgBtn = document.getElementById("private-msg-btn");
   const privateMsgBadge = document.getElementById("private-msg-badge");
@@ -1774,7 +1502,7 @@
     privateMsgInput.value = ""; privateMsgInput.focus();
     const optimisticData = {
       threadId: activeThreadId, senderId: myId, senderName: getSavedName(),
-      senderUsername: getUsername(), senderAvatar: getSavedAvatar(),
+      senderAvatar: getSavedAvatar(),
       fromAdmin: isAdmin(), text, read: false,
       timestamp: { toDate: () => new Date(), toMillis: () => Date.now() }
     };
@@ -1785,8 +1513,8 @@
     try {
       await addDoc(collection(db, "privateMessages"), {
         threadId: activeThreadId, senderId: myId,
-        senderName: getSavedName(), senderUsername: getUsername(),
-        senderAvatar: getSavedAvatar(), fromAdmin: isAdmin(),
+        senderName: getSavedName(), senderAvatar: getSavedAvatar(),
+        fromAdmin: isAdmin(),
         text, read: false, timestamp: serverTimestamp()
       });
     } catch (err) {
@@ -1842,7 +1570,7 @@
       return !ids.some(id => id.includes(sid)) && sid !== myId;
     });
     newMembers.forEach(([sid, m]) => {
-      inboxList.appendChild(buildInboxRow(threadIdFor(myId, sid), "@" + (m.username || sid), m.avatar, "", null, 0, true, false));
+      inboxList.appendChild(buildInboxRow(threadIdFor(myId, sid), m.name || "Member", m.avatar || "😀", "", null, 0, true, false));
     });
     if (ids.length === 0 && newMembers.length === 0) {
       const empty = document.createElement("div");
@@ -1857,7 +1585,7 @@
       snap.forEach((docSnap) => {
         const d = docSnap.data();
         if (d.senderId && d.senderId !== myId) {
-          knownMembers[d.senderId] = { name: d.name || "Member", username: d.username, avatar: d.avatar || "😀" };
+          knownMembers[d.senderId] = { name: d.name || "Member", avatar: d.avatar || "😀" };
         }
       });
     }));
@@ -1866,13 +1594,10 @@
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
         const tId = data.threadId; if (!tId) return;
-        if (!tId.includes(myId) && myId === ADMIN_USER_KEY) {
-          /* still show all for admin */
-        }
         if (!threads[tId]) threads[tId] = { name: "Member", avatar: "😀", lastText: "", lastTime: null, unread: 0, isAdmin: false };
         if (data.senderId !== myId) {
-          threads[tId].name = (data.senderName || "Member") + (data.senderUsername ? " @" + data.senderUsername : "");
-          threads[tId].avatar = data.senderAvatar || "😀";
+          threads[tId].name = (data.senderName || data.name || "Member");
+          threads[tId].avatar = data.senderAvatar || data.avatar || "😀";
           threads[tId].isAdmin = !!data.fromAdmin;
         }
         threads[tId].lastText = data.text;
@@ -1895,8 +1620,8 @@
         const other = otherFromThread(data.threadId, myId);
         if (!mineThreads[data.threadId]) mineThreads[data.threadId] = { name: other, avatar: "😀", lastText: "", lastTime: null };
         if (data.senderId !== myId) {
-          mineThreads[data.threadId].name = (data.senderUsername || data.senderName || other);
-          mineThreads[data.threadId].avatar = data.senderAvatar || "😀";
+          mineThreads[data.threadId].name = (data.senderName || data.name || other);
+          mineThreads[data.threadId].avatar = data.senderAvatar || data.avatar || "😀";
         }
         mineThreads[data.threadId].lastText = data.text;
         mineThreads[data.threadId].lastTime = data.timestamp;
@@ -1912,14 +1637,14 @@
       }).forEach(tid => {
         if (tid === adminTid) return;
         const t = mineThreads[tid];
-        list.appendChild(buildInboxRow(tid, "@" + t.name, t.avatar, t.lastText, t.lastTime, 0, false, t.name === ADMIN_USER_KEY));
+        list.appendChild(buildInboxRow(tid, t.name, t.avatar, t.lastText, t.lastTime, 0, false, false));
       });
     }));
   }
 
   privateMsgBtn.addEventListener("click", () => {
     if (isAdmin()) adminInboxModal.classList.add("open");
-    else openPrivateChat(threadIdFor(myId, ADMIN_USER_KEY), "PIKAZOO");
+    else openPrivateChat(threadIdFor(myId, ADMIN_USER_KEY), "Pikazoo");
   });
   document.getElementById("inbox-close-btn").addEventListener("click", () => adminInboxModal.classList.remove("open"));
 
@@ -1961,7 +1686,7 @@
           avatarDiv.classList.add("clickable-avatar");
           avatarDiv.addEventListener("click", (e) => {
             e.stopPropagation();
-            openPrivateChat(threadIdFor(myId, data.senderId), data.username || data.name || "Member");
+            openPrivateChat(threadIdFor(myId, data.senderId), data.name || data.username || "Member");
           });
         }
         const avatarNode = mine ? avatarDiv : wrapWithPresence(avatarDiv, data.senderId);
@@ -2038,7 +1763,7 @@
     if (!isAdmin() && containsLink(text)) { await showAlert("⚠ Links are not allowed."); return; }
     document.getElementById("channel-msg-input").value = "";
     await addDoc(collection(db, "channelMessages"), {
-      name: getSavedName(), username: getUsername(), avatar: getSavedAvatar(),
+      name: getSavedName(), avatar: getSavedAvatar(),
       senderId: myId, text, isAdmin: isAdmin(), timestamp: serverTimestamp()
     });
   }
@@ -2056,6 +1781,7 @@
         localStorage.setItem("isChatAdmin", "true");
         updateAdminBadge();
         await showAlert("✅ Admin unlocked on this device. Crown / GitHub avatar enabled.");
+        try { await updateDoc(doc(db, "users", myId), { isAdmin: true, vipAccess: true }); } catch (e) {}
       } else await showAlert("⚠ Incorrect admin code.");
       msgInput.value = "";
       return;
@@ -2069,7 +1795,6 @@
     try {
       const payload = {
         name: getSavedName() || "Anonymous",
-        username: getUsername(),
         avatar: getSavedAvatar(),
         senderId: myId,
         text, isAdmin: isAdmin(),
@@ -2098,9 +1823,13 @@
     subscribePresence();
     subscribeMainChat();
     subscribeChannel();
-    if (isAdmin()) subscribeAdminInbox();
-    subscribeOwnThreadBadge();
   }
+
+  document.getElementById("home-menu-btn").addEventListener("click", (e) => {
+    e.stopPropagation();
+    document.getElementById("home-menu").classList.toggle("open");
+  });
+  document.addEventListener("click", () => document.getElementById("home-menu").classList.remove("open"));
 
   document.addEventListener("visibilitychange", () => { if (myId) setPresence(!document.hidden); });
   window.addEventListener("beforeunload", () => setPresence(false));
@@ -2109,7 +1838,29 @@
   (async function boot() {
     try { await ensureAdminUser(); } catch (e) { console.warn("admin seed", e); }
     try { await seedVipPasswords(); } catch (e) { console.warn("vip seed", e); }
-    await restoreSession();
+    const savedId = localStorage.getItem("chatUserId");
+    const savedName = localStorage.getItem("chatName");
+    if (savedId && savedName) {
+      myId = savedId;
+      saveName(savedName); saveAvatar(localStorage.getItem("chatAvatar") || "😀");
+      if (localStorage.getItem("isChatAdmin") === "true") localStorage.setItem("isChatAdmin", "true");
+      else localStorage.removeItem("isChatAdmin");
+      currentUserName.textContent = savedName;
+      updateAdminBadge();
+      try {
+        const snap = await getDoc(doc(db, "users", myId));
+        if (!snap.exists()) {
+          await setDoc(doc(db, "users", myId), { name: savedName, avatar: getSavedAvatar(), isAdmin: isAdmin(), vipAccess: hasVipAccess(), createdAt: serverTimestamp() });
+        }
+      } catch (e) {}
+      showView("home");
+      startRealtime();
+      if (isAdmin()) subscribeAdminInbox();
+      subscribeOwnThreadBadge();
+    } else {
+      showView("login");
+      buildAvatarGrid(document.getElementById("welcome-avatar-grid"), AVATARS[0], a => welcomeSelectedAvatar = a);
+    }
   })();
 </script>
 </body>
