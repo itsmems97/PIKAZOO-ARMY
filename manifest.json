@@ -1,0 +1,36 @@
+{
+  "name": "ETQAN TEBA EST (IFTIKHAR)",
+  "short_name": "ETQAN",
+  "start_url": "https://itsmems97.github.io/PIKAZOO-ARMY/ETQAN.html",
+  "scope": "https://itsmems97.github.io/PIKAZOO-ARMY/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#17181C",
+  "theme_color": "#17181C",
+  "icons": [
+    {
+      "src": "ETQAN.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "ETQAN.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "ETQAN.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "ETQAN.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
